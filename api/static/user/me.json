@@ -1,0 +1,29 @@
+{
+  "menus": [
+    {
+      "parent_id": "5741104725d8d338134193ea",
+      "path": "/add/circle/",
+      "name": "圈子"
+    },
+    {
+      "parent_id": "57410a46251923f8150b23cb",
+      "path": "/managment/menu/",
+      "name": "目录"
+    },
+    {
+      "parent_id": "57410a46251923f8150b23cb",
+      "path": "/managment/action/",
+      "name": "权限"
+    },
+    {
+      "parent_id": "57410a46251923f8150b23cb",
+      "path": "/managment/role/",
+      "name": "角色"
+    },
+    {
+      "parent_id": "57410a46251923f8150b23cb",
+      "path": "/managment/code/",
+      "name": "邀请码"
+    }
+  ]
+}
