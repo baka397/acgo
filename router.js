@@ -5,6 +5,7 @@
 let fs = require('fs');
 let path = require('path');
 let tool = require('./common/tool');
+const VERSION_LIST = ['v1'];
 module.exports = function(app) {
 	// 读取web下所有controller
 	let controllerDir = path.join(__dirname, 'controllers/web');
@@ -15,8 +16,7 @@ module.exports = function(app) {
 		app.use(controller.requestMapping, controller.router);
 	}
     //版本信息
-    let versionList = ['v1'];
-    versionList.forEach(function(version){
+    VERSION_LIST.forEach(function(version){
         //读取API所有版本controller
         let controllerApiVersionDir = path.join(__dirname, 'controllers/api/'+version);
         let filesApi = fs.readdirSync(controllerApiVersionDir);

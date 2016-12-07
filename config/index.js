@@ -6,10 +6,11 @@ let _ = require('lodash');
 // 默认配置
 let defaultConfig = {
     project: {
-        port: 5500,                                         // 项目端口
+        port: 8000,                                         // 项目端口
         name: pkg.name,                                     // 项目名称
         version: pkg.version                                // 项目版本
     },
+    db:'',                                                  // More info http://mongoosejs.com/docs/api.html#index_Mongoose-createConnection
     log: {
         path: './logs/',                                    // 日志路径
         type: 'console',                                    // 日志打印类型：console、fileLog、dateFileLog

@@ -8,6 +8,7 @@ let ejs = require('ejs');
 let log = require('./log');
 let router = require('./router');
 let tool = require('./common/tool');
+let apiAuth = require('./middlewares/api_auth');
 
 // 全局请求地址前缀
 global.__CONTEXT_PATH = '/';
@@ -15,8 +16,6 @@ global.__CONTEXT_PATH = '/';
 global.LOG = log.logger;
 // 系统配置
 global.CONFIG = require('./config/');
-// redis集群对象
-global.Redis = require('./common/redis-session');
 
 let app = express();
 
@@ -32,11 +31,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 设置session
-app.use(global.Redis());
-
 // 设置日志记录
 log.use(app);
+//API拦截
+app.use('/api/*',apiAuth.checkApi);
 // 加载系统路由
 router(app);
 
