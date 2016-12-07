@@ -41,7 +41,8 @@ ACGO website Project
 
 文档生成
 ----------
-安装apidoc
-`npm install apidoc -g`
-生成文档
-`apidoc -i controllers/api/ -o docs/api`
+##安装apidoc
+```npm install apidoc -g```
+
+##生成文档
+```apidoc -i controllers/api/ -o docs/api```

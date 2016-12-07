@@ -8,6 +8,7 @@ let ejs = require('ejs');
 let log = require('./log');
 let router = require('./router');
 let tool = require('./common/tool');
+let STATUS_CODE = require('./enums/status_code');
 let apiAuth = require('./middlewares/api_auth');
 
 // 全局请求地址前缀
@@ -52,17 +53,29 @@ app.use(function (err, req, res, next) {
     let message = err.message || err.stack;
     if (/TIMEDOUT/i.test(code) || err.syscall == 'connect' || err.hasOwnProperty('connect')) {
         code = 408;
-        message = '网络异常，请稍候再试~';
+        message = '网络异常，请稍候再试';
     }else if(/^\d+$/.test(code)){
         switch(code){
             case 404:
                 message = '找不到当前页面';
                 break;
             case 500:
+                console.log(err);
                 message = '系统错误';
                 break;
             case 502:
                 message = '数据访问异常，请稍后重试';
+                break;
+            case STATUS_CODE.MONGO_ERROR:
+                if(err.errors){
+                    let errorName = Object.keys(err.errors)[0];
+                    if(err.errors[errorName].name==='CastError') message = '参数类型错误';
+                    else message = err.errors[errorName].message;
+                }
+                break;
+            case STATUS_CODE.MONGO_UNIQUE_ERROR:
+                code = STATUS_CODE.MONGO_ERROR;
+                message = message.replace(/^[\S\s]+\"([\S\s]+)\"[\S\s]+$/,'$1') + '已被占用';
                 break;
         }
     }else{
@@ -71,32 +84,24 @@ app.use(function (err, req, res, next) {
     }
 
 	// 返回数据
-	let params = {
-		title: err.title || code,
-		code: code,
-		msg: message
-	};
+    let params = {
+        code: code,
+        msg: message
+    };
 
-	try {
-        let reqAjaxInfo=tool.isAjaxRequest(req);
-		if (reqAjaxInfo.needJson) { //判定是否需要以json形式返回
-			res.send(params);
-		} else {
-            //设置特殊情况下的http状态码，否则为200
-            switch(code){
-                case 403:
-                case 404:
-                case 500:
-                    res.status(code);
-                    break;
-            }
-            params.isAjax=reqAjaxInfo.result; //判定是否为ajax请求
-            if(code===403) res.render('common/403',params);
-			else res.render('common/error',params);
-		}
-	} catch (e) {
-		LOG.error(e);
-	}
+    switch(code){
+        case 403:
+        case 404:
+        case 500:
+            res.status(code);
+            break;
+    }
+
+    try {
+        res.send(params);
+    } catch (e) {
+        LOG.error(e);
+    }
 });
 
 module.exports = app;

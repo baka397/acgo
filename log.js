@@ -3,11 +3,21 @@
  * Created by jie.ding on 2016/4/26.
  * Updated by jing.zhang on 2016/10/12.
  */
-let fs = require('fs');
-let path = require('path');
-let log4js = require('log4js');
-let config = require('./config/');
+const fs = require('fs');
+const path = require('path');
+const log4js = require('log4js');
+const config = require('./config/');
 let logPath = process.env.LOG_PATH || config.log.path, logType = config.log.type, logLevel = config.log.level;
+if(config.closeLog){
+	exports.use = function(){};
+	function emptyLogger(){}
+	emptyLogger.prototype={
+		error:function(){},
+		info:function(){}
+	}
+	exports.logger = new emptyLogger();
+	return;
+}
 //同步创建日志目录
 try{
 	fs.statSync(logPath);
@@ -45,6 +55,7 @@ log4js.configure({
 	}
 });
 let logger = log4js.getLogger(logType || 'dateFileLog');
+
 exports.logger = logger;
 exports.use = function (app) {
 	app.use(log4js.connectLogger(logger, {level: logLevel, format: ':method :url'}));
