@@ -40,26 +40,11 @@ let userEmailValidator = [
         message: '错误的邮箱格式'
     })
 ];
-let versionValidator = [
-    validate({
-        validator: 'isLength',
-        arguments: [0, 20],
-        message: '错误的版本数据'
-    }),
-    validate({
-        validator: 'matches',
-        arguments: [/(\d+.)+\d+/],
-        message: '错误的版本编号'
-    })
-]
 let AppSchema = new Schema({
     project_name: {type: String, required:[true, '必须填写应用名称'], unique: true, validate: projectNameValidator}, //应用名称，3-50
     project_alias:{type: String, required:[true, '必须填写应用别名'], unique: true, validate: projectAliasValidator}, //应用别名，英文，3-50
     user_name: {type: String, required:[true, '必须填写管理员姓名'], validate: userNameValidator}, //管理员姓名
     user_email: {type: String, required:[true, '必须填写管理员邮箱'], validate: userEmailValidator}, //管理员邮箱
-    version: {type: String, validate: versionValidator}, //node版本数据
-    package_version: {type: String, validate: versionValidator}, //package版本信息
-    uptime: {type: Number , min:[0, '错误的运行时间']}, //运行时间（s）
     create_at: { type: Date, default: Date.now },
     update_at: { type: Date, default: Date.now }
 });

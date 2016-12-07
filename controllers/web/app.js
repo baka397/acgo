@@ -15,7 +15,8 @@ exports.requestMapping = '/app';
 //路由处理
 router.get('/',function(req,res,next){
     let page = parseInt(req.query.page)||1;
-    let pageSize = parseInt(req.query.pageSize)||CONFIG.pageSize;
+    let pageSize = parseInt(req.query.pageSize)
+    if(!pageSize||pageSize>CONFIG.pageSize) pageSize=CONFIG.pageSize;
     let query = Object.create(null);
     App.getList(query,'_id user_email user_name project_alias project_name update_at',page,pageSize).then(function(result){
         res.send(tool.buildResJson('获取应用列表成功',result[1],page,pageSize,result[0]));

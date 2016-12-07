@@ -45,4 +45,4 @@ ACGO website Project
 ```npm install apidoc -g```
 
 ##生成文档
-```apidoc -i controllers/api/ -o docs/api```
+```apidoc -i docs/api -o docs/apidoc```

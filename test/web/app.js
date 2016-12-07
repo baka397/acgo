@@ -207,11 +207,11 @@ module.exports=function(app){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.content.length!==2) throw new Error('数据列表查询错误');
                 if(res.body.data.total!==2) throw new Error('数据列表查询错误');
-                if(res.body.data.content[1].user_email!=='jing.zhang02@msxf.com') throw new Error('管理员邮箱错误');
-                if(res.body.data.content[1].user_name!=='张竞') throw new Error('管理员姓名错误');
-                if(res.body.data.content[1].project_alias!=='test') throw new Error('应用别名错误');
-                if(res.body.data.content[1].project_name!=='测试应用') throw new Error('应用名称错误');
-                addAppId = res.body.data.content[1]._id;
+                if(res.body.data.content[0].user_email!=='jing.zhang02@msxf.com') throw new Error('管理员邮箱错误');
+                if(res.body.data.content[0].user_name!=='张竞') throw new Error('管理员姓名错误');
+                if(res.body.data.content[0].project_alias!=='test') throw new Error('应用别名错误');
+                if(res.body.data.content[0].project_name!=='测试应用') throw new Error('应用名称错误');
+                addAppId = res.body.data.content[0]._id;
             })
             .end(function(err,res){
                 done(err);

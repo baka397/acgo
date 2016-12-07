@@ -1,0 +1,16 @@
+#!/bin/bash
+# Node Settings
+#########################setting####################
+port=8801
+uid=http://127.0.0.1
+
+#########################App####################
+
+
+case "$1" in
+  ?|help)
+        echo $"Usage: $0 {app -get/-post/put/delete|help|?}"
+        ;;
+  *)
+        echo $"Usage: $0 {help|?}"
+esac

@@ -81,7 +81,7 @@ function getByAlias(alias){
  * @return {Object}          Promise对象
  */
 function getList(query,fields,page,pageSize){
-    return Promise.all([App.count(query).exec(),App.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
+    return Promise.all([App.count(query).exec(),App.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).sort({'_id':-1}).exec()]);
 }
 exports.newAndSave = newAndSave;
 exports.updateById = updateById;
