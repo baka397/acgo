@@ -26,7 +26,7 @@
  * @apiSuccess {String} data.content.name 动画名称
  * @apiSuccess {String} data.content.alias 动画别名
  * @apiSuccess {String} data.content.cover 动画封面
- * @apiSuccess {Number=0,1,2} data.content.status 动画状态,0-未开始,1-连载中,2-已完结
+ * @apiSuccess {Number=0,1,2} data.content.show_status 动画状态,0-未开始,1-连载中,2-已完结
  * @apiSuccess {Array} data.content.lastUpdateGroupType 集数类型
  * @apiSuccess {Array} data.content.lastUpdateGroupNum 最后更新集数,与类型一一对应
  */
@@ -148,7 +148,7 @@
  * @apiSuccess {String} data.name 动画名称
  * @apiSuccess {String} data.alias 动画别名
  * @apiSuccess {String} data.cover 动画封面
- * @apiSuccess {Number=0,1,2} data.status 动画状态,0-未开始,1-连载中,2-已完结
+ * @apiSuccess {Number=0,1,2} data.show_status 动画状态,0-未开始,1-连载中,2-已完结
  * @apiSuccess {String} data.desc 动画描述
  * @apiSuccess {Array} data.tag 动画标签
  * @apiSuccess {Array} data.tag._id 动画标签ID
@@ -175,7 +175,7 @@
  * @apiParam {String} name 动画名称
  * @apiParam {String} alias 动画别名
  * @apiParam {String} cover 动画封面
- * @apiParam {Number=0,1,2} status 动画状态,0-未开始,1-连载中,2-已完结
+ * @apiParam {Number=0,1,2} show_status 动画状态,0-未开始,1-连载中,2-已完结
  * @apiParam {String} desc 动画描述
  * @apiParam {Array} tag 动画标签
  * @apiParam {Array} tag._id 动画标签ID
@@ -196,7 +196,7 @@
  * @apiParam {String} [name] 动画名称
  * @apiParam {String} [alias] 动画别名
  * @apiParam {String} [cover] 动画封面
- * @apiParam {Number=0,1,2} [status] 动画状态,0-未开始,1-连载中,2-已完结
+ * @apiParam {Number=0,1,2} [show_status] 动画状态,0-未开始,1-连载中,2-已完结
  * @apiParam {String} [desc] 动画描述
  * @apiParam {Array} [tag] 动画标签
  * @apiParam {Array} [tag._id] 动画标签ID
@@ -246,9 +246,10 @@
  * @apiGroup AnimeGroup
  * @apiDescription 获取动画集合
  * @apiPermission user
- * @apiParam {Number} type 动画集合类型
- * @apiParam {String} url 动画集合地址
- * @apiParam {String} episode 动画分集
+ * @apiSuccess {Number} type 动画集合类型
+ * @apiSuccess {String} url 动画集合地址
+ * @apiSuccess {String} episode_no 动画分集编号
+ * @apiSuccess {String} episode_name 动画分集名称
  */
 /**
  * @apiUse return
@@ -261,7 +262,8 @@
  * @apiPermission user
  * @apiParam {Number} type 动画集合类型
  * @apiParam {String} url 动画集合地址
- * @apiParam {String} episode 动画分集
+ * @apiParam {String} episodeNo 动画分集编号
+ * @apiParam {String} episodeName 动画分集名称
  */
 /**
  * @apiUse return
@@ -274,7 +276,8 @@
  * @apiPermission user
  * @apiParam {Number} type 动画集合类型
  * @apiParam {String} url 动画集合地址
- * @apiParam {String} episode 动画分集
+ * @apiParam {String} episodeNo 动画分集编号
+ * @apiParam {String} episodeName 动画分集名称
  */
 /**
  * @apiUse return
@@ -298,4 +301,31 @@
  * @apiGroup AnimeGroup
  * @apiDescription 记录动画浏览信息
  * @apiPermission user
+ */
+//标签
+/**
+ * @apiUse return
+ * @apiUse apiheader
+ * @apiUse list
+ * @apiUse search
+ * @api {GET} /tag/ Get Tag list
+ * @apiVersion 1.0.0
+ * @apiName GetTag
+ * @apiGroup Tag
+ * @apiDescription 查看标签列表
+ * @apiPermission user
+ * @apiSuccess {String} data.content.name 标签名称
+ * @apiSuccess {String} data.content.alias 标签别名
+ */
+/**
+ * @apiUse return
+ * @apiUse apiheader
+ * @api {POST} /tag/ Add Tag
+ * @apiVersion 1.0.0
+ * @apiName AddTag
+ * @apiGroup Tag
+ * @apiDescription 添加标签列表
+ * @apiPermission user
+ * @apiParam {String} name 标签名称
+ * @apiParam {String} alias 标签别名
  */

@@ -13,4 +13,14 @@ mongoose.connect(config.db, {
 
 // models
 require('./app');
+require('./code');
+require('./tag');
+require('./anime');
+require('./anime_group_task');
+require('./anime_group_item');
 exports.App = mongoose.model('App');
+exports.Code = mongoose.model('Code');
+exports.Tag = mongoose.model('Tag');
+exports.Anime = mongoose.model('Anime');
+exports.AnimeGroupTask = mongoose.model('AnimeGroupTask');
+exports.AnimeGroupItem = mongoose.model('AnimeGroupItem');
