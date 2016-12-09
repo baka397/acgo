@@ -4,6 +4,7 @@ nock.enableNetConnect(); // 允许真实的网络连接
 const app = require('../app');
 const Model = require('../models');
 const webTest = require('./web/');
+const apiV1Test = require('./api/v1/');
 const request = require('supertest');
 let client =request(app);
 describe('Common', function(){
@@ -16,13 +17,16 @@ describe('Common', function(){
     })
 })
 webTest(client);
+apiV1Test(client);
 describe('Clear', function(){
     describe('Drop', function(){
-        it('app', function (done) {
-            Model.App.remove({}).then(function(result){
-                done();
-            }).catch(function(err){
-                done(err);
+        Object.keys(Model).forEach(function(key){
+            it(key, function (done) {
+                Model[key].remove({}).then(function(result){
+                    done();
+                }).catch(function(err){
+                    done(err);
+                })
             })
         })
     })

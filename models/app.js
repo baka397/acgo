@@ -41,7 +41,7 @@ let userEmailValidator = [
     })
 ];
 let AppSchema = new Schema({
-    project_name: {type: String, required:[true, '必须填写应用名称'], unique: true, validate: projectNameValidator}, //应用名称
+    project_name: {type: String, required:[true, '必须填写应用名称'], validate: projectNameValidator}, //应用名称
     project_alias:{type: String, required:[true, '必须填写应用别名'], unique: true, validate: projectAliasValidator}, //应用别名
     user_name: {type: String, required:[true, '必须填写管理员姓名'], validate: userNameValidator}, //管理员姓名
     user_email: {type: String, required:[true, '必须填写管理员邮箱'], validate: userEmailValidator}, //管理员邮箱

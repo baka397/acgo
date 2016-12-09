@@ -3,7 +3,6 @@ const STATUS_CODE = require('../enums/status_code');
 let authTool = require('../common/auth');
 let App = require('../proxy/').App;
 
-
 /**
  * 拦截API请求并验证
  */

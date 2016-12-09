@@ -47,7 +47,7 @@
  * @apiPermission none
  * @apiParam {String} email 用户邮箱
  * @apiParam {String} nickname 用户昵称
- * @apiParam {String} password 用户密码,请使用MD5加密后截取16位并大写化
+ * @apiParam {String} password 用户密码,请使用MD5加密后大写化
  * @apiParam {String} code 邀请码
  */
 /**
@@ -60,7 +60,7 @@
  * @apiDescription 用户登录
  * @apiPermission none
  * @apiParam {String} email 用户邮箱
- * @apiParam {String} password 用户密码,请使用MD5加密,请使用MD5加密后截取16位并大写化
+ * @apiParam {String} password 用户密码,请使用MD5加密后大写化
  * @apiSuccess {String} data.key 登录用户授权key,无续期情况下24小时内有效,自动续期
  */
 /**

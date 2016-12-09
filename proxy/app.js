@@ -28,15 +28,10 @@ function updateById(id,data){
             if(data.projectAlias) saveData.project_alias = data.projectAlias;
             if(data.userName) saveData.user_name = data.userName;
             if(data.userEmail) saveData.user_email = data.userEmail;
-            if(data.version) saveData.version = data.version;
-            if(data.packageVersion) saveData.package_version = data.packageVersion;
-            if(data.uptime) saveData.uptime = data.uptime;
             Object.assign(app,saveData);
             return app.save();
         }
-        else return new Promise(function(resolve,reject){
-            reject(new Error('没有该数据'));
-        })
+        else throw new Error('没有该数据');
     })
 }
 /**
@@ -49,9 +44,7 @@ function removeById(id){
         if(app){
             return app.remove();
         }
-        else return new Promise(function(resolve,reject){
-            reject(new Error('没有该数据'));
-        })
+        else throw new Error('没有该数据');
     })
 }
 /**

@@ -79,7 +79,7 @@
  */
 /**
  * @apiUse return
- * @api {POST} /app/ Add invitation code
+ * @api {POST} /code/ Add invitation code
  * @apiVersion 1.0.0
  * @apiName AddCode
  * @apiGroup Code
@@ -89,11 +89,12 @@
 
 /**
  * @apiUse return
- * @api {PUT} /app/:id Update invitation code
+ * @api {PUT} /code/:id Update invitation code
  * @apiVersion 1.0.0
  * @apiName UpdateCode
  * @apiGroup Code
  * @apiDescription 更新一个邀请码
  * @apiPermission localhost
- * @apiParam {Number=0,-1} status 邀请码状态,0-未使用,-1-已禁用
+ * @apiParam {Number=1,-1} status 邀请码状态,1-已使用,-1-已禁用
+ * @apiParam {String} useUser 使用用户
  */

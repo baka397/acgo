@@ -8,16 +8,6 @@ const path = require('path');
 const log4js = require('log4js');
 const config = require('./config/');
 let logPath = process.env.LOG_PATH || config.log.path, logType = config.log.type, logLevel = config.log.level;
-if(config.closeLog){
-	exports.use = function(){};
-	function emptyLogger(){}
-	emptyLogger.prototype={
-		error:function(){},
-		info:function(){}
-	}
-	exports.logger = new emptyLogger();
-	return;
-}
 //同步创建日志目录
 try{
 	fs.statSync(logPath);
@@ -47,7 +37,7 @@ log4js.configure({
 
 		} // 日期格式文件输出
 	],
-	replaceConsole: true,   //替换console.log
+	replaceConsole: false,   //替换console.log
 	levels: {
 		console: logLevel,
 		fileLog: logLevel,

@@ -19,5 +19,5 @@ let AnimeGroupTaskSchema = new Schema({
     create_at: { type: Date, default: Date.now }
 });
 AnimeGroupTaskSchema.plugin(BaseModel);
-AnimeGroupTaskSchema.index(create_at: -1});
+AnimeGroupTaskSchema.index({create_at: -1});
 mongoose.model('AnimeGroupTask', AnimeGroupTaskSchema);
