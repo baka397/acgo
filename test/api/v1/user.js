@@ -4,9 +4,11 @@ const apiTool = require('../tool');
 module.exports=function(app){
     let path = '/api/v1/user/';
     let apiTokenParams;
+    let apiLoginTokenParams;
     let addCodeId;
     let addCodeIdError;
     let password = apiTool.getPassword('testpassword');
+    let apiToken;
     describe('/user/', function(){
         //Prepare
         it('Prepare Token', function (done) {
@@ -70,6 +72,24 @@ module.exports=function(app){
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(!res.body.data.key) throw new Error('验证不符合预期');
+                apiLoginTokenParams=Object.assign({},apiTokenParams,{
+                    'x-req-key':res.body.data.key
+                });
+
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /user/me', function (done) {
+            app.get(path+'me')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.email!=='test@test.com') throw new Error('验证不符合预期');
+                if(res.body.data.role!=='user') throw new Error('验证不符合预期');
+                if(res.body.data.nickname!=='测试昵称') throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);

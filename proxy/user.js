@@ -79,7 +79,7 @@ function login(email,password){
     return getByEmail(email).then(function(user){
         if(user){
             if(user.password===auth.md5Hash(password)){
-                return auth.createLoginToken(user._id);
+                return auth.createLoginToken(user);
             }
             else throw error;
         }

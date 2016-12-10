@@ -17,19 +17,41 @@ exports.validApiToken = function(token,appId,timestamp){
 
 /**
  * 生成用户登录token
- * @param  {String} userId 用户ID
+ * @param  {String} user   用户对象
  * @return {Object}        Promise对象
  */
-exports.createLoginToken = function(userId){
-    let token = md5Hash(userId+new Date().getTime());
+exports.createLoginToken = function(user){
+    let token = md5Hash(user._id+new Date().getTime());
     let key = CONFIG.redisNamespace+':key:'+token;
     let redisPipeline=redisClient.pipeline();
-    redisPipeline.set(key,userId).expire(key,CONFIG.userTokenExpire);
+    let redisData = {
+        _id:user._id,
+        email:user.email,
+        role:user.role
+    }
+    redisPipeline.set(key,JSON.stringify(redisData)).expire(key,CONFIG.userTokenExpire);
     return redisPipeline.exec().then(function(data){
         return new Promise(function(resolve,reject){
             resolve({
                 'key':token
             });
+        })
+    })
+}
+
+/**
+ * 获取用户token
+ */
+exports.getUserIdByToken = function(token){
+    let redisPipeline=redisClient.pipeline();
+    let key = CONFIG.redisNamespace+':key:'+token;
+    redisPipeline.get(key).expire(key,CONFIG.userTokenExpire);
+    return redisPipeline.exec().then(function(data){
+        if(data[0][1]==='null'){
+            throw new Error('无效的key');
+        }
+        return new Promise(function(resolve,reject){
+            resolve(data[0][1]);
         })
     })
 }

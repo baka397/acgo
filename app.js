@@ -35,7 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 设置日志记录
 log.use(app);
 //API拦截
-app.use('/api/*',apiAuth.checkApi);
+app.use('/api/*',apiAuth.checkApi,apiAuth.checkApiUser);
 // 加载系统路由
 router(app);
 
