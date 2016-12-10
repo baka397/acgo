@@ -56,5 +56,15 @@ router.get('/me',function(req,res,next){
         next(err);
     });
 });
+router.put('/me',function(req,res,next){
+    let data=Object.create(null);
+    data.nickname=req.body.nickname;
+    User.updateById(req.user._id,data).then(function(result){
+        res.send(tool.buildResJson('更新成功',null));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+})
 
 exports.router = router;

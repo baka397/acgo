@@ -95,6 +95,34 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('PUT /user/me', function (done) {
+            app.put(path+'me')
+            .set(apiLoginTokenParams)
+            .send({
+                'nickname':'测试昵称2'
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /user/me again', function (done) {
+            app.get(path+'me')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.email!=='test@test.com') throw new Error('验证不符合预期');
+                if(res.body.data.role!=='user') throw new Error('验证不符合预期');
+                if(res.body.data.nickname!=='测试昵称2') throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         //Error test
         it('POST /user/ with empty', function (done) {
             app.post(path)
@@ -271,7 +299,7 @@ module.exports=function(app){
             .set(apiTokenParams)
             .send({
                 'email':'test2@test.com',
-                'nickname':'测试昵称',
+                'nickname':'测试昵称2',
                 'password':password,
                 'code':addCodeIdError
             })
@@ -358,6 +386,24 @@ module.exports=function(app){
                 if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
                 console.log(res.body.msg);
             })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /user/me with empty token', function (done) {
+            app.get(path+'me')
+            .set(apiTokenParams)
+            .expect(403)
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /user/me with wrong token', function (done) {
+            app.get(path+'me')
+            .set(Object.assign({},apiTokenParams,{
+                'x-req-key':'test'
+            }))
+            .expect(403)
             .end(function(err,res){
                 done(err);
             });

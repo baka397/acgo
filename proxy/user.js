@@ -35,7 +35,7 @@ function newAndSave(data){
     })
 }
 /**
- * 根据邀请码ID更新用户
+ * 根据用户ID更新用户
  * @param  {String} id   Object ID
  * @param  {Object} data 数据对象
  * @return {Object}      Promise对象
@@ -86,20 +86,7 @@ function login(email,password){
         else throw error;
     })
 }
-
-/**
- * 获取邀请码列表
- * @param  {Object} query    Query info
- * @param  {String} fields   Query info
- * @param  {Number} page     Page number
- * @param  {Number} pageSize Page Size
- * @return {Object}          Promise对象
- */
-function getList(query,fields,page,pageSize){
-    return Promise.all([User.count(query).exec(),User.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).sort({'_id':-1}).exec()]);
-}
 exports.newAndSave = newAndSave;
 exports.updateById = updateById;
 exports.getById = getById;
-exports.getList = getList;
 exports.login = login;

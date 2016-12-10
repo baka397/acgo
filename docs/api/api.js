@@ -84,6 +84,7 @@
  * @apiGroup User
  * @apiDescription 用户设置密码
  * @apiPermission user
+ * @apiParam {String} oldPassword 用户原密码
  * @apiParam {String} password 用户密码
  */
 /**

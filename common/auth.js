@@ -43,15 +43,13 @@ exports.createLoginToken = function(user){
  * 获取用户token
  */
 exports.getUserIdByToken = function(token){
-    let redisPipeline=redisClient.pipeline();
     let key = CONFIG.redisNamespace+':key:'+token;
-    redisPipeline.get(key).expire(key,CONFIG.userTokenExpire);
-    return redisPipeline.exec().then(function(data){
-        if(data[0][1]==='null'){
+    return redisClient.get(key).then(function(data){
+        if(!data){
             throw new Error('无效的key');
         }
         return new Promise(function(resolve,reject){
-            resolve(data[0][1]);
+            resolve(data);
         })
     })
 }
