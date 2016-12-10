@@ -6,6 +6,7 @@ const Model = require('../models');
 const webTest = require('./web/');
 const apiV1Test = require('./api/v1/');
 const request = require('supertest');
+const redisClient = require('../common/redis');
 let client =request(app);
 describe('Common', function(){
     it('GET 404 Page', function (done) {
@@ -19,7 +20,7 @@ describe('Common', function(){
 webTest(client);
 apiV1Test(client);
 describe('Clear', function(){
-    describe('Drop', function(){
+    describe('MongoDB', function(){
         Object.keys(Model).forEach(function(key){
             it(key, function (done) {
                 Model[key].remove({}).then(function(result){
@@ -28,6 +29,12 @@ describe('Clear', function(){
                     done(err);
                 })
             })
+        })
+    })
+    describe('Redis', function(){
+        it('Flush', function (done) {
+            redisClient.flushdb();
+            done();
         })
     })
 });

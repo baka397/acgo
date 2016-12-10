@@ -5,6 +5,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../../../proxy/').User;
+const validator = require('validator');
 
 //枚举
 const STATUS_CODE = require('../../../enums/status_code');
@@ -26,6 +27,22 @@ router.post('/',function(req,res,next){
         next(err);
     });
 })
-
+router.post('/login',function(req,res,next){
+    let data=Object.create(null);
+    data.email=req.body.email;
+    data.password=req.body.password;
+    if(!data.email||!data.password||!validator.isEmail(data.email)){
+        let error=new Error('请输入正确的邮箱或密码');
+        error.status=STATUS_CODE.ERROR;
+        next(error);
+        return;
+    }
+    User.login(data.email,data.password).then(function(result){
+        res.send(tool.buildResJson('登录成功',result));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
 
 exports.router = router;

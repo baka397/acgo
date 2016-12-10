@@ -30,5 +30,5 @@ let UserSchema = new Schema({
     create_at: { type: Date, default: Date.now }
 });
 UserSchema.plugin(BaseModel);
-UserSchema.index({create_at: -1});
+UserSchema.index({email:1,create_at: -1});
 mongoose.model('User', UserSchema);

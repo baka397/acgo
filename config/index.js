@@ -16,7 +16,13 @@ let defaultConfig = {
         type: 'console',                                    // 日志打印类型：console、fileLog、dateFileLog
         level: 'debug'                                      // 日志打印级别：trace、debug、info、warn、error、fatal
     },
-	redisNodes:[]
+	redis:{
+        port:6379,
+        host:'127.0.0.1'
+    },
+    //运营配置
+    userTokenExpire:24*60*60,                               //用户token有效时间,可续期
+    redisNamespace:'acgo'                                   //redis命名空间
 };
 // 启动配置，部署环境变量：dev、test、uat、online
 let startupConfig = process.env.CFG_PATH || ('./config-' + (process.env.NODE_ENV || 'dev'));

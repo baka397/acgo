@@ -60,6 +60,32 @@ function updateById(id,data){
 function getById(id){
     return User.findOne({_id: id});
 }
+/**
+ * 根据ID获取用户
+ * @param  {String} id 主键ID
+ * @return {Object}    Promise对象
+ */
+function getByEmail(email){
+    return User.findOne({email:email});
+}
+/**
+ * 根据邮箱和密码登录
+ * @param  {String} email    邮箱
+ * @param  {String} password 密码
+ * @return {Object}          Promise对象
+ */
+function login(email,password){
+    let error=new Error('错误的邮箱或密码');
+    return getByEmail(email).then(function(user){
+        if(user){
+            if(user.password===auth.md5Hash(password)){
+                return auth.createLoginToken(user._id);
+            }
+            else throw error;
+        }
+        else throw error;
+    })
+}
 
 /**
  * 获取邀请码列表
@@ -76,3 +102,4 @@ exports.newAndSave = newAndSave;
 exports.updateById = updateById;
 exports.getById = getById;
 exports.getList = getList;
+exports.login = login;

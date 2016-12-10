@@ -59,6 +59,22 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('POST /user/login', function (done) {
+            app.post(path+'login')
+            .set(apiTokenParams)
+            .send({
+                'email':'test@test.com',
+                'password':password
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(!res.body.data.key) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         //Error test
         it('POST /user/ with empty', function (done) {
             app.post(path)
@@ -238,6 +254,84 @@ module.exports=function(app){
                 'nickname':'测试昵称',
                 'password':password,
                 'code':addCodeIdError
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/login with empty email', function (done) {
+            app.post(path+'login')
+            .set(apiTokenParams)
+            .send({
+                'password':password
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/login with wrong email', function (done) {
+            app.post(path+'login')
+            .set(apiTokenParams)
+            .send({
+                'email':'test',
+                'password':password
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/login with unreal email', function (done) {
+            app.post(path+'login')
+            .set(apiTokenParams)
+            .send({
+                'email':'test3@test.com',
+                'password':password
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/login with empty password', function (done) {
+            app.post(path+'login')
+            .set(apiTokenParams)
+            .send({
+                'email':'test@test.com'
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/login with wrong password', function (done) {
+            app.post(path+'login')
+            .set(apiTokenParams)
+            .send({
+                'email':'test@test.com',
+                'password':'123456'
             })
             .expect(200)
             .expect(function(res){

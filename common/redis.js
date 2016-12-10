@@ -1,4 +1,5 @@
 'use strict';
 const Redis = require('ioredis');
-let redisCluster = new Redis.Cluster(CONFIG.redisNodes);
-exports.client = redisCluster;
+const config = require('../config/');
+let redisClient = new Redis(config.redis);
+module.exports = redisClient;
