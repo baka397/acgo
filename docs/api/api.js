@@ -73,7 +73,7 @@
  * @apiDescription 用户找回密码
  * @apiPermission none
  * @apiParam {String} email 用户邮箱
- * @apiParam {String} backurl 返回地址,邮件会按照该地址后添加#+key
+ * @apiParam {String} backurl 返回地址,邮件会按照该地址后添加#+key,该key有效时间为10分钟
  */
 /**
  * @apiUse return
