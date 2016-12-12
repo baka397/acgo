@@ -14,7 +14,7 @@ let tagNameValidator = [
 let tagAliasValidator = [
     validate({
         validator: 'isLength',
-        arguments: [3, 10],
+        arguments: [3, 20],
         message: '标签名称需要{ARGS[0]}-{ARGS[1]}之间的字符串'
     })
 ];

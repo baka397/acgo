@@ -38,7 +38,7 @@ let AnimeSchema = new Schema({
     alias: {type: String, required:[true, '必须填写动画别名'], validate: animeAliasValidator}, //动画别名
     cover: {type: String, required:[true, '必须填写动画封面'], validate: animeCoverValidator}, //动画封面
     show_status:{type: Number, required:[true, '必须选择动画放映状态']},
-    status:{type: Number, required:[true, '必须选择动画状态']},
+    status:{type: Number, required:[true, '必须选择动画状态']}, //动画状态,0-未审核, 1-审核通过, -1-审核拒绝
     desc: {type: String, required:[true, '必须填写动画简介'], validate: animeDescValidator}, //动画简介
     tag: {type: Array, required:[true,'必须填写动画标签']}, //动画标签
     staff: {type: Array, required:[true,'必须填写动画制作人员']}, //动画制作人员
