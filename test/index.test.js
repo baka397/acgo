@@ -4,6 +4,7 @@ nock.enableNetConnect(); // 允许真实的网络连接
 const app = require('../app');
 const Model = require('../models');
 const webTest = require('./web/');
+const searchTest = require('./search/');
 const apiV1Test = require('./api/v1/');
 const request = require('supertest');
 const redisClient = require('../common/redis');
@@ -18,6 +19,7 @@ describe('Common', function(){
     })
 })
 webTest(client);
+searchTest();
 apiV1Test(client);
 describe('Clear', function(){
     describe('MongoDB', function(){

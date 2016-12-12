@@ -315,6 +315,7 @@
  * @apiGroup Tag
  * @apiDescription 查看标签列表
  * @apiPermission user
+ * @apiParam {Number=1,2,3} type 标签类型,1-动画,2-制作人员,3-声优
  * @apiSuccess {String} data.content.name 标签名称
  * @apiSuccess {String} data.content.alias 标签别名
  */
@@ -329,4 +330,5 @@
  * @apiPermission user
  * @apiParam {String} name 标签名称
  * @apiParam {String} alias 标签别名
+ *  @apiParam {Number=1,2,3} type 标签类型,1-动画,2-制作人员,3-声优
  */
