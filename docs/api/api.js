@@ -26,6 +26,7 @@
  * @apiSuccess {String} data.content.name 动画名称
  * @apiSuccess {String} data.content.alias 动画别名
  * @apiSuccess {String} data.content.cover 动画封面
+ * @apiSuccess {Array} data.content.cover_clip 动画封面裁剪比例
  * @apiSuccess {Number=0,1,2} data.content.show_status 动画状态,0-未开始,1-连载中,2-已完结
  * @apiSuccess {Array} data.content.lastUpdateGroupType 集数类型
  * @apiSuccess {Array} data.content.lastUpdateGroupNum 最后更新集数,与类型一一对应
@@ -149,6 +150,7 @@
  * @apiSuccess {String} data.name 动画名称
  * @apiSuccess {String} data.alias 动画别名
  * @apiSuccess {String} data.cover 动画封面
+ * @apiSuccess {Array}  data.cover_clip 动画封面裁剪比例
  * @apiSuccess {Number=0,1,2} data.show_status 动画状态,0-未开始,1-连载中,2-已完结
  * @apiSuccess {String} data.desc 动画描述
  * @apiSuccess {Array} data.tag 动画标签,存储动画标签ID
@@ -166,6 +168,7 @@
  * @apiPermission user
  * @apiSuccess {String} data.alias 动画别名
  * @apiSuccess {String} data.cover 动画封面
+ * @apiSuccess {Array} data.cover_clip 动画封面裁剪比例
  * @apiSuccess {Number=0,1,2} data.show_status 动画状态,0-未开始,1-连载中,2-已完结
  * @apiSuccess {String} data.desc 动画描述
  * @apiSuccess {Array} data.tag 动画标签,存储动画标签ID
@@ -184,6 +187,7 @@
  * @apiParam {String} name 动画名称
  * @apiParam {String} alias 动画别名
  * @apiParam {String} cover 动画封面
+ * @apiParam {Array} cover_clip 动画封面裁剪比例
  * @apiParam {Number=0,1,2} show_status 动画状态,0-未开始,1-连载中,2-已完结
  * @apiParam {String} desc 动画描述
  * @apiParam {Array} tag 动画标签,存储动画标签ID
@@ -202,6 +206,7 @@
  * @apiParam {String} [name] 动画名称
  * @apiParam {String} [alias] 动画别名
  * @apiParam {String} [cover] 动画封面
+ * @apiParam {Array} cover_clip 动画封面裁剪比例
  * @apiParam {Number=0,1,2} [show_status] 动画状态,0-未开始,1-连载中,2-已完结
  * @apiParam {String} [desc] 动画描述
  * @apiSuccess {Array} [data.tag] 动画标签,存储动画标签ID
