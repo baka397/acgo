@@ -209,9 +209,9 @@
  * @apiParam {Array} cover_clip 动画封面裁剪比例
  * @apiParam {Number=0,1,2} [show_status] 动画状态,0-未开始,1-连载中,2-已完结
  * @apiParam {String} [desc] 动画描述
- * @apiSuccess {Array} [data.tag] 动画标签,存储动画标签ID
- * @apiSuccess {Array} [data.staff] 动画制作人员,存储动画制作人员ID
- * @apiSuccess {Array} [data.cv] 动画声优,存储动画声优ID
+ * @apiParam {Array} [data.tag] 动画标签,存储动画标签ID
+ * @apiParam {Array} [data.staff] 动画制作人员,存储动画制作人员ID
+ * @apiParam {Array} [data.cv] 动画声优,存储动画声优ID
  */
 /**
  * @apiUse return
