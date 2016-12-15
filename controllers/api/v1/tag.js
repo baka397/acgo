@@ -25,16 +25,31 @@ router.post('/',function(req,res,next){
     });
 })
 router.get('/',function(req,res,next){
-    let page = parseInt(req.query.page)||1;
-    let pageSize = parseInt(req.query.pageSize)
-    if(!pageSize||pageSize>CONFIG.pageSize) pageSize=CONFIG.pageSize;
+    let page = parseInt(req.query.page);
+    let pageSize = parseInt(req.query.pageSize);
+    let fields='_id name alias type';
     req.query.type=parseInt(req.query.type);
-    Tag.search(req.query.keyword,req.query.type,'_id name alias type',page,pageSize).then(function(result){
-        res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
-    }).catch(function(err){
-        err.status=STATUS_CODE.MONGO_ERROR;
-        next(err);
-    });
+    if(req.query.ids){
+        let ids=req.query.ids.split(',');
+        let getQuery=Object.create(null);
+        getQuery._id={
+            $in:ids
+        }
+        if(req.query.type) getQuery.type=req.query.type;
+        Tag.getList(getQuery,fields,page,pageSize).then(function(result){
+            res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
+        }).catch(function(err){
+            err.status=STATUS_CODE.MONGO_ERROR;
+            next(err);
+        });
+    }else{
+        Tag.search(req.query.keyword,req.query.type,fields,page,pageSize).then(function(result){
+            res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
+        }).catch(function(err){
+            err.status=STATUS_CODE.MONGO_ERROR;
+            next(err);
+        });
+    }
 });
 
 exports.router = router;

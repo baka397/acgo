@@ -74,6 +74,8 @@ function getByAlias(alias){
  * @return {Object}          Promise对象
  */
 function getList(query,fields,page,pageSize){
+    if(!page||page<0) page=1;
+    if(!pageSize||pageSize>CONFIG.maxPageSize) pageSize=CONFIG.pageSize;
     return Promise.all([App.count(query).exec(),App.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).sort({'_id':-1}).exec()]);
 }
 exports.newAndSave = newAndSave;

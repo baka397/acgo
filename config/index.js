@@ -21,6 +21,8 @@ let defaultConfig = {
         host:'127.0.0.1'
     },
     //运营配置
+    pageSize:10,                                            //默认列表数
+    maxPageSize:150,                                        //最大列表数
     pwSalt:'47579A1306DC',                                  //密码盐
     userTokenExpire:24*60*60,                               //用户token有效时间,可续期
     redisNamespace:'acgo'                                   //redis命名空间

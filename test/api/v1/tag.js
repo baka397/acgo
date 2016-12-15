@@ -7,6 +7,7 @@ module.exports=function(app){
     let apiLoginTokenParams;
     let password = apiTool.getPassword('testpassword');
     let apiToken;
+    let validTags=[];
     describe('/tag/', function(){
         //Prepare
         it('Prepare Token', function (done) {
@@ -88,13 +89,16 @@ module.exports=function(app){
             });
         })
         it('GET /tag/', function (done) {
-            app.get(path+'?keyword='+encodeURIComponent('测试')+'&type=1')
+            app.get(path+'?keyword='+encodeURIComponent('测试')+'&type=2')
             .set(apiLoginTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
-                if(res.body.data.content[0].name!=='测试标签') throw new Error('验证不符合预期');
+                if(res.body.data.content[0].name!=='测试标签2') throw new Error('验证不符合预期');
+                res.body.data.content.forEach(function(item){
+                    validTags.push(item._id);
+                })
             })
             .end(function(err,res){
                 done(err);
@@ -109,6 +113,51 @@ module.exports=function(app){
                 if(res.body.data.content.length!==2) throw new Error('验证不符合预期');
                 if(res.body.data.content[0].name!=='测试标签') throw new Error('验证不符合预期');
                 if(res.body.data.content[1].name!=='标签名称') throw new Error('验证不符合预期');
+                res.body.data.content.forEach(function(item){
+                    validTags.push(item._id);
+                })
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /tag/ without type', function (done) {
+            app.get(path+'?ids='+validTags.toString())
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.content.length!==3) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].name!=='测试标签') throw new Error('验证不符合预期');
+                if(res.body.data.content[1].name!=='测试标签2') throw new Error('验证不符合预期');
+                if(res.body.data.content[2].name!=='标签名称') throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /tag/ with type', function (done) {
+            app.get(path+'?ids='+validTags.toString()+'&type=1')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.content.length!==2) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].name!=='测试标签') throw new Error('验证不符合预期');
+                if(res.body.data.content[1].name!=='标签名称') throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        //Error test
+        it('GET /tag/ without keyword or ids', function (done) {
+            app.get(path+'?type=1')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
             })
             .end(function(err,res){
                 done(err);
@@ -126,7 +175,6 @@ module.exports=function(app){
                 done(err);
             });
         })
-        //Error test
         it('POST /tag/ with same name again', function (done) {
             app.post(path)
             .set(apiLoginTokenParams)
@@ -184,18 +232,6 @@ module.exports=function(app){
                 name:'测试-标签',
                 alias:'测试标签别名'
             })
-            .expect(200)
-            .expect(function(res){
-                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
-                console.log(res.body.msg);
-            })
-            .end(function(err,res){
-                done(err);
-            });
-        })
-        it('GET /tag/ with empty keyword', function (done) {
-            app.get(path+'?keyword=&type=1')
-            .set(apiLoginTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');

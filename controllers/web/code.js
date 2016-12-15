@@ -14,8 +14,8 @@ exports.requestMapping = '/code';
 
 //路由处理
 router.get('/',function(req,res,next){
-    let page = parseInt(req.query.page)||1;
-    let pageSize = parseInt(req.query.pageSize)
+    let page = parseInt(req.query.page);
+    let pageSize = parseInt(req.query.pageSize);
     if(!pageSize||pageSize>CONFIG.pageSize) pageSize=CONFIG.pageSize;
     let query = Object.create(null);
     Code.getList(query,'_id status use_user create_at update_at',page,pageSize).then(function(result){

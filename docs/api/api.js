@@ -151,18 +151,26 @@
  * @apiSuccess {String} data.cover 动画封面
  * @apiSuccess {Number=0,1,2} data.show_status 动画状态,0-未开始,1-连载中,2-已完结
  * @apiSuccess {String} data.desc 动画描述
- * @apiSuccess {Array} data.tag 动画标签
- * @apiSuccess {String} data.tag._id 动画标签ID
- * @apiSuccess {String} data.tag.name 动画标签名称
- * @apiSuccess {String} data.tag.alias 动画标签别名
- * @apiSuccess {Array} data.staff 动画制作人员
- * @apiSuccess {String} data.staff._id 动画制作人员ID
- * @apiSuccess {String} data.staff.name 动画制作人员名称
- * @apiSuccess {String} data.staff.alias 动画制作人员别名
- * @apiSuccess {Array} data.cv 动画声优
- * @apiSuccess {String} data.cv._id 动画声优ID
- * @apiSuccess {String} data.cv.name 动画声优名称
- * @apiSuccess {String} data.cv.alias 动画声优别名
+ * @apiSuccess {Array} data.tag 动画标签,存储动画标签ID
+ * @apiSuccess {Array} data.staff 动画制作人员,存储动画制作人员ID
+ * @apiSuccess {Array} data.cv 动画声优,存储动画声优ID
+ */
+/**
+ * @apiUse return
+ * @apiUse apiheader
+ * @api {GET} /anime/audit/:id Get Anime audit detail
+ * @apiVersion 1.0.0
+ * @apiName GetAnimeAuditDetail
+ * @apiGroup Anime
+ * @apiDescription 查看动画审核详情
+ * @apiPermission user
+ * @apiSuccess {String} data.alias 动画别名
+ * @apiSuccess {String} data.cover 动画封面
+ * @apiSuccess {Number=0,1,2} data.show_status 动画状态,0-未开始,1-连载中,2-已完结
+ * @apiSuccess {String} data.desc 动画描述
+ * @apiSuccess {Array} data.tag 动画标签,存储动画标签ID
+ * @apiSuccess {Array} data.staff 动画制作人员,存储动画制作人员ID
+ * @apiSuccess {Array} data.cv 动画声优,存储动画声优ID
  */
 /**
  * @apiUse return
@@ -178,12 +186,9 @@
  * @apiParam {String} cover 动画封面
  * @apiParam {Number=0,1,2} show_status 动画状态,0-未开始,1-连载中,2-已完结
  * @apiParam {String} desc 动画描述
- * @apiParam {Array} tag 动画标签
- * @apiParam {String} tag._id 动画标签ID
- * @apiParam {Array} staff 动画制作人员
- * @apiParam {String} staff._id 动画制作人员ID
- * @apiParam {Array} cv 动画声优
- * @apiParam {String} cv._id 动画声优ID
+ * @apiParam {Array} tag 动画标签,存储动画标签ID
+ * @apiParam {Array} staff 动画制作人员,存储动画制作人员ID
+ * @apiParam {Array} cv 动画声优,存储动画声优ID
  */
 /**
  * @apiUse return
@@ -199,21 +204,18 @@
  * @apiParam {String} [cover] 动画封面
  * @apiParam {Number=0,1,2} [show_status] 动画状态,0-未开始,1-连载中,2-已完结
  * @apiParam {String} [desc] 动画描述
- * @apiParam {Array} [tag] 动画标签
- * @apiParam {String} [tag._id] 动画标签ID
- * @apiParam {Array} [staff] 动画制作人员
- * @apiParam {String} [staff._id] 动画制作人员ID
- * @apiParam {Array} [cv] 动画声优
- * @apiParam {String} [cv._id] 动画声优ID
+ * @apiSuccess {Array} [data.tag] 动画标签,存储动画标签ID
+ * @apiSuccess {Array} [data.staff] 动画制作人员,存储动画制作人员ID
+ * @apiSuccess {Array} [data.cv] 动画声优,存储动画声优ID
  */
 /**
  * @apiUse return
  * @apiUse apiheader
- * @api {PUT} /anime/:id Audit Anime
+ * @api {PUT} /anime/audit/:auditId Audit Anime
  * @apiVersion 1.0.0
  * @apiName AuditAnime
  * @apiGroup Anime
- * @apiDescription 审核动画
+ * @apiDescription 审核动画编辑信息
  * @apiPermission admin
  * @apiParam {Number=0,1,-1} status 动画状态,0-未审核,1-已通过,-1-未通过
  */
@@ -315,7 +317,9 @@
  * @apiGroup Tag
  * @apiDescription 查看标签列表
  * @apiPermission user
- * @apiParam {Number=1,2,3} type 标签类型,1-动画,2-制作人员,3-声优
+ * @apiParam {String} [keywords] 标签关键字,如果有关键字,则以关键字查询,如果无,则以ids查询
+ * @apiParam {Number=1,2,3} [type] 标签类型,1-动画,2-制作人员,3-声优
+ * @apiParam {String} [ids] 包含的标签ID,以,分割多个
  * @apiSuccess {String} data.content.name 标签名称
  * @apiSuccess {String} data.content.alias 标签别名
  */
