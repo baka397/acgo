@@ -23,7 +23,7 @@ function newAndSave(data){
             let user = new User();
             user.email = data.email;
             user.nickname = data.nickname;
-            user.password = data.password?auth.md5Hash(data.password):'';
+            user.password = data.password?auth.md5Hash(CONFIG.pwSalt+data.password):'';
             return user.save()
         }
         else throw new Error('无效的邀请码');
@@ -45,7 +45,7 @@ function updateById(id,data){
         if(user){
             let saveData={};
             if(data.nickname) saveData.nickname = data.nickname;
-            if(data.password) saveData.password = auth.md5Hash(data.password);
+            if(data.password) saveData.password = auth.md5Hash(CONFIG.pwSalt+data.password);
             Object.assign(user,saveData);
             return user.save();
         }
@@ -78,7 +78,7 @@ function login(email,password){
     let error=new Error('错误的邮箱或密码');
     return getByEmail(email).then(function(user){
         if(user){
-            if(user.password===auth.md5Hash(password)){
+            if(user.password===auth.md5Hash(CONFIG.pwSalt+password)){
                 return auth.createLoginToken(user);
             }
             else throw error;
