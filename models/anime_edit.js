@@ -1,9 +1,10 @@
 'use strict';
-//动画
+//动画编辑
 const mongoose  = require('mongoose');
 const validate = require('mongoose-validator');
 const BaseModel = require("./base_model");
 const Schema = mongoose.Schema;
+const ObjectId  = Schema.ObjectId;
 let animeNameValidator = [
     validate({
         validator: 'isLength',
@@ -32,8 +33,7 @@ let animeDescValidator = [
         message: '动画简介需要{ARGS[0]}-{ARGS[1]}之间的字符串'
     })
 ];
-let AnimeSchema = new Schema({
-    name: {type: String, required:[true, '必须填写动画名称'], validate: animeNameValidator}, //动画名称
+let AnimeEditSchema = new Schema({
     alias: {type: String, required:[true, '必须填写动画别名'], validate: animeAliasValidator}, //动画别名
     cover: {type: String, required:[true, '必须填写动画封面'], validate: animeCoverValidator}, //动画封面
     show_status:{type: Number, required:[true, '必须选择动画放映状态']},
@@ -41,9 +41,13 @@ let AnimeSchema = new Schema({
     tag: {type: Array, required:[true,'必须填写动画标签']}, //动画标签
     staff: {type: Array, required:[true,'必须填写动画制作人员']}, //动画制作人员
     cv: {type: Array, required:[true,'必须填写动画声优']}, //动画声优
-    status:{type: Number, required:[true, '必须选择动画状态']}, //动画发布状态,0-未发布, 1-已发布
-    create_at: { type: Date, default: Date.now }
+    status:{type: Number, required:[true, '必须选择动画状态']}, //动画状态,0-未审核, 1-审核通过, -1-审核拒绝
+    anime_id: {type: ObjectId},
+    edit_user: {type: ObjectId},
+    audit_user: {type: ObjectId},
+    create_at: { type: Date, default: Date.now },
+    update_at: { type: Date, default: Date.now }
 });
-AnimeSchema.plugin(BaseModel);
-AnimeSchema.index({create_at: -1});
-mongoose.model('Anime', AnimeSchema);
+AnimeEditSchema.plugin(BaseModel);
+AnimeEditSchema.index({create_at: -1});
+mongoose.model('AnimeEdit', AnimeEditSchema);
