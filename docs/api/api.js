@@ -33,7 +33,7 @@
  */
 /**
  * @apiDefine search
- * @apiParam {String} [key] 搜索关键字
+ * @apiParam {String} keyword 搜索关键字
  */
 
 //用户接口
