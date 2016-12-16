@@ -42,7 +42,7 @@ let AnimeSchema = new Schema({
     tag: {type: Array, required:[true,'必须填写动画标签']}, //动画标签
     staff: {type: Array, required:[true,'必须填写动画制作人员']}, //动画制作人员
     cv: {type: Array, required:[true,'必须填写动画声优']}, //动画声优
-    status:{type: Number, required:[true, '必须选择动画状态']}, //动画发布状态,0-未发布, 1-已发布
+    public_status:{type: Number, required:[true, '必须选择动画发布状态']}, //动画发布状态,0-未发布, 1-已发布
     create_at: { type: Date, default: Date.now }
 });
 AnimeSchema.plugin(BaseModel);

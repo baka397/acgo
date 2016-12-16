@@ -1,5 +1,5 @@
 'use strict';
-//动画编辑
+//动画编辑/审核列表
 const mongoose  = require('mongoose');
 const validate = require('mongoose-validator');
 const BaseModel = require("./base_model");
@@ -42,13 +42,13 @@ let AnimeEditSchema = new Schema({
     tag: {type: Array, required:[true,'必须填写动画标签']}, //动画标签
     staff: {type: Array, required:[true,'必须填写动画制作人员']}, //动画制作人员
     cv: {type: Array, required:[true,'必须填写动画声优']}, //动画声优
-    status:{type: Number, required:[true, '必须选择动画状态']}, //动画状态,0-未审核, 1-审核通过, -1-审核拒绝
-    anime_id: {type: ObjectId},
-    edit_user: {type: ObjectId},
+    audit_status:{type: Number, required:[true, '必须选择动画状态']}, //动画状态,0-未审核, 1-审核通过, -1-审核拒绝
+    anime_id: {type: ObjectId, required:[true, '必须关联动画ID']},
+    edit_user: {type: ObjectId, required:[true, '必须关联编辑用户']},
     audit_user: {type: ObjectId},
     create_at: { type: Date, default: Date.now },
     update_at: { type: Date, default: Date.now }
 });
 AnimeEditSchema.plugin(BaseModel);
-AnimeEditSchema.index({create_at: -1});
+AnimeEditSchema.index({anime_id:1,create_at: -1});
 mongoose.model('AnimeEdit', AnimeEditSchema);

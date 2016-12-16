@@ -1,5 +1,5 @@
 'use strict';
-//邀请码
+//动画集合分集列表
 const mongoose  = require('mongoose');
 const validate = require('mongoose-validator');
 const BaseModel = require("./base_model");

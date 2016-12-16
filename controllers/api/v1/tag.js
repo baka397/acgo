@@ -25,8 +25,9 @@ router.post('/',function(req,res,next){
     });
 })
 router.get('/',function(req,res,next){
-    let page = parseInt(req.query.page);
-    let pageSize = parseInt(req.query.pageSize);
+    tool.rebuildPageSize(req);
+    let page = req.query.page;
+    let pageSize = req.query.pageSize;
     let fields='_id name alias type';
     req.query.type=parseInt(req.query.type);
     if(req.query.ids){

@@ -54,7 +54,7 @@ function newAndSave(data){
 // }
 
 /**
- * 根据关键字
+ * 根据关键字查询标签
  * @param  {String} keyword  关键字
  * @param  {Number} type     类型
  * @param  {String} fields   Query info
@@ -92,8 +92,6 @@ function search(keyword,type,fields,page,pageSize){
  * @return {Object}          Promise对象
  */
 function getList(query,fields,page,pageSize){
-    if(!page||page<0) page=1;
-    if(!pageSize||pageSize>CONFIG.maxPageSize) pageSize=CONFIG.pageSize;
     return Promise.all([Tag.count(query).exec(),Tag.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
 }
 exports.newAndSave = newAndSave;

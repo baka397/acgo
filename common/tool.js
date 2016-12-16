@@ -25,3 +25,22 @@ exports.buildResJson = function(msg,data){
     }
     return result;
 }
+
+/**
+ * 请求下个Promise
+ * @param  {Object} err 错误信息
+ * @return {Object}     Promise对象
+ */
+exports.nextPromise = function(err){
+    return new Promise(function(resolve,reject){
+        if(err) reject(err);
+        else resolve();
+    })
+}
+
+exports.rebuildPageSize = function(req){
+    req.query.page = parseInt(req.query.page);
+    req.query.pageSize = parseInt(req.query.pageSize);
+    if(!req.query.page||req.query.page<0) req.query.page=1;
+    if(!req.query.pageSize||req.query.pageSize>CONFIG.maxPageSize) req.query.pageSize=CONFIG.pageSize;
+}

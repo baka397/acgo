@@ -1,5 +1,5 @@
 'use strict';
-//动画订阅记录
+//动画观看记录
 const mongoose  = require('mongoose');
 const validate = require('mongoose-validator');
 const BaseModel = require("./base_model");
@@ -7,8 +7,9 @@ const Schema = mongoose.Schema;
 const ObjectId  = Schema.ObjectId;
 let AnimeSubSchema = new Schema({
     anime_id: {type: ObjectId, required:[true, '必须选择动画']},
+    anime_group_type: {type: ObjectId, required:[true, '必须选择动画集合类型']},
     sub_user: {type: ObjectId, required:[true, '必须选择订阅用户']},
-    sub_status: {type: Number, required:[true, '必须选择订阅状态']},//订阅状态,1-已订阅,-1-未订阅
+    anime_group_ep: {type: Number, required:[true, '必须填写动画分集数']},
     create_at: { type: Date, default: Date.now },
     update_at: { type: Date, default: Date.now }
 });
