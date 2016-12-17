@@ -9,6 +9,7 @@ module.exports=function(app){
     let apiToken;
     let tags=[[],[],[]];
     let animeId;
+    let animeEditId;
     describe('/anime/', function(){
         //Prepare
         it('Prepare Token', function (done) {
@@ -191,6 +192,45 @@ module.exports=function(app){
                 if(res.body.data.tag.length!==tags[0].length) throw new Error('验证不符合预期');
                 if(res.body.data.staff.length!==tags[1].length) throw new Error('验证不符合预期');
                 if(res.body.data.cv.length!==tags[2].length) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime/audit', function (done) {
+            app.get(path+'audit/?animeId='+animeId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
+                animeEditId=res.body.data.content[0]._id;
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime/audit/:id', function (done) {
+            app.get(path+'audit/'+animeEditId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                let curClip=[1,2,3,4];
+                let validResult=res.body.data.cover_clip.every(function(clip,index){
+                    return clip===curClip[index];
+                })
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.cover!=='测试动画封面') throw new Error('验证不符合预期');
+                if(!validResult) throw new Error('验证不符合预期');
+                if(res.body.data.show_status!==1) throw new Error('验证不符合预期');
+                if(res.body.data.desc!=='测试描述') throw new Error('验证不符合预期');
+                if(res.body.data.tag.length!==tags[0].length) throw new Error('验证不符合预期');
+                if(res.body.data.staff.length!==tags[1].length) throw new Error('验证不符合预期');
+                if(res.body.data.cv.length!==tags[2].length) throw new Error('验证不符合预期');
+                if(res.body.data.anime_id!==animeId) throw new Error('验证不符合预期');
+                if(!res.body.data.edit_user) throw new Error('验证不符合预期');
+                if(res.body.data.audit_user) throw new Error('验证不符合预期');
+                if(res.body.data.audit_status!==0) throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);
