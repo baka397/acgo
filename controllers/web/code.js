@@ -17,7 +17,6 @@ router.get('/',function(req,res,next){
     tool.rebuildPageSize(req);
     let page = req.query.page;
     let pageSize = req.query.pageSize;
-    if(!pageSize||pageSize>CONFIG.pageSize) pageSize=CONFIG.pageSize;
     let query = Object.create(null);
     Code.getList(query,'_id status use_user create_at update_at',page,pageSize).then(function(result){
         res.send(tool.buildResJson('获取邀请码列表成功',result[1],page,pageSize,result[0]));

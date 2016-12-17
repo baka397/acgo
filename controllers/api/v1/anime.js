@@ -51,7 +51,7 @@ router.get('/audit/',function(req,res,next){
     let page = req.query.page;
     let pageSize = req.query.pageSize;
     let animeId = req.query.animeId;
-    if(!validator.isMongoId(animeId)){
+    if(!animeId||!validator.isMongoId(animeId)){
         let err = new Error('请指定正确的动画');
         err.status=STATUS_CODE.ERROR;
         return next(err);
@@ -73,6 +73,11 @@ router.get('/audit/',function(req,res,next){
 });
 
 router.get('/:id',function(req,res,next){
+    if(!validator.isMongoId(req.params.id)){
+        let err = new Error('错误的ID值');
+        err.status=STATUS_CODE.ERROR;
+        return next(err);
+    }
     Anime.getById(req.params.id).then(function(result){
         if(result){
             res.send(tool.buildResJson('获取信息成功',result));
@@ -88,6 +93,11 @@ router.get('/:id',function(req,res,next){
 });
 
 router.get('/audit/:id',function(req,res,next){
+    if(!validator.isMongoId(req.params.id)){
+        let err = new Error('错误的ID值');
+        err.status=STATUS_CODE.ERROR;
+        return next(err);
+    }
     Anime.getAnimeEditById(req.params.id).then(function(result){
         if(result){
             res.send(tool.buildResJson('获取信息成功',result));

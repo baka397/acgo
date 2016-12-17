@@ -35,10 +35,6 @@ function validAnimePromise(data){
         let err=new Error('无效的放映状态');
         return tool.nextPromise(err);
     }
-    if(!Array.isArray(data.tag)||!Array.isArray(data.staff)||!Array.isArray(data.cv)){
-        let err=new Error('标签数据错误');
-        return tool.nextPromise(err);
-    }
     if(data.tag.length===0||data.tag.length>5){
         let err=new Error('请添加1-5个标签');
         return tool.nextPromise(err);
