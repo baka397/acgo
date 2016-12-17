@@ -60,7 +60,6 @@ app.use(function (err, req, res, next) {
                 message = '找不到当前页面';
                 break;
             case 500:
-                console.log(err);
                 message = '系统错误';
                 break;
             case 502:
