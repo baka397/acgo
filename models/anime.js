@@ -33,7 +33,7 @@ let animeDescValidator = [
     })
 ];
 let AnimeSchema = new Schema({
-    name: {type: String, required:[true, '必须填写动画名称'], validate: animeNameValidator}, //动画名称
+    name: {type: String, required:[true, '必须填写动画名称'], unique: true, validate: animeNameValidator}, //动画名称
     alias: {type: String, required:[true, '必须填写动画别名'], validate: animeAliasValidator}, //动画别名
     cover: {type: String, required:[true, '必须填写动画封面'], validate: animeCoverValidator}, //动画封面
     cover_clip: {type:Array, required:[true, '必须填写封面裁剪比例']}, //封面裁剪比例为数组[x,y,clip_width,clip_height]
