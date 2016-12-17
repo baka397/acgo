@@ -9,6 +9,7 @@ module.exports=function(app){
     let addCodeIdError;
     let password = apiTool.getPassword('testpassword');
     let apiToken;
+    let userId;
     describe('/user/', function(){
         //Prepare
         it('Prepare Token', function (done) {
@@ -90,6 +91,7 @@ module.exports=function(app){
                 if(res.body.data.email!=='test@test.com') throw new Error('验证不符合预期');
                 if(res.body.data.role!=='user') throw new Error('验证不符合预期');
                 if(res.body.data.nickname!=='测试昵称') throw new Error('验证不符合预期');
+                userId=res.body.data._id;
             })
             .end(function(err,res){
                 done(err);
@@ -109,15 +111,14 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('GET /user/me again', function (done) {
-            app.get(path+'me')
+        it('GET /user/', function (done) {
+            app.get(path+'?ids='+userId)
             .set(apiLoginTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
-                if(res.body.data.email!=='test@test.com') throw new Error('验证不符合预期');
-                if(res.body.data.role!=='user') throw new Error('验证不符合预期');
-                if(res.body.data.nickname!=='测试昵称2') throw new Error('验证不符合预期');
+                if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].nickname!=='测试昵称2') throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);
@@ -404,6 +405,42 @@ module.exports=function(app){
                 'x-req-key':'test'
             }))
             .expect(403)
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /user/ with empty userId', function (done) {
+            app.get(path)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /user/ with large userIds', function (done) {
+            app.get(path+'?ids=1,2,3,4,5,6')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /user/ with unvalid userId', function (done) {
+            app.get(path+'?ids=1')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
             .end(function(err,res){
                 done(err);
             });

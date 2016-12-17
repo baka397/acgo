@@ -86,7 +86,19 @@ function login(email,password){
         else throw error;
     })
 }
+/**
+ * 获取用户列表
+ * @param  {Object} query    Query info
+ * @param  {String} fields   Query info
+ * @param  {Number} page     Page number
+ * @param  {Number} pageSize Page Size
+ * @return {Object}          Promise对象
+ */
+function getList(query,fields,page,pageSize){
+    return Promise.all([User.count(query).exec(),User.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
+}
 exports.newAndSave = newAndSave;
 exports.updateById = updateById;
 exports.getById = getById;
 exports.login = login;
+exports.getList = getList;

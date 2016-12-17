@@ -64,7 +64,7 @@ router.get('/audit/',function(req,res,next){
     let reqData=Object.create(null);
     reqData.anime_id=animeId;
     if(req.query.auditStatus) reqData.audit_status=parseInt(req.query.auditStatus);
-    Anime.getAnimeEditList(reqData,'_id audit_status edit_user audit_user',page,pageSize).then(function(result){
+    Anime.getAnimeEditList(reqData,'_id audit_status create_at update_at',page,pageSize).then(function(result){
         res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
