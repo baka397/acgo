@@ -249,6 +249,39 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('PUT /anime/', function (done) {
+            app.put(path+animeId)
+            .set(apiLoginTokenParams)
+            .send({
+                alias:'测试动画别名',
+                cover:'测试动画封面',
+                coverClip:'1,2,3,4',
+                showStatus:1,
+                desc:'测试描述',
+                tag:tags[0].toString(),
+                staff:tags[1].toString(),
+                cv:tags[2].toString()
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime/audit/ again', function (done) {
+            app.get(path+'audit/?animeId='+animeId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.content.length!==2) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         //Error test
         it('POST /anime/ with empty coverClip', function (done) {
             app.post(path)
