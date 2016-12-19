@@ -570,5 +570,49 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('PUT /anime/ with wrong animeId', function (done) {
+            app.put(path+'123')
+            .set(apiLoginTokenParams)
+            .send({
+                alias:'测试动画别名',
+                cover:'测试动画封面',
+                coverClip:'1,2,3,4',
+                showStatus:1,
+                desc:'测试描述',
+                tag:tags[0].toString(),
+                staff:tags[1].toString(),
+                cv:tags[2].toString()
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /anime/ with inexistence animeId', function (done) {
+            app.put(path+'58297d95e7aaf218604a8d0f')
+            .set(apiLoginTokenParams)
+            .send({
+                alias:'测试动画别名',
+                cover:'测试动画封面',
+                coverClip:'1,2,3,4',
+                showStatus:1,
+                desc:'测试描述',
+                tag:tags[0].toString(),
+                staff:tags[1].toString(),
+                cv:tags[2].toString()
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
     })
 }
