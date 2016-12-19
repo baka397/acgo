@@ -12,74 +12,97 @@ let animeSearch = searcher.createSearch('animes');
 
 function validAnimePromise(data){
     //裁剪检测
-    let validClip=true;
-    data.coverClip=data.coverClip?data.coverClip.split(','):[];
-    if(data.coverClip.length!==4){
-        let err=new Error('无效的裁剪参数');
-        return tool.nextPromise(err);
+    if(data.cover||data.coverClip){
+        let validClip=true;
+        data.coverClip=data.coverClip?data.coverClip.split(','):[];
+        if(data.coverClip.length!==4){
+            let err=new Error('无效的裁剪参数');
+            return tool.nextPromise(err);
+        }
+        data.coverClip=data.coverClip.map(function(clip){
+            let clipVal=parseInt(clip);
+            if(!clipVal) validClip=false;
+            return clipVal;
+        });
+        if(!validClip){
+            let err=new Error('无效的裁剪参数');
+            return tool.nextPromise(err);
+        }
     }
-    data.coverClip=data.coverClip.map(function(clip){
-        let clipVal=parseInt(clip);
-        if(!clipVal) validClip=false;
-        return clipVal;
-    });
-    if(!validClip){
-        let err=new Error('无效的裁剪参数');
-        return tool.nextPromise(err);
-    }
-    //标签数据
-    data.tag=data.tag?data.tag.split(','):[];
-    data.staff=data.staff?data.staff.split(','):[];
-    data.cv=data.cv?data.cv.split(','):[];
-    if(!ANIME.showStatus[data.showStatus]){
+    if(!isNaN(data.showStatus)&&!ANIME.showStatus[data.showStatus]){
         let err=new Error('无效的放映状态');
         return tool.nextPromise(err);
     }
-    if(data.tag.length===0||data.tag.length>5){
-        let err=new Error('请添加1-5个标签');
-        return tool.nextPromise(err);
+    //标签数据
+    let tagList=[];
+    let promiseList = [];
+    let needValidKey = [];
+    if(data.tag){
+        data.tag=data.tag.split(',');
+        if(data.tag.length===0||data.tag.length>5){
+            let err=new Error('请添加1-5个标签');
+            return tool.nextPromise(err);
+        }
+        tagList=tagList.concat(data.tag);
+        needValidKey.push('tag');
+        promiseList.push(tagProxy.getList({
+            '_id':{
+                $in:data.tag
+            },
+            type:1
+        }));
     }
-    if(data.staff.length===0||data.staff.length>5){
-        let err=new Error('请添加1-5个工作人员');
-        return tool.nextPromise(err);
+    if(data.staff){
+        data.staff=data.staff.split(',');
+        if(data.staff.length===0||data.staff.length>5){
+            let err=new Error('请添加1-5个工作人员');
+            return tool.nextPromise(err);
+        }
+        tagList=tagList.concat(data.staff);
+        needValidKey.push('staff');
+        promiseList.push(tagProxy.getList({
+            '_id':{
+                $in:data.staff
+            },
+            type:2
+        }));
     }
-    if(data.cv.length===0||data.cv.length>5){
-        let err=new Error('请添加1-5个声优');
-        return tool.nextPromise(err);
+    if(data.cv){
+        data.cv=data.cv.split(',');
+        if(data.cv.length===0||data.cv.length>5){
+            let err=new Error('请添加1-5个声优');
+            return tool.nextPromise(err);
+        }
+        tagList=tagList.concat(data.cv);
+        needValidKey.push('cv');
+        promiseList.push(tagProxy.getList({
+            '_id':{
+                $in:data.cv
+            },
+            type:3
+        }));
     }
     //检测标签是否合规
-    let tagList=[].concat(data.tag,data.staff,data.cv);
-    let idValidResult=tagList.every(function(tag){
-        return validator.isMongoId(tag)
-    });
-    if(!idValidResult){
-        let err=new Error('无效的标签ID');
-        return tool.nextPromise(err);
+    if(tagList.length>0){
+        let idValidResult=tagList.every(function(tag){
+            return validator.isMongoId(tag)
+        });
+        if(!idValidResult){
+            let err=new Error('无效的标签ID');
+            return tool.nextPromise(err);
+        }
     }
-    //检测标签是否存在
-    let promiseList = [];
-    promiseList.push(tagProxy.getList({
-        '_id':{
-            $in:data.tag
-        },
-        type:1
-    }));
-    promiseList.push(tagProxy.getList({
-        '_id':{
-            $in:data.staff
-        },
-        type:2
-    }));
-    promiseList.push(tagProxy.getList({
-        '_id':{
-            $in:data.cv
-        },
-        type:3
-    }));
-    return Promise.all(promiseList).then(function(result){
-        if(result[0][1].length!==data.tag.length||result[1][1].length!==data.staff.length||result[2][1].length!==data.cv.length) throw new Error('存在无效的标签值');
-        else return tool.nextPromise();
-    })
+    if(promiseList.length>0){
+        return Promise.all(promiseList).then(function(result){
+            let resultValid=result.every(function(item,index){
+                return item[1].length===data[needValidKey[index]].length;
+            })
+            if(!resultValid) throw new Error('存在无效的标签值');
+            else return tool.nextPromise();
+        })
+    }else{
+        return tool.nextPromise();
+    }
 }
 
 /**
@@ -133,14 +156,14 @@ function newAndSaveAnimeEdit(data,unvalid){
     }).then(function(anime){
         if(anime){
             let animeEdit = new AnimeEdit();
-            animeEdit.alias = data.alias;
-            animeEdit.cover = data.cover;
-            animeEdit.cover_clip = data.coverClip;
-            animeEdit.show_status = data.showStatus;
-            animeEdit.desc = data.desc;
-            animeEdit.tag = data.tag;
-            animeEdit.staff = data.staff;
-            animeEdit.cv = data.cv;
+            if(data.alias) animeEdit.alias = data.alias;
+            if(data.cover) animeEdit.cover = data.cover;
+            if(data.coverClip) animeEdit.cover_clip = data.coverClip;
+            if(data.showStatus) animeEdit.show_status = data.showStatus;
+            if(data.desc) animeEdit.desc = data.desc;
+            if(data.tag) animeEdit.tag = data.tag;
+            if(data.tag) animeEdit.staff = data.staff;
+            if(data.tag) animeEdit.cv = data.cv;
             animeEdit.audit_status = 0;
             animeEdit.anime_id = data.animeId;
             animeEdit.edit_user = data.editUser;
@@ -216,8 +239,52 @@ function getList(query,fields,page,pageSize){
  * @return {Object}          Promise对象
  */
 function getAnimeEditList(query,fields,page,pageSize){
-    return Promise.all([AnimeEdit.count(query).exec(),AnimeEdit.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
+    return Promise.all([AnimeEdit.count(query).exec(),AnimeEdit.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).sort({'_id':1}).exec()]);
 }
+
+/**
+ * 审核动画信息
+ * @param  {String} id    动画编辑信息
+ * @param  {Number} data  审核结果
+ * @return {Object}       Promise对象
+ */
+function aduitAnimeEdit(id,data){
+    if(!ANIME.auditStatus[data.auditStatus]||data.auditStatus===0){
+        let err=new Error('请指定正确的审核结果');
+        return tool.nextPromise(err);
+    }
+    return getAnimeEditById(id).then(function(animeEdit){
+        if(animeEdit&&animeEdit.audit_status===0){
+            animeEdit.audit_status=data.auditStatus;
+            animeEdit.audit_user=data.auditUser;
+            //如果是审核通过
+            if(data.auditStatus===1){
+                return Promise.all([animeEdit.save(),getById(animeEdit.anime_id)]);
+            }else{
+                return animeEdit.save();
+            }
+        }
+        else throw new Error('没有该数据');
+    }).then(function(result){
+        if(Array.isArray(result)){
+            let animeEdit=result[0];
+            let anime=result[1];
+            if(animeEdit.alias) anime.alias = animeEdit.alias;
+            if(animeEdit.cover) anime.cover = animeEdit.cover;
+            if(animeEdit.cover_clip) anime.cover_clip = animeEdit.cover_clip;
+            if(animeEdit.show_status) anime.show_status = animeEdit.show_status;
+            if(animeEdit.desc) anime.desc = animeEdit.desc;
+            if(animeEdit.tag.length>0) anime.tag = animeEdit.tag;
+            if(animeEdit.staff.length>0) anime.staff = animeEdit.staff;
+            if(animeEdit.cv.length>0) anime.cv = animeEdit.cv;
+            if(anime.public_status===0) anime.public_status=1;
+            return anime.save();
+        }else{
+            return tool.nextPromise();
+        }
+    })
+}
+
 exports.newAndSave = newAndSave;
 exports.newAndSaveAnimeEdit = newAndSaveAnimeEdit;
 exports.getById = getById;
@@ -225,3 +292,4 @@ exports.getAnimeEditById = getAnimeEditById;
 exports.search = search;
 exports.getList = getList;
 exports.getAnimeEditList = getAnimeEditList;
+exports.aduitAnimeEdit = aduitAnimeEdit;

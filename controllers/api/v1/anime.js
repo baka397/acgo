@@ -120,14 +120,14 @@ router.put('/:id',function(req,res,next){
     }
     let data=Object.create(null);
     data.animeId=req.params.id;
-    data.alias=req.body.alias;
-    data.cover=req.body.cover;
-    data.coverClip=req.body.coverClip;
-    data.showStatus=req.body.showStatus;
-    data.desc=req.body.desc;
-    data.tag=req.body.tag;
-    data.staff=req.body.staff;
-    data.cv=req.body.cv;
+    if(req.body.alias) data.alias=req.body.alias;
+    if(req.body.cover) data.cover=req.body.cover;
+    if(req.body.coverClip) data.coverClip=req.body.coverClip;
+    if(req.body.showStatus) data.showStatus=req.body.showStatus;
+    if(req.body.desc) data.desc=req.body.desc;
+    if(req.body.tag) data.tag=req.body.tag;
+    if(req.body.staff) data.staff=req.body.staff;
+    if(req.body.cv) data.cv=req.body.cv;
     data.editUser=req.user._id;
     Anime.newAndSaveAnimeEdit(data).then(function(result){
         res.send(tool.buildResJson('编辑成功',null));
@@ -135,6 +135,29 @@ router.put('/:id',function(req,res,next){
         err.status=STATUS_CODE.MONGO_ERROR;
         next(err);
     });
-})
+});
+
+router.put('/audit/:id',function(req,res,next){
+    if(!validator.isMongoId(req.params.id)){
+        let err = new Error('错误的ID值');
+        err.status=STATUS_CODE.ERROR;
+        return next(err);
+    }
+    let status=parseInt(req.body.status);
+    if(!status){
+        let err = new Error('请指定审核结果');
+        err.status=STATUS_CODE.ERROR;
+        return next(err);
+    }
+    let data=Object.create(null);
+    data.auditStatus=status;
+    data.auditUser=req.user._id;
+    Anime.aduitAnimeEdit(req.params.id,data).then(function(result){
+        res.send(tool.buildResJson('审核成功',null));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
 
 exports.router = router;
