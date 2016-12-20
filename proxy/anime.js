@@ -191,6 +191,13 @@ function getAnimeEditById(id){
     return AnimeEdit.findOne({_id: id});
 }
 
+function getAnimeSubByAnimeIdAndUserId(animeId,userId){
+    return AnimeSub.findOne({
+        anime_id:animeId,
+        sub_user:userId
+    });
+}
+
 /**
  * 根据关键字查询动画
  * @param  {String} keyword  关键字
@@ -243,6 +250,34 @@ function getAnimeEditList(query,fields,page,pageSize){
 }
 
 /**
+ * 获取动画订阅列表
+ * @param  {Object} query    Query info
+ * @param  {String} fields   Query info
+ * @param  {Number} page     Page number
+ * @param  {Number} pageSize Page Size
+ * @return {Object}          Promise对象
+ */
+function getAnimeSubList(query,fields,page,pageSize){
+    return Promise.all([AnimeSub.count(query).exec(),AnimeSub.find(query).select('anime_id').skip((page-1)*pageSize).limit(pageSize).sort({'_id':1}).exec()])
+    .then(function(result){
+        //重组动画详情查询
+        let ids=result[1].map(function(sub){
+            return sub.anime_id;
+        });
+        return Promise.all([tool.nextPromise(null,result[0]),getList({
+            '_id':{
+                $in:ids
+            }
+        },fields,page,pageSize)]);
+    })
+    .then(function(result){
+        let count=result[0];
+        let content=result[1][1];
+        return tool.nextPromise(null,[count,content])
+    })
+}
+
+/**
  * 审核动画信息
  * @param  {String} id    动画编辑信息
  * @param  {Number} data  审核结果
@@ -285,6 +320,43 @@ function aduitAnimeEdit(id,data){
     })
 }
 
+/**
+ * 订阅动画
+ * @param  {Object} data 订阅数据
+ * @return {Object}      Promise对象
+ */
+function subAnime(data){
+    if(!data.animeId||!validator.isMongoId(data.animeId)){
+        let err=new Error('错误的动画ID');
+        return tool.nextPromise(err);
+    }
+    return getAnimeSubByAnimeIdAndUserId(data.animeId,data.subUser).then(function(animeSub){
+        //如果有该数据
+        if(animeSub){
+            //如果该数据已订阅
+            if(animeSub.sub_status===data.subStatus){
+                return tool.nextPromise(null,animeSub);
+            }else{
+                animeSub.sub_status=data.subStatus;
+                return animeSub.save();
+            }
+        }else{
+            //新增时,查询是否存在动画
+            return getById(data.animeId).then(function(anime){
+                if(anime){
+                    animeSub=new AnimeSub();
+                    animeSub.anime_id=data.animeId;
+                    animeSub.sub_user=data.subUser;
+                    animeSub.sub_status=data.subStatus;
+                    return animeSub.save();
+                }else{
+                    throw new Error('没有该数据');
+                }
+            })
+        }
+    })
+}
+
 exports.newAndSave = newAndSave;
 exports.newAndSaveAnimeEdit = newAndSaveAnimeEdit;
 exports.getById = getById;
@@ -293,3 +365,5 @@ exports.search = search;
 exports.getList = getList;
 exports.getAnimeEditList = getAnimeEditList;
 exports.aduitAnimeEdit = aduitAnimeEdit;
+exports.subAnime = subAnime;
+exports.getAnimeSubList = getAnimeSubList;

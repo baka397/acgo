@@ -110,21 +110,19 @@
  * @apiPermission user
  * @apiParam {String} nickname 用户昵称
  */
+//动画信息
 /**
  * @apiUse return
  * @apiUse apiheader
  * @apiUse list
  * @apiUse animeListInfo
- * @api {GET} /user/timeline Get User timeline
+ * @api {GET} /anime/sub/me Get User sub list
  * @apiVersion 1.0.0
- * @apiName GetUserTimeline
- * @apiGroup User
+ * @apiName GetUserAnimeSubList
+ * @apiGroup Anime
  * @apiDescription 查看用户时间轴信息
  * @apiPermission user
- * @apiSuccess {Number} data.content.lastWatchGroupType 最后观看类型
- * @apiSuccess {Number} data.content.lastWatchGroupNum 最后观看集数
  */
-//动画信息
 /**
  * @apiUse return
  * @apiUse apiheader

@@ -13,5 +13,5 @@ let AnimeSubSchema = new Schema({
     update_at: { type: Date, default: Date.now }
 });
 AnimeSubSchema.plugin(BaseModel);
-AnimeSubSchema.index({create_at: -1});
+AnimeSubSchema.index({anime_id:1,sub_user:1,create_at: -1});
 mongoose.model('AnimeSub', AnimeSubSchema);

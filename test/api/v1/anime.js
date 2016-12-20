@@ -417,6 +417,93 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('PUT /anime/sub/:id', function (done) {
+            app.put(path+'sub/'+animeId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime/sub/me', function (done) {
+            app.get(path+'sub/me')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].name!=='测试动画') throw new Error('验证不符合预期');
+                if(res.body.data.content[0].cover!=='测试动画封面3') throw new Error('验证不符合预期');
+                let curClip=[1,2,3,5];
+                let validResult=res.body.data.content[0].cover_clip.every(function(clip,index){
+                    return clip===curClip[index];
+                })
+                if(!validResult) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].show_status!==1) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].public_status!==1) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /anime/sub/:id again', function (done) {
+            app.put(path+'sub/'+animeId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime/sub/me again', function (done) {
+            app.get(path+'sub/me')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].name!=='测试动画') throw new Error('验证不符合预期');
+                if(res.body.data.content[0].cover!=='测试动画封面3') throw new Error('验证不符合预期');
+                let curClip=[1,2,3,5];
+                let validResult=res.body.data.content[0].cover_clip.every(function(clip,index){
+                    return clip===curClip[index];
+                })
+                if(!validResult) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].show_status!==1) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].public_status!==1) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('DELETE /anime/sub/:id', function (done) {
+            app.delete(path+'sub/'+animeId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime/sub/me again', function (done) {
+            app.get(path+'sub/me')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.content.length!==0) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         //Error test
         it('POST /anime/ with empty cover', function (done) {
             app.post(path)
@@ -910,6 +997,54 @@ module.exports=function(app){
             .send({
                 status:3
             })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /anime/sub/:id with wrong id', function (done) {
+            app.put(path+'sub/test')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /anime/sub/:id with inexistence id', function (done) {
+            app.put(path+'sub/58297d95e7aaf218604a8d0f')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('DELETE /anime/sub/:id with wrong id', function (done) {
+            app.delete(path+'sub/test')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('DELETE /anime/sub/:id with inexistence id', function (done) {
+            app.delete(path+'sub/58297d95e7aaf218604a8d0f')
             .set(apiLoginTokenParams)
             .expect(200)
             .expect(function(res){

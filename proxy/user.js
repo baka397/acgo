@@ -3,6 +3,7 @@
 const User = require('../models').User;
 const Code = require('./code');
 const auth = require('../common/auth');
+const tool = require('../common/tool');
 const validator = require('validator');
 /**
  * 新增用户
@@ -10,12 +11,8 @@ const validator = require('validator');
  * @return {Object}       Promise对象
  */
 function newAndSave(data){
-    if(!data.code) return new Promise(function(resolve,reject){
-        reject(new Error('请输入邀请码'));
-    })
-    if(!validator.isMongoId(data.code)) return new Promise(function(resolve,reject){
-        reject(new Error('无效的邀请码'));
-    })
+    if(!data.code) return tool.nextPromise(new Error('请输入邀请码'));
+    if(!validator.isMongoId(data.code)) return tool.nextPromise(new Error('无效的邀请码'));
     let getCode;
     return Code.getById(data.code).then(function(code){
         if(code&&code.status===0){
@@ -75,8 +72,8 @@ function getByEmail(email){
  * @return {Object}          Promise对象
  */
 function login(email,password){
-    let error=new Error('错误的邮箱或密码');
     return getByEmail(email).then(function(user){
+        let error=new Error('错误的邮箱或密码');
         if(user){
             if(user.password===auth.md5Hash(CONFIG.pwSalt+password)){
                 return auth.createLoginToken(user);

@@ -2,6 +2,7 @@
 //标签操作
 const Tag = require('../models').Tag;
 const searcher = require('../lib/search/');
+const tool = require('../common/tool');
 const TAG = require('../enums/tag');
 let tagSearch = searcher.createSearch('tags');
 /**
@@ -13,9 +14,7 @@ function newAndSave(data){
     let tag = new Tag();
     tag.type = data.type;
     if(!TAG.type[tag.type]){
-        return new Promise(function(resolve,reject){
-            reject(new Error('错误的类型值'))
-        })
+        return tool.nextPromise(new Error('错误的类型值'))
     }
     tag.name = data.name;
     if(data.alias) tag.alias = data.alias;
@@ -71,9 +70,7 @@ function search(keyword,type,fields,page,pageSize){
             else resolve(ids);
         })
     }).then(function(ids){
-        if(ids.length===0) return new Promise(function(resolve,reject){
-            resolve([0,[]]);
-        });
+        if(ids.length===0) return tool.nextPromise(null,[0,[]])
         return getList({
             '_id':{
                 $in:ids

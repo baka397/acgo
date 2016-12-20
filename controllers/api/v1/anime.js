@@ -92,26 +92,6 @@ router.get('/:id',function(req,res,next){
     });
 });
 
-router.get('/audit/:id',function(req,res,next){
-    if(!validator.isMongoId(req.params.id)){
-        let err = new Error('错误的ID值');
-        err.status=STATUS_CODE.ERROR;
-        return next(err);
-    }
-    Anime.getAnimeEditById(req.params.id).then(function(result){
-        if(result){
-            res.send(tool.buildResJson('获取信息成功',result));
-        }else{
-            let err = new Error('没有该动画审核数据');
-            err.status=STATUS_CODE.MONGO_ERROR;
-            next(err)
-        }
-    }).catch(function(err){
-        err.status=STATUS_CODE.MONGO_ERROR;
-        next(err);
-    });
-});
-
 router.put('/:id',function(req,res,next){
     if(!validator.isMongoId(req.params.id)){
         let err = new Error('错误的ID值');
@@ -137,6 +117,26 @@ router.put('/:id',function(req,res,next){
     });
 });
 
+router.get('/audit/:id',function(req,res,next){
+    if(!validator.isMongoId(req.params.id)){
+        let err = new Error('错误的ID值');
+        err.status=STATUS_CODE.ERROR;
+        return next(err);
+    }
+    Anime.getAnimeEditById(req.params.id).then(function(result){
+        if(result){
+            res.send(tool.buildResJson('获取信息成功',result));
+        }else{
+            let err = new Error('没有该动画审核数据');
+            err.status=STATUS_CODE.MONGO_ERROR;
+            next(err)
+        }
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
+
 router.put('/audit/:id',function(req,res,next){
     if(!validator.isMongoId(req.params.id)){
         let err = new Error('错误的ID值');
@@ -154,6 +154,47 @@ router.put('/audit/:id',function(req,res,next){
     data.auditUser=req.user._id;
     Anime.aduitAnimeEdit(req.params.id,data).then(function(result){
         res.send(tool.buildResJson('审核成功',null));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
+
+router.put('/sub/:id',function(req,res,next){
+    let data=Object.create(null);
+    data.animeId=req.params.id;
+    data.subUser=req.user._id;
+    data.subStatus=1;
+    Anime.subAnime(data).then(function(result){
+        res.send(tool.buildResJson('订阅成功',null));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
+
+router.delete('/sub/:id',function(req,res,next){
+    let data=Object.create(null);
+    data.animeId=req.params.id;
+    data.subUser=req.user._id;
+    data.subStatus=-1;
+    Anime.subAnime(data).then(function(result){
+        res.send(tool.buildResJson('取消订阅成功',null));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
+
+router.get('/sub/me',function(req,res,next){
+    tool.rebuildPageSize(req);
+    let page = req.query.page;
+    let pageSize = req.query.pageSize;
+    let reqData=Object.create(null);
+    reqData.sub_user=req.user._id;
+    reqData.sub_status=1;
+    Anime.getAnimeSubList(reqData,'_id name cover cover_clip show_status public_status',page,pageSize).then(function(result){
+        res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
         next(err);
