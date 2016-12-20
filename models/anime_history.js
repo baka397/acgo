@@ -6,10 +6,9 @@ const BaseModel = require("./base_model");
 const Schema = mongoose.Schema;
 const ObjectId  = Schema.ObjectId;
 let AnimeSubSchema = new Schema({
-    anime_id: {type: ObjectId, required:[true, '必须选择动画']},
-    anime_group_type: {type: ObjectId, required:[true, '必须选择动画集合类型']},
+    group_id: {type: ObjectId, required:[true, '必须选择动画集合']},
     sub_user: {type: ObjectId, required:[true, '必须选择订阅用户']},
-    anime_group_ep: {type: Number, required:[true, '必须填写动画分集数']},
+    anime_group_ep: {type: Number, required:[true, '必须填写动画观看分集数']},
     create_at: { type: Date, default: Date.now },
     update_at: { type: Date, default: Date.now }
 });

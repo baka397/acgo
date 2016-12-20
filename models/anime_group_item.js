@@ -19,8 +19,7 @@ let episodeNameValidator = [
     })
 ];
 let AnimeGroupItemSchema = new Schema({
-    anime_id: {type:ObjectId, required:[true, '必须选择关联动画']}, //关联动画ID
-    type: {type:Number, required:[true, '必须选择集合类型']}, //集合类型
+    group_id: {type:ObjectId, required:[true, '必须选择关联集合']}, //集合ID
     url: {type:String, required:[true, '必须填写分集地址'], validate: urlValidator}, //分集地址
     episode_no: {type:Number, required:[true, '必须填写分集编号']}, //分集编号
     episode_name: {type:Number, required:[true, '必须填写分集名称'], validate: episodeNameValidator}, //分集名称

@@ -12,7 +12,7 @@ let urlValidator = [
     })
 ];
 let AnimeGroupTaskSchema = new Schema({
-    anime_id: {type:ObjectId, required:[true, '必须选择关联动画']},
+    group_id: {type:ObjectId, required:[true, '必须选择关联集合']},
     type: {type:Number, required:[true, '必须选择集合类型']},
     url: {type:String, required:[true, '必须填写集合地址'], validate: urlValidator},
     period: {type:String, required:[true, '必须填写集合更新周期']},
