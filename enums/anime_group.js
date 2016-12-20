@@ -1,10 +1,39 @@
-//动画类型
+//合集状态
 exports.status={
     '1':'正常',
     '-1':'禁用'
 }
+//合集类型
 exports.type={
-    '1':'B站',
-    '2':'D站',
-    '3':'爱奇艺'
+    '1':{
+        'name':'B站',
+        'taskRegExp':'',
+        'itemRegExp':''
+    },
+    '2':{
+        'name':'D站',
+        'taskRegExp':'',
+        'itemRegExp':''
+    },
+    '3':{
+        'name':'爱奇艺',
+        'taskRegExp':'',
+        'itemRegExp':''
+    }
+}
+//合集任务状态
+exports.taskStatus={
+    '1':'正常',
+    '0':'暂停',
+    '-1':'停止'
+}
+//合集任务周期
+exports.taskPeriod={
+    '0':'周日',
+    '1':'周一',
+    '2':'周二',
+    '3':'周三',
+    '4':'周四',
+    '5':'周五',
+    '6':'周六'
 }

@@ -3,3 +3,4 @@ exports.Code = require('./code');
 exports.User = require('./user');
 exports.Tag = require('./tag');
 exports.Anime = require('./anime');
+exports.AnimeGroup = require('./anime_group');

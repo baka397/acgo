@@ -27,7 +27,6 @@ let UserSchema = new Schema({
     email: {type: String, required:[true, '必须填写邮箱地址'], unique: true, validate: userEmailValidator}, //邮箱地址
     nickname: {type: String, required:[true, '必须填写昵称'], unique: true, validate: userNicknameValidator}, //昵称
     password: {type: String, required:[true, '必须填写密码']}, //密码
-    role:{type: String, default:'user'},
     create_at: { type: Date, default: Date.now }
 });
 UserSchema.plugin(BaseModel);

@@ -1,6 +1,7 @@
 'use strict';
 const crypto = require('crypto');
 const redisClient = require('../common/redis');
+const tool = require('./tool');
 
 function md5Hash(str){
     let hash = crypto.createHash('md5');
@@ -26,15 +27,17 @@ exports.createLoginToken = function(user){
     let redisPipeline=redisClient.pipeline();
     let redisData = {
         _id:user._id,
-        email:user.email,
-        role:user.role
+        email:user.email
+    }
+    if(CONFIG.admins[user.email]){
+        redisData.role=CONFIG.admins[user.email];
+    }else{
+        redisData.role=CONFIG.admins.default;
     }
     redisPipeline.set(key,JSON.stringify(redisData)).expire(key,CONFIG.userTokenExpire);
     return redisPipeline.exec().then(function(data){
-        return new Promise(function(resolve,reject){
-            resolve({
-                'key':token
-            });
+        return tool.nextPromise(null,{
+            'key':token
         })
     })
 }
@@ -48,9 +51,7 @@ exports.getUserIdByToken = function(token){
         if(!data){
             throw new Error('无效的key');
         }
-        return new Promise(function(resolve,reject){
-            resolve(data);
-        })
+        return tool.nextPromise(null,data);
     })
 }
 

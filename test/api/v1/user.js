@@ -6,6 +6,7 @@ module.exports=function(app){
     let apiTokenParams;
     let apiLoginTokenParams;
     let addCodeId;
+    let addCodeIdAdmin;
     let addCodeIdError;
     let password = apiTool.getPassword('testpassword');
     let apiToken;
@@ -28,6 +29,17 @@ module.exports=function(app){
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 addCodeId=res.body.data._id;
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('Add a code for test admin', function (done) {
+            app.post('/code/')
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                addCodeIdAdmin=res.body.data._id;
             })
             .end(function(err,res){
                 done(err);
@@ -119,6 +131,23 @@ module.exports=function(app){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
                 if(res.body.data.content[0].nickname!=='测试昵称2') throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/ with admin user', function (done) {
+            app.post(path)
+            .set(apiTokenParams)
+            .send({
+                'email':'admin@test.com',
+                'nickname':'测试管理员',
+                'password':password,
+                'code':addCodeIdAdmin
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
             })
             .end(function(err,res){
                 done(err);

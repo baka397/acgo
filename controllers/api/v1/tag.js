@@ -1,6 +1,6 @@
 'use strict';
 /**
- * 用户管理
+ * 标签管理
  */
 const express = require('express');
 const router = express.Router();

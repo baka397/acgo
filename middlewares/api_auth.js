@@ -51,3 +51,16 @@ exports.checkApiUser = function(req, res, next){
         next(err);
     });
 }
+/**
+ * 拦截API管理员权限
+ */
+exports.checkApiAdmin = function(req, res, next){
+    let roleList=req.user.role.split(',');
+    if(roleList.indexOf('admin')>=0){
+        return next();
+    }else{
+        let err=new Error('你不是管理员');
+        err.status = STATUS_CODE.FORBIDDEN;
+        return next(err);
+    }
+}

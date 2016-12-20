@@ -1,6 +1,6 @@
 'use strict';
 /**
- * 用户管理
+ * 动画管理
  */
 const express = require('express');
 const router = express.Router();
@@ -32,7 +32,7 @@ router.post('/',function(req,res,next){
         err.status=STATUS_CODE.MONGO_ERROR;
         next(err);
     });
-})
+});
 
 router.get('/',function(req,res,next){
     tool.rebuildPageSize(req);

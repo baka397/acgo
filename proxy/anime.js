@@ -1,5 +1,5 @@
 'use strict';
-//标签操作
+//动画操作
 const Anime = require('../models').Anime;
 const AnimeEdit = require('../models').AnimeEdit;
 const AnimeSub = require('../models').AnimeSub;

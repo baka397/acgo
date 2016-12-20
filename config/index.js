@@ -25,7 +25,12 @@ let defaultConfig = {
     maxPageSize:150,                                        //最大列表数
     pwSalt:'47579A1306DC',                                  //密码盐
     userTokenExpire:24*60*60,                               //用户token有效时间,可续期
-    redisNamespace:'acgo'                                   //redis命名空间
+    redisNamespace:'acgo',                                  //redis命名空间
+    //管理员配置
+    admins:{
+        'test2@test.com':'admin',
+        'default':'user'
+    }
 };
 // 启动配置，部署环境变量：dev、test、uat、online
 let startupConfig = process.env.CFG_PATH || ('./config-' + (process.env.NODE_ENV || 'dev'));

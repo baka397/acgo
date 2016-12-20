@@ -6,7 +6,6 @@ module.exports=function(app){
     let apiTokenParams;
     let apiLoginTokenParams;
     let password = apiTool.getPassword('testpassword');
-    let apiToken;
     let tags=[[],[],[]];
     let animeId;
     let animeEditId;
