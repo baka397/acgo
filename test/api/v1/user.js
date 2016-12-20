@@ -474,5 +474,20 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('PUT /user/me with wrong nickname', function (done) {
+            app.put(path+'me')
+            .set(apiLoginTokenParams)
+            .send({
+                'nickname':'测试 昵称'
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
     })
 }
