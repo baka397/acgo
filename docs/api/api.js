@@ -17,7 +17,7 @@
 /**
  * @apiDefine apiheader
  * @apiHeader {String} x-req-token MD5编译后的token
- * @apiHeader {Number} x-req-timestamp 当前服务器时间戳,可以通过访问首页获取该值
+ * @apiHeader {Number} x-req-timestamp 客户端产生本次请求的unix时间戳（UTC），精确到毫秒。
  * @apiHeader {Number} x-req-project 应用别名
  * @apiHeader {Number} [x-req-key] 用户key,需要验证用户的接口传输.
  */
