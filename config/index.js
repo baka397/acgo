@@ -28,7 +28,7 @@ let defaultConfig = {
     redisNamespace:'acgo',                                  //redis命名空间
     //管理员配置
     admins:{
-        'test2@test.com':'admin',
+        'admin@test.com':'admin',
         'default':'user'
     }
 };

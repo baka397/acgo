@@ -7,7 +7,7 @@ exports.status={
 exports.type={
     '1':{
         'name':'B站',
-        'taskRegExp':'',
+        'taskRegExp':/^http:\/\/bangumi.bilibili.com\/anime\/\d+$/i,
         'itemRegExp':''
     },
     '2':{
@@ -29,11 +29,11 @@ exports.taskStatus={
 }
 //合集任务周期
 exports.taskPeriod={
-    '0':'周日',
     '1':'周一',
     '2':'周二',
     '3':'周三',
     '4':'周四',
     '5':'周五',
-    '6':'周六'
+    '6':'周六',
+    '7':'周日'
 }
