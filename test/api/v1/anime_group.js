@@ -10,6 +10,8 @@ module.exports=function(app){
     let animeId;
     let animeGroupId;
     let animeGroupTaskId;
+    let animeGroupCacheId;
+    let animeGroupItemId;
     describe('/anime-group/', function(){
         //Prepare
         it('Prepare Token', function (done) {
@@ -189,6 +191,212 @@ module.exports=function(app){
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/item', function (done) {
+            app.post(path+'item/')
+            .send({
+                groupId:animeGroupId,
+                url:'http://bangumi.bilibili.com/anime/v/96644',
+                episodeNo:1,
+                episodeName:'桐山零 / 河边的小镇'
+            })
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/item', function (done) {
+            app.get(path+'item/?groupId='+animeGroupId)
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].episode_no!==1) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].episode_name!=='桐山零 / 河边的小镇') throw new Error('验证不符合预期');
+                animeGroupItemId=res.body.data.content[0]._id;
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /anime-group/item/:id', function (done) {
+            app.put(path+'item/'+animeGroupItemId)
+            .send({
+                url:'http://bangumi.bilibili.com/anime/v/96645',
+                episodeNo:2,
+                episodeName:'桐山零 / 河边的小镇'
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /anime-group/item/:id', function (done) {
+            app.put(path+'item/'+animeGroupItemId)
+            .send({
+                episodeName:'桐山零 / 河边的小镇2'
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/item', function (done) {
+            app.get(path+'item/?groupId='+animeGroupId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].episode_no!==2) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].episode_name!=='桐山零 / 河边的小镇2') throw new Error('验证不符合预期');
+                animeGroupItemId=res.body.data.content[0]._id;
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/', function (done) {
+            app.post(path)
+            .send({
+                animeId:animeId,
+                type:2,
+                episodeTotal:30
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                animeGroupCacheId=res.body.data._id;
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/task', function (done) {
+            app.post(path+'task/')
+            .send({
+                groupId:animeGroupCacheId,
+                url:'http://www.dilidili.com/anime/selector/',
+                taskPeriod:4
+            })
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/item', function (done) {
+            app.post(path+'item/')
+            .send({
+                groupId:animeGroupCacheId,
+                url:'http://www.dilidili.com/watch/9076/',
+                episodeNo:1,
+                episodeName:'「这个奇迹让人有些恐惧」'
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/item', function (done) {
+            app.get(path+'item/?groupId='+animeGroupCacheId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].episode_no!==1) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].episode_name!=='「这个奇迹让人有些恐惧」') throw new Error('验证不符合预期');
+
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/', function (done) {
+            app.post(path)
+            .send({
+                animeId:animeId,
+                type:3,
+                episodeTotal:30
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                animeGroupCacheId=res.body.data._id;
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/task', function (done) {
+            app.post(path+'task/')
+            .send({
+                groupId:animeGroupCacheId,
+                url:'http://www.iqiyi.com/a_19rrk4anph.html',
+                taskPeriod:4
+            })
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/item', function (done) {
+            app.post(path+'item/')
+            .send({
+                groupId:animeGroupCacheId,
+                url:'http://www.iqiyi.com/dongman/20121126/02e0cda200ae32bb.html',
+                episodeNo:1,
+                episodeName:'王子现身'
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/item', function (done) {
+            app.get(path+'item/?groupId='+animeGroupCacheId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].episode_no!==1) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].episode_name!=='王子现身') throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);
@@ -626,6 +834,212 @@ module.exports=function(app){
             .expect(function(res){
                 if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
                 console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/item without groupId', function (done) {
+            app.post(path+'item/')
+            .send({
+                url:'http://bangumi.bilibili.com/anime/v/96644',
+                episodeNo:1,
+                episodeName:'桐山零 / 河边的小镇'
+            })
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/item with wrong groupId', function (done) {
+            app.post(path+'item/')
+            .send({
+                groupId:'test',
+                url:'http://bangumi.bilibili.com/anime/v/96644',
+                episodeNo:1,
+                episodeName:'桐山零 / 河边的小镇'
+            })
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/item with inexistence groupId', function (done) {
+            app.post(path+'item/')
+            .send({
+                groupId:'58297d95e7aaf218604a8d0f',
+                url:'http://bangumi.bilibili.com/anime/v/96644',
+                episodeNo:1,
+                episodeName:'桐山零 / 河边的小镇'
+            })
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/item with exist groupId & episodeNo', function (done) {
+            app.post(path+'item/')
+            .send({
+                groupId:animeGroupId,
+                url:'http://bangumi.bilibili.com/anime/v/96644',
+                episodeNo:2,
+                episodeName:'桐山零 / 河边的小镇'
+            })
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/item with wrong url', function (done) {
+            app.post(path+'item/')
+            .send({
+                groupId:animeGroupId,
+                url:'http://bangumi.bilibili.com/anime/v/test',
+                episodeNo:1,
+                episodeName:'桐山零 / 河边的小镇2'
+            })
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/item with empty epNo', function (done) {
+            app.post(path+'item/')
+            .send({
+                groupId:animeGroupId,
+                url:'http://bangumi.bilibili.com/anime/v/96644',
+                episodeName:'桐山零 / 河边的小镇'
+            })
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /anime-group/item/:id with wrong ID', function (done) {
+            app.put(path+'item/test')
+            .send({
+                url:'http://bangumi.bilibili.com/anime/v/96645',
+                episodeName:'桐山零 / 河边的小镇2'
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /anime-group/item/:id with inexistence ID', function (done) {
+            app.put(path+'item/58297d95e7aaf218604a8d0f')
+            .send({
+                url:'http://bangumi.bilibili.com/anime/v/96645',
+                episodeName:'桐山零 / 河边的小镇2'
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /anime-group/item/:id with exist epNo', function (done) {
+            app.put(path+'item/'+animeGroupItemId)
+            .send({
+                url:'http://bangumi.bilibili.com/anime/v/96645',
+                episodeNo:2,
+                episodeName:'桐山零 / 河边的小镇2'
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /anime-group/item/:id with wrong url', function (done) {
+            app.put(path+'item/'+animeGroupItemId)
+            .send({
+                url:'http://bangumi.bilibili.com/anime/v/test'
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/item without groupId', function (done) {
+            app.get(path+'item/')
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/item with wrong groupId', function (done) {
+            app.get(path+'item/?groupId=test')
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/item with inexistence groupId', function (done) {
+            app.get(path+'item/?groupId=58297d95e7aaf218604a8d0f')
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.content.length!==0) throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);

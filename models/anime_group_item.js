@@ -20,11 +20,14 @@ let episodeNameValidator = [
 ];
 let AnimeGroupItemSchema = new Schema({
     group_id: {type:ObjectId, required:[true, '必须选择关联集合']}, //集合ID
-    url: {type:String, required:[true, '必须填写分集地址'], validate: urlValidator}, //分集地址
-    episode_no: {type:Number, required:[true, '必须填写分集编号']}, //分集编号
-    episode_name: {type:Number, required:[true, '必须填写分集名称'], validate: episodeNameValidator}, //分集名称
-    create_at: { type: Date, default: Date.now }
+    url: {type:String, required:[true, '必须填写分集地址'], unique: true, validate: urlValidator}, //分集地址
+    episode_no: {type:Number, required:[true, '必须填写分集编号'], min: [0, '错误的分集编号']}, //分集编号
+    episode_name: {type:String, required:[true, '必须填写分集名称'], validate: episodeNameValidator}, //分集名称
+    create_user:{type:ObjectId,  required:[true, '必须关联添加用户']}, //添加用户
+    edit_user:{type:ObjectId}, //编辑用户
+    create_at: { type: Date, default: Date.now },
+    update_at: { type: Date, default: Date.now }
 });
 AnimeGroupItemSchema.plugin(BaseModel);
-AnimeGroupItemSchema.index({episode_no:1});
+AnimeGroupItemSchema.index({group_id:1,episode_no:1});
 mongoose.model('AnimeGroupItem', AnimeGroupItemSchema);

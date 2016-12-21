@@ -8,17 +8,17 @@ exports.type={
     '1':{
         'name':'B站',
         'taskRegExp':/^http:\/\/bangumi.bilibili.com\/anime\/\d+$/i,
-        'itemRegExp':''
+        'itemRegExp':/^(http:\/\/bangumi.bilibili.com\/anime\/v\/\d+|http:\/\/www.bilibili.com\/video\/av\d+\/)$/i
     },
     '2':{
         'name':'D站',
-        'taskRegExp':'',
-        'itemRegExp':''
+        'taskRegExp':/^http:\/\/www.dilidili.com\/anime\/[a-z0-9\_]+\/$/i,
+        'itemRegExp':/^http:\/\/www.dilidili.com\/watch\/\d+\/$/i
     },
     '3':{
         'name':'爱奇艺',
-        'taskRegExp':'',
-        'itemRegExp':''
+        'taskRegExp':/^http:\/\/www.iqiyi.com\/a_[a-z0-9\_]+.html$/i,
+        'itemRegExp':/^http:\/\/www.iqiyi.com\/dongman\/\d+\/[a-z0-9\_]+.html$/i
     }
 }
 //合集任务状态

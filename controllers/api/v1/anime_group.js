@@ -51,12 +51,26 @@ router.get('/',function(req,res,next){
     });
 });
 
+router.put('/:id',apiAuth.checkApiAdmin,function(req,res,next){
+    let data=Object.create(null);
+    data.episodeTotal=parseInt(req.body.episodeTotal);
+    data.episodeCur=parseInt(req.body.episodeCur);
+    data.status=parseInt(req.body.status);
+    AnimeGroup.updateById(req.params.id,data).then(function(result){
+        res.send(tool.buildResJson('修改成功',null));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
+
 router.post('/task/',apiAuth.checkApiAdmin,function(req,res,next){
     let data=Object.create(null);
     data.groupId=req.body.groupId;
     data.url=req.body.url;
     data.taskPeriod=parseInt(req.body.taskPeriod);
     data.taskStatus=1;
+    data.createUser=req.user._id;
     AnimeGroup.newAndSaveTask(data).then(function(result){
         res.send(tool.buildResJson('添加成功',null));
     }).catch(function(err){
@@ -79,6 +93,26 @@ router.get('/task/',function(req,res,next){
     reqData.task_period=taskPeriod;
     reqData.task_status=1;
     AnimeGroup.getListTask(reqData,'_id group_id url',page,pageSize).then(function(result){
+        res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
+
+router.get('/item/',function(req,res,next){
+    tool.rebuildPageSize(req);
+    let page = req.query.page;
+    let pageSize = req.query.pageSize;
+    let groupId = req.query.groupId;
+    if(!groupId||!validator.isMongoId(groupId)){
+        let err = new Error('无效的集合ID');
+        err.status=STATUS_CODE.ERROR;
+        return next(err);
+    }
+    let reqData=Object.create(null);
+    reqData.group_id=groupId;
+    AnimeGroup.getListItem(reqData,'_id episode_name episode_no',page,pageSize).then(function(result){
         res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
@@ -119,13 +153,28 @@ router.put('/task/:id',apiAuth.checkApiAdmin,function(req,res,next){
     });
 });
 
-router.put('/:id',apiAuth.checkApiAdmin,function(req,res,next){
-    let animeGroupId=req.params.id;
+router.post('/item/',function(req,res,next){
     let data=Object.create(null);
-    data.episodeTotal=parseInt(req.body.episodeTotal);
-    data.episodeCur=parseInt(req.body.episodeCur);
-    data.status=parseInt(req.body.status);
-    AnimeGroup.updateById(animeGroupId,data).then(function(result){
+    data.groupId=req.body.groupId;
+    data.url=req.body.url;
+    data.episodeNo=parseInt(req.body.episodeNo);
+    data.episodeName=req.body.episodeName;
+    data.createUser=req.user._id;
+    AnimeGroup.newAndSaveItem(data).then(function(result){
+        res.send(tool.buildResJson('添加成功',null));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
+
+router.put('/item/:id',function(req,res,next){
+    let data=Object.create(null);
+    data.episodeNo=req.body.episodeNo;
+    data.episodeName=req.body.episodeName;
+    data.url=req.body.url;
+    data.editUser=req.user._id;
+    AnimeGroup.updateItemById(req.params.id,data).then(function(result){
         res.send(tool.buildResJson('修改成功',null));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
