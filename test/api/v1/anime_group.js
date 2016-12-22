@@ -12,6 +12,7 @@ module.exports=function(app){
     let animeGroupTaskId;
     let animeGroupCacheId;
     let animeGroupItemId;
+    let animeGroupItemWatchIds=[];
     describe('/anime-group/', function(){
         //Prepare
         it('Prepare Token', function (done) {
@@ -397,6 +398,97 @@ module.exports=function(app){
                 if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
                 if(res.body.data.content[0].episode_no!==1) throw new Error('验证不符合预期');
                 if(res.body.data.content[0].episode_name!=='王子现身') throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/item', function (done) {
+            app.post(path+'item/')
+            .send({
+                groupId:animeGroupCacheId,
+                url:'http://www.iqiyi.com/dongman/20121126/bb1358e9b1ba0c1a.html',
+                episodeNo:2,
+                episodeName:'武士第二代'
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/item', function (done) {
+            app.get(path+'item/?groupId='+animeGroupCacheId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.content.length!==2) throw new Error('验证不符合预期');
+                res.body.data.content.forEach(function(content){
+                    animeGroupItemWatchIds.push(content._id);
+                })
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/watch', function (done) {
+            app.post(path+'watch/')
+            .send({
+                groupId:animeGroupCacheId,
+                groupItemId:animeGroupItemWatchIds[0]
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/watch again', function (done) {
+            app.post(path+'watch/')
+            .send({
+                groupId:animeGroupCacheId,
+                groupItemId:animeGroupItemWatchIds[1]
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/watch with prev groupItemId', function (done) {
+            app.post(path+'watch/')
+            .send({
+                groupId:animeGroupCacheId,
+                groupItemId:animeGroupItemWatchIds[0]
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/watch', function (done) {
+            app.get(path+'watch/')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].group_id!==animeGroupCacheId) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].watch_ep!==2) throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);
@@ -1040,6 +1132,116 @@ module.exports=function(app){
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.content.length!==0) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/watch without groupId', function (done) {
+            app.post(path+'watch/')
+            .send({
+                groupItemId:animeGroupItemWatchIds[1]
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/watch with wrong groupId', function (done) {
+            app.post(path+'watch/')
+            .send({
+                groupId:'test',
+                groupItemId:animeGroupItemWatchIds[1]
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/watch with inexistence groupId', function (done) {
+            app.post(path+'watch/')
+            .send({
+                groupId:'58297d95e7aaf218604a8d0f',
+                groupItemId:animeGroupItemWatchIds[1]
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/watch without groupItemId', function (done) {
+            app.post(path+'watch/')
+            .send({
+                groupId:animeGroupCacheId
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/watch with wrong groupId', function (done) {
+            app.post(path+'watch/')
+            .send({
+                groupId:animeGroupCacheId,
+                groupItemId:'test'
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/watch with inexistence groupId', function (done) {
+            app.post(path+'watch/')
+            .send({
+                groupId:animeGroupCacheId,
+                groupItemId:'58297d95e7aaf218604a8d0f'
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/watch with mismatching groupItemId', function (done) {
+            app.post(path+'watch/')
+            .send({
+                groupId:animeGroupId,
+                groupItemId:animeGroupItemWatchIds[0]
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
             })
             .end(function(err,res){
                 done(err);

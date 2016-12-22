@@ -120,6 +120,20 @@ router.get('/item/',function(req,res,next){
     });
 });
 
+router.get('/watch/',function(req,res,next){
+    tool.rebuildPageSize(req);
+    let page = req.query.page;
+    let pageSize = req.query.pageSize;
+    let reqData=Object.create(null);
+    reqData.sub_user=req.user._id;
+    AnimeGroup.getListHistory(reqData,'group_id watch_ep update_at',page,pageSize).then(function(result){
+        res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
+
 router.get('/:id',function(req,res,next){
     let animeGroupId=req.params.id;
     if(!animeGroupId||!validator.isMongoId(animeGroupId)){
@@ -175,6 +189,19 @@ router.put('/item/:id',function(req,res,next){
     data.url=req.body.url;
     data.editUser=req.user._id;
     AnimeGroup.updateItemById(req.params.id,data).then(function(result){
+        res.send(tool.buildResJson('修改成功',null));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
+
+router.post('/watch/',function(req,res,next){
+    let data=Object.create(null);
+    data.groupId=req.body.groupId;
+    data.groupItemId=req.body.groupItemId;
+    data.subUser=req.user._id;
+    AnimeGroup.addHistory(data).then(function(result){
         res.send(tool.buildResJson('修改成功',null));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;

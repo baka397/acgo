@@ -3,6 +3,7 @@
 const AnimeGroup = require('../models').AnimeGroup;
 const AnimeGroupTask = require('../models').AnimeGroupTask;
 const AnimeGroupItem = require('../models').AnimeGroupItem;
+const AnimeGroupHistory = require('../models').AnimeGroupHistory;
 const ANIME_GROUP = require('../enums/anime_group');
 const animeProxy = require('./anime');
 const validator = require('validator');
@@ -78,6 +79,10 @@ function newAndSaveItem(data){
         let err=new Error('错误的动画集合ID');
         return tool.nextPromise(err);
     }
+    if(!data.episodeNo){
+        let err=new Error('错误的分集数');
+        return tool.nextPromise(err);
+    }
     return getItemByGroupIdAndEpNo(data.groupId,data.episodeNo).then(function(animeGroupItem){
         if(animeGroupItem){
             throw new Error('已存在数据，请勿重复添加');
@@ -97,6 +102,26 @@ function newAndSaveItem(data){
             animeGroupItem.create_user = data.createUser;
             return animeGroupItem.save();
         }else throw new Error('错误的动画集合');
+    })
+}
+
+/**
+ * 新增动画合集观看历史数据
+ * @param  {String} data  数据对象
+ * @return {Object}       Promise对象
+ */
+function newAndSaveGroupHistory(data){
+    return Promise.all([getById(data.groupId),getItemById(data.groupItemId)]).then(function(result){
+        let animeGroup=result[0];
+        let animeGroupItem=result[1];
+        if(animeGroup&&animeGroupItem){
+            if(animeGroupItem.group_id.toString()!==animeGroup._id.toString()) throw new Error('数据不匹配');
+            let animeGroupHistory=new AnimeGroupHistory();
+            animeGroupHistory.group_id=data.groupId;
+            animeGroupHistory.sub_user=data.subUser;
+            animeGroupHistory.watch_ep=animeGroupItem.episode_no;
+            return animeGroupHistory.save();
+        }else throw new Error('无效的数据');
     })
 }
 
@@ -199,6 +224,47 @@ function updateItemById(id,data){
 }
 
 /**
+ * 更新动画集合历史数据
+ * @param  {String} animeGroupHistory   Object
+ * @param  {Object} data                数据对象
+ * @return {Object}                     Promise对象
+ */
+function updateHistoryById(animeGroupHistory,data){
+    return getItemById(data.groupItemId).then(function(animeGroupItem){
+        if(animeGroupItem){
+            //判断之前的数据是否有效
+            if(animeGroupItem.episode_no<=animeGroupHistory.watch_ep){
+                return tool.nextPromise();
+            }
+            animeGroupHistory.watch_ep=animeGroupItem.episode_no;
+            return animeGroupHistory.save();
+        }else throw new Error('无效的数据');
+    })
+}
+
+/**
+ * 新增动画合集观看历史
+ * @param  {String} data  数据对象
+ * @return {Object}       Promise对象
+ */
+function addHistory(data){
+    if(!data.groupId||!validator.isMongoId(data.groupId)){
+        let err=new Error('错误的动画集合ID');
+        return tool.nextPromise(err);
+    }
+    if(!data.groupItemId||!validator.isMongoId(data.groupItemId)){
+        let err=new Error('错误的动画分集ID');
+        return tool.nextPromise(err);
+    }
+    return getHistoryByGroupIdAndSubUser(data.groupId,data.subUser).then(function(animeGroupHistory){
+        //编辑历史数据
+        if(animeGroupHistory){
+            return updateHistoryById(animeGroupHistory,data);
+        }else return newAndSaveGroupHistory(data);
+    })
+}
+
+/**
  * 根据ID获取动画合集
  * @param  {String} id 主键ID
  * @return {Object}    Promise对象
@@ -224,6 +290,7 @@ function getTaskById(id){
 function getItemById(id){
     return AnimeGroupItem.findOne({_id: id});
 }
+
 /**
  * 根据Group ID和分集编号获取动画分集
  * @param  {String} group_id 集合ID
@@ -231,13 +298,22 @@ function getItemById(id){
  * @return {Object}          Promise对象
  */
 function getItemByGroupIdAndEpNo(group_id,ep_no){
-    if(!group_id||!ep_no){
-        let err = new Error('错误的分集编号');
-        return tool.nextPromise(err);
-    }
     return AnimeGroupItem.findOne({
         group_id:group_id,
         episode_no:ep_no
+    });
+}
+
+/**
+ * 根据Group ID和订阅用户获取动画观看历史
+ * @param  {String} group_id  集合ID
+ * @param  {Number} sub_user  订阅用户
+ * @return {Object}           Promise对象
+ */
+function getHistoryByGroupIdAndSubUser(group_id,sub_user){
+    return AnimeGroupHistory.findOne({
+        group_id:group_id,
+        sub_user:sub_user
     });
 }
 
@@ -277,9 +353,22 @@ function getListItem(query,fields,page,pageSize){
     return Promise.all([AnimeGroupItem.count(query).exec(),AnimeGroupItem.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
 }
 
+/**
+ * 获取动画合集历史
+ * @param  {Object} query    Query info
+ * @param  {String} fields   Query info
+ * @param  {Number} page     Page number
+ * @param  {Number} pageSize Page Size
+ * @return {Object}          Promise对象
+ */
+function getListHistory(query,fields,page,pageSize){
+    return Promise.all([AnimeGroupHistory.count(query).exec(),AnimeGroupHistory.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
+}
+
 exports.newAndSave = newAndSave;
 exports.newAndSaveTask = newAndSaveTask;
 exports.newAndSaveItem = newAndSaveItem;
+exports.addHistory = addHistory;
 exports.getById = getById;
 exports.getTaskById = getTaskById;
 exports.updateById = updateById;
@@ -288,3 +377,4 @@ exports.updateItemById = updateItemById;
 exports.getList = getList;
 exports.getListTask = getListTask;
 exports.getListItem = getListItem;
+exports.getListHistory = getListHistory;
