@@ -3,7 +3,7 @@
 #########################setting####################
 env=online
 port=8801
-uid=acgo.club
+uid=www.acgo.club
 appPath=/home/website/App/$uid
 logPath=/home/website/Logs/$uid
 #########################env setting####################
