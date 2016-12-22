@@ -1,14 +1,10 @@
-ACGO website Project
+ACGO API Project
 ============
-提供ACGO web页面的访问
+提供ACGO API的访问
 
 采用技术
 ----------
-前端：React+Redux+React-Router
-<br/>
 服务端：nodejs+express+log4js+ejs+Mongoose
-<br/>
-构建：gulp+less+webpack
 <br/>
 数据库：MongoDb
 <br/>
