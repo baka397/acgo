@@ -30,8 +30,6 @@ ACGO API Project
 <br />
 -系统配置：config/config-*.js
 <br />
--前端构建目录：build/
-<br />
 日志采用log4js、全局对象LOG、支持trace、debug、info、warn、error、fatal
 <br />
 
