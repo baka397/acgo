@@ -9,7 +9,7 @@ module.exports=function(app){
                 "projectName":"测试应用",
                 "projectAlias":"test",
                 "userName":"张竞",
-                "userEmail":"jing.zhang02@msxf.com"
+                "userEmail":"cqggff@live.com"
             })
             .expect(200)
             .expect(function(res){
@@ -26,7 +26,7 @@ module.exports=function(app){
                 "projectName":"测试应用",
                 "projectAlias":"test",
                 "userName":"张竞",
-                "userEmail":"jing.zhang02@msxf.com"
+                "userEmail":"cqggff@live.com"
             })
             .expect(200)
             .expect(function(res){
@@ -42,7 +42,7 @@ module.exports=function(app){
                 "projectName":"测试应用2",
                 "projectAlias":"test",
                 "userName":"张竞",
-                "userEmail":"jing.zhang02@msxf.com"
+                "userEmail":"cqggff@live.com"
             })
             .expect(200)
             .expect(function(res){
@@ -58,7 +58,7 @@ module.exports=function(app){
                 "projectName":"",
                 "projectAlias":"test2",
                 "userName":"张竞",
-                "userEmail":"jing.zhang02@msxf.com"
+                "userEmail":"cqggff@live.com"
             })
             .expect(200)
             .expect(function(res){
@@ -74,7 +74,7 @@ module.exports=function(app){
                 "projectName":"测试应用2",
                 "projectAlias":"",
                 "userName":"张竞",
-                "userEmail":"jing.zhang02@msxf.com"
+                "userEmail":"cqggff@live.com"
             })
             .expect(200)
             .expect(function(res){
@@ -90,7 +90,7 @@ module.exports=function(app){
                 "projectName":"测试应用2",
                 "projectAlias":"test2",
                 "userName":"",
-                "userEmail":"jing.zhang02@msxf.com"
+                "userEmail":"cqggff@live.com"
             })
             .expect(200)
             .expect(function(res){
@@ -138,7 +138,7 @@ module.exports=function(app){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.content.length!==1) throw new Error('数据列表查询错误');
                 if(res.body.data.total!==1) throw new Error('数据列表查询错误');
-                if(res.body.data.content[0].user_email!=='jing.zhang02@msxf.com') throw new Error('管理员邮箱错误');
+                if(res.body.data.content[0].user_email!=='cqggff@live.com') throw new Error('管理员邮箱错误');
                 if(res.body.data.content[0].user_name!=='张竞') throw new Error('管理员姓名错误');
                 if(res.body.data.content[0].project_alias!=='test') throw new Error('应用别名错误');
                 if(res.body.data.content[0].project_name!=='测试应用') throw new Error('应用名称错误');
@@ -154,12 +154,12 @@ module.exports=function(app){
                 "projectName":"测试应用2",
                 "projectAlias":"test2",
                 "userName":"张竞",
-                "userEmail":"jing.zhang02@msxf.com"
+                "userEmail":"cqggff@live.com"
             })
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
-                if(res.body.data.user_email!=='jing.zhang02@msxf.com') throw new Error('管理员邮箱错误');
+                if(res.body.data.user_email!=='cqggff@live.com') throw new Error('管理员邮箱错误');
                 if(res.body.data.user_name!=='张竞') throw new Error('管理员姓名错误');
                 if(res.body.data.project_alias!=='test2') throw new Error('应用别名错误');
                 if(res.body.data.project_name!=='测试应用2') throw new Error('应用名称错误');
@@ -191,7 +191,7 @@ module.exports=function(app){
                 "projectName":"测试应用",
                 "projectAlias":"test",
                 "userName":"张竞",
-                "userEmail":"jing.zhang02@msxf.com"
+                "userEmail":"cqggff@live.com"
             })
             .expect(200)
             .expect(function(res){
@@ -207,7 +207,7 @@ module.exports=function(app){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.content.length!==2) throw new Error('数据列表查询错误');
                 if(res.body.data.total!==2) throw new Error('数据列表查询错误');
-                if(res.body.data.content[0].user_email!=='jing.zhang02@msxf.com') throw new Error('管理员邮箱错误');
+                if(res.body.data.content[0].user_email!=='cqggff@live.com') throw new Error('管理员邮箱错误');
                 if(res.body.data.content[0].user_name!=='张竞') throw new Error('管理员姓名错误');
                 if(res.body.data.content[0].project_alias!=='test') throw new Error('应用别名错误');
                 if(res.body.data.content[0].project_name!=='测试应用') throw new Error('应用名称错误');
@@ -244,7 +244,7 @@ module.exports=function(app){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.content.length!==1) throw new Error('数据列表查询错误');
                 if(res.body.data.total!==1) throw new Error('数据列表查询错误');
-                if(res.body.data.content[0].user_email!=='jing.zhang02@msxf.com') throw new Error('管理员邮箱错误');
+                if(res.body.data.content[0].user_email!=='cqggff@live.com') throw new Error('管理员邮箱错误');
                 if(res.body.data.content[0].user_name!=='张竞') throw new Error('管理员姓名错误');
                 if(res.body.data.content[0].project_alias!=='test2') throw new Error('应用别名错误');
                 if(res.body.data.content[0].project_name!=='测试应用2') throw new Error('应用名称错误');
