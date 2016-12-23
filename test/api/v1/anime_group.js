@@ -229,6 +229,21 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('GET /anime-group/:id to comfirm episode_cur', function (done) {
+            app.get(path+animeGroupId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.anime_id!==animeId) throw new Error('验证不符合预期');
+                if(res.body.data.type!==1) throw new Error('验证不符合预期');
+                if(res.body.data.episode_total!==32) throw new Error('验证不符合预期');
+                if(res.body.data.episode_cur!==1) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         it('PUT /anime-group/item/:id', function (done) {
             app.put(path+'item/'+animeGroupItemId)
             .send({
@@ -274,7 +289,7 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('GET /anime-group/:id', function (done) {
+        it('GET /anime-group/:id to comfirm episode_cur', function (done) {
             app.get(path+animeGroupId)
             .set(apiLoginTokenParams)
             .expect(200)
@@ -284,6 +299,38 @@ module.exports=function(app){
                 if(res.body.data.type!==1) throw new Error('验证不符合预期');
                 if(res.body.data.episode_total!==32) throw new Error('验证不符合预期');
                 if(res.body.data.episode_cur!==2) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/item', function (done) {
+            app.post(path+'item/')
+            .send({
+                groupId:animeGroupId,
+                url:'http://bangumi.bilibili.com/anime/v/96646',
+                episodeNo:5,
+                episodeName:'桐山零 / 河边的小镇'
+            })
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/:id to comfirm episode_cur', function (done) {
+            app.get(path+animeGroupId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.anime_id!==animeId) throw new Error('验证不符合预期');
+                if(res.body.data.type!==1) throw new Error('验证不符合预期');
+                if(res.body.data.episode_total!==32) throw new Error('验证不符合预期');
+                if(res.body.data.episode_cur!==5) throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);
