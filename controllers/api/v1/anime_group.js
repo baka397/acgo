@@ -79,7 +79,7 @@ router.post('/task/',apiAuth.checkApiAdmin,function(req,res,next){
     });
 });
 
-router.get('/task/',function(req,res,next){
+router.get('/task/',apiAuth.checkApiCrawler,function(req,res,next){
     tool.rebuildPageSize(req);
     let page = req.query.page;
     let pageSize = req.query.pageSize;

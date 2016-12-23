@@ -8,6 +8,7 @@ module.exports=function(app){
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
+                addCodeId = res.body.data._id;
             })
             .end(function(err,res){
                 done(err);
@@ -22,7 +23,6 @@ module.exports=function(app){
                 if(res.body.data.total!==1) throw new Error('数据列表查询错误');
                 if(res.body.data.content[0].status!==0) throw new Error('邀请码状态错误');
                 if(res.body.data.content[0].use_user) throw new Error('邀请码使用用户错误');
-                addCodeId = res.body.data.content[0]._id;
             })
             .end(function(err,res){
                 done(err);

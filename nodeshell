@@ -11,6 +11,12 @@ export NODE_ENV=$env
 export NODE_PORT=$port
 export APP_PATH=$appPath
 export LOG_PATH=$logPath
+#########################init####################
+init() {
+  echo init begin
+    su -p website -c "node $appPath/init.js"
+  echo init end
+}
 #########################starting####################
 start() {
   echo start begin
@@ -38,6 +44,9 @@ restart(){
 }
 
 case "$1" in
+  init)
+        init
+        ;;
   start)
         start
         ;;
@@ -51,7 +60,7 @@ case "$1" in
         restart
         ;;
   ?|help)
-        echo $"Usage: $0 {start|status|stop|restart|help|?}"
+        echo $"Usage: $0 {init|start|status|stop|restart|help|?}"
         ;;
   *)
         echo $"Usage: $0 {help|?}"
