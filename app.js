@@ -7,7 +7,6 @@ let bodyParser = require('body-parser');
 let ejs = require('ejs');
 let log = require('./log');
 let router = require('./router');
-let tool = require('./common/tool');
 let STATUS_CODE = require('./enums/status_code');
 let apiAuth = require('./middlewares/api_auth');
 
