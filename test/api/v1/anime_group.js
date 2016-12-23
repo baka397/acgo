@@ -236,7 +236,7 @@ module.exports=function(app){
                 episodeNo:2,
                 episodeName:'桐山零 / 河边的小镇'
             })
-            .set(apiLoginTokenParams)
+            .set(apiAdminTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
@@ -250,7 +250,7 @@ module.exports=function(app){
             .send({
                 episodeName:'桐山零 / 河边的小镇2'
             })
-            .set(apiLoginTokenParams)
+            .set(apiAdminTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
@@ -269,6 +269,21 @@ module.exports=function(app){
                 if(res.body.data.content[0].episode_no!==2) throw new Error('验证不符合预期');
                 if(res.body.data.content[0].episode_name!=='桐山零 / 河边的小镇2') throw new Error('验证不符合预期');
                 animeGroupItemId=res.body.data.content[0]._id;
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/:id', function (done) {
+            app.get(path+animeGroupId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.anime_id!==animeId) throw new Error('验证不符合预期');
+                if(res.body.data.type!==1) throw new Error('验证不符合预期');
+                if(res.body.data.episode_total!==32) throw new Error('验证不符合预期');
+                if(res.body.data.episode_cur!==2) throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);
@@ -1043,7 +1058,7 @@ module.exports=function(app){
                 url:'http://bangumi.bilibili.com/anime/v/96645',
                 episodeName:'桐山零 / 河边的小镇2'
             })
-            .set(apiLoginTokenParams)
+            .set(apiAdminTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
@@ -1059,7 +1074,7 @@ module.exports=function(app){
                 url:'http://bangumi.bilibili.com/anime/v/96645',
                 episodeName:'桐山零 / 河边的小镇2'
             })
-            .set(apiLoginTokenParams)
+            .set(apiAdminTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
@@ -1076,7 +1091,7 @@ module.exports=function(app){
                 episodeNo:2,
                 episodeName:'桐山零 / 河边的小镇2'
             })
-            .set(apiLoginTokenParams)
+            .set(apiAdminTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
@@ -1091,7 +1106,7 @@ module.exports=function(app){
             .send({
                 url:'http://bangumi.bilibili.com/anime/v/test'
             })
-            .set(apiLoginTokenParams)
+            .set(apiAdminTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
@@ -1132,6 +1147,23 @@ module.exports=function(app){
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.content.length!==0) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /anime-group/item with wrong episodeNo', function (done) {
+            app.post(path+'item/')
+            .send({
+                groupId:animeGroupId,
+                url:'http://bangumi.bilibili.com/anime/v/96645',
+                episodeNo:35,
+                episodeName:'桐山零 / 河边的小镇3'
+            })
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);

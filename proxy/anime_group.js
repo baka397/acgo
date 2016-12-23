@@ -94,6 +94,10 @@ function newAndSaveItem(data){
                 let reg = ANIME_GROUP.type[animeGroup.type].itemRegExp;
                 if(!reg.test(data.url)) throw new Error('无效的URL');
             }
+            //检测分集规则
+            if(animeGroup.episode_total!==0&&animeGroup.episode_total<data.episodeNo){
+                throw new Error('无效的分集数量');
+            }
             let animeGroupItem=new AnimeGroupItem();
             animeGroupItem.group_id = data.groupId;
             animeGroupItem.url = data.url;
@@ -102,6 +106,8 @@ function newAndSaveItem(data){
             animeGroupItem.create_user = data.createUser;
             return animeGroupItem.save();
         }else throw new Error('错误的动画集合');
+    }).then(function(result){
+        return updateEpCurById(data.groupId);
     })
 }
 
@@ -126,7 +132,7 @@ function newAndSaveGroupHistory(data){
 }
 
 /**
- * 根据用户ID更新动画集合
+ * 根据ID更新动画集合
  * @param  {String} id   Object ID
  * @param  {Object} data 数据对象
  * @return {Object}      Promise对象
@@ -154,7 +160,25 @@ function updateById(id,data){
 }
 
 /**
- * 根据用户ID更新动画集合任务
+ * 根据ID更新动画集合最大数据
+ * @param  {String} id Object ID
+ * @return {Object}    Promise对象
+ */
+function updateEpCurById(id){
+    return Promise.all([getById(id),AnimeGroupItem.findOne({
+        group_id:id
+    }).sort({'episode_no':-1}).select('episode_no')]).then(function(result){
+        let animeGroup=result[0];
+        let animeGroupItem=result[1];
+        if(animeGroup.episode_cur<animeGroupItem.episode_no){
+            animeGroup.episode_cur=animeGroupItem.episode_no;
+            return animeGroup.save();
+        }else return tool.nextPromise();
+    })
+}
+
+/**
+ * 根据ID更新动画集合任务
  * @param  {String} id   Object ID
  * @param  {Object} data 数据对象
  * @return {Object}      Promise对象
@@ -180,7 +204,7 @@ function updateTaskById(id,data){
 }
 
 /**
- * 根据用户ID更新动画集合数据
+ * 根据ID更新动画集合数据
  * @param  {String} id   Object ID
  * @param  {Object} data 数据对象
  * @return {Object}      Promise对象
@@ -215,11 +239,13 @@ function updateItemById(id,data){
             if(!validReuslt) throw new Error('无效的URL');
             else saveData.url = data.url;
         }
-        if(!isNaN(data.episodeNo)) saveData.episode_no = data.episodeNo;
+        if(data.episodeNo) saveData.episode_no = data.episodeNo;
         if(data.episodeName) saveData.episode_name = data.episodeName;
         saveData.edit_user = data.editUser;
         Object.assign(animeGroupItem,saveData);
         return animeGroupItem.save();
+    }).then(function(animeGroupItem){
+        return updateEpCurById(animeGroupItem.group_id)
     })
 }
 

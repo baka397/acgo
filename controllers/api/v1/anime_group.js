@@ -182,7 +182,7 @@ router.post('/item/',function(req,res,next){
     });
 });
 
-router.put('/item/:id',function(req,res,next){
+router.put('/item/:id',apiAuth.checkApiAdmin,function(req,res,next){
     let data=Object.create(null);
     data.episodeNo=req.body.episodeNo;
     data.episodeName=req.body.episodeName;
