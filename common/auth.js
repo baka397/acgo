@@ -32,7 +32,7 @@ exports.createLoginToken = function(user){
     if(CONFIG.admins[user.email]){
         redisData.role=CONFIG.admins[user.email];
     }else{
-        redisData.role=CONFIG.admins.default;
+        redisData.role='user';
     }
     redisPipeline.set(key,JSON.stringify(redisData)).expire(key,CONFIG.userTokenExpire);
     return redisPipeline.exec().then(function(data){

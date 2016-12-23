@@ -27,8 +27,7 @@ let defaultConfig = {
     redisNamespace:'acgo',                                  //redis命名空间
     //管理员配置
     admins:{
-        'admin@test.com':'admin',
-        'default':'user'
+        'admin@test.com':'admin'
     }
 };
 // 启动配置，部署环境变量：dev、test、uat、online
