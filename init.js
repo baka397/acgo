@@ -32,6 +32,6 @@ client.post('/code/')
 })
 .end(function(err,res){
     if(err){
-        console.log('创建应用失败',err.message);
+        console.log('创建邀请码失败',err.message);
     }
 });
