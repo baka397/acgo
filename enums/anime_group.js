@@ -8,7 +8,7 @@ exports.type={
     '1':{
         'name':'B站',
         'taskRegExp':/^http:\/\/bangumi.bilibili.com\/anime\/\d+$/i,
-        'itemRegExp':/^(http:\/\/bangumi.bilibili.com\/anime\/v\/\d+|http:\/\/www.bilibili.com\/video\/av\d+\/)$/i
+        'itemRegExp':/^(http:\/\/bangumi.bilibili.com\/anime\/v\/\d+|http:\/\/www.bilibili.com\/video\/av\d+\/|http:\/\/bangumi.bilibili.com\/anime\/\d+\/play#\d+)$/i
     },
     '2':{
         'name':'D站',
