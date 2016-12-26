@@ -12,13 +12,13 @@ exports.type={
     },
     '2':{
         'name':'D站',
-        'taskRegExp':/^http:\/\/www.dilidili.com\/anime\/[a-z0-9\_]+\/$/i,
+        'taskRegExp':/^http:\/\/www.dilidili.com\/anime\/[a-z0-9\_\-]+\/$/i,
         'itemRegExp':/^http:\/\/www.dilidili.com\/watch\/\d+\/$/i
     },
     '3':{
         'name':'爱奇艺',
         'taskRegExp':/^http:\/\/www.iqiyi.com\/a_[a-z0-9\_]+.html$/i,
-        'itemRegExp':/^http:\/\/www.iqiyi.com\/dongman\/\d+\/[a-z0-9\_]+.html$/i
+        'itemRegExp':/^http:\/\/www.iqiyi.com\/dongman\/\d+\/[a-z0-9\_\-]+.html$/i
     }
 }
 //合集任务状态
