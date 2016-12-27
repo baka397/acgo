@@ -115,6 +115,7 @@ module.exports=function(app){
                 if(res.body.data.anime_id!==animeId) throw new Error('验证不符合预期');
                 if(res.body.data.type!==1) throw new Error('验证不符合预期');
                 if(res.body.data.episode_total!==30) throw new Error('验证不符合预期');
+                if(res.body.data.episode_cur!==0) throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);

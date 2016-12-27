@@ -64,7 +64,7 @@ router.put('/:id',apiAuth.checkApiAdmin,function(req,res,next){
     });
 });
 
-router.post('/task/',apiAuth.checkApiAdmin,function(req,res,next){
+router.post('/task/',apiAuth.checkApiCrawler,function(req,res,next){
     let data=Object.create(null);
     data.groupId=req.body.groupId;
     data.url=req.body.url;
@@ -155,7 +155,7 @@ router.get('/:id',function(req,res,next){
     });
 });
 
-router.put('/task/:id',apiAuth.checkApiAdmin,function(req,res,next){
+router.put('/task/:id',apiAuth.checkApiCrawler,function(req,res,next){
     let animeGroupTaskId=req.params.id;
     let data=Object.create(null);
     data.taskStatus=parseInt(req.body.taskStatus);
