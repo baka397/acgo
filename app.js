@@ -39,7 +39,7 @@ app.use(function (req, res, next) {
 
 // error handlers
 app.use(function (err, req, res, next) {
-	if(err.code!==404) LOG.error(err);
+	if(err.code!==404||err.status!==404) LOG.error(err);
     let code = err.code || err.status || 500;
     let message = err.message || err.stack;
     if (/TIMEDOUT/i.test(code) || err.syscall == 'connect' || err.hasOwnProperty('connect')) {

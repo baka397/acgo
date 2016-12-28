@@ -44,3 +44,25 @@ npm install apidoc -g
 ```
 apidoc -i docs/api -o docs/apidoc
 ```
+
+初始化命令
+----------
+## windows
+### 添加应用
+```
+set NODE_INIT_CASE=addapp
+set NODE_INIT_PNAME=应用名称
+set NODE_INIT_ALIAS=应用别名
+set NODE_INIT_UNAME=用户名称
+set NODE_INIT_EMAIL=用户邮箱
+npm run init
+```
+
+### 添加邀请码
+```
+set NODE_INIT_CASE=code
+npm run init
+```
+
+## linux
+请使用shell文件

@@ -11,11 +11,23 @@ export NODE_ENV=$env
 export NODE_PORT=$port
 export APP_PATH=$appPath
 export LOG_PATH=$logPath
-#########################init####################
-init() {
-  echo init begin
+#########################addapp####################
+addapp() {
+  echo add app begin
+    export NODE_INIT_CASE=addapp
+    export NODE_INIT_PNAME=$2
+    export NODE_INIT_ALIAS=$3
+    export NODE_INIT_UNAME=$4
+    export NODE_INIT_EMAIL=$5
     su -p website -c "node $appPath/init.js"
-  echo init end
+  echo add app end
+}
+#########################addcode####################
+addcode(){
+  echo add code begin
+    export NODE_INIT_CASE=code
+    su -p website -c "node $appPath/init.js"
+  echo add code end
 }
 #########################starting####################
 start() {
@@ -44,8 +56,11 @@ restart(){
 }
 
 case "$1" in
-  init)
-        init
+  addapp)
+        addapp
+        ;;
+  addcode)
+        addcode
         ;;
   start)
         start
@@ -60,7 +75,7 @@ case "$1" in
         restart
         ;;
   ?|help)
-        echo $"Usage: $0 {init|start|status|stop|restart|help|?}"
+        echo $"Usage: $0 {addapp|addcode|start|status|stop|restart|help|?}"
         ;;
   *)
         echo $"Usage: $0 {help|?}"
