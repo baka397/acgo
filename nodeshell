@@ -2,8 +2,8 @@
 # Node Settings
 #########################setting####################
 env=online
-port=8801
-uid=www.acgo.club
+port=8000
+uid=api.acgo.club
 appPath=/home/website/App/$uid
 logPath=/home/website/Logs/$uid
 #########################env setting####################
