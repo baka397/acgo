@@ -2,9 +2,7 @@
 let express = require('express');
 let path = require('path');
 let favicon = require('serve-favicon');
-let cookieParser = require('cookie-parser');
 let bodyParser = require('body-parser');
-let ejs = require('ejs');
 let log = require('./log');
 let router = require('./router');
 let STATUS_CODE = require('./enums/status_code');
@@ -19,16 +17,10 @@ global.CONFIG = require('./config/');
 
 let app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.engine('html', ejs.__express);
-app.set('view engine', 'html');
-
 // uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'favicon.ico')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // 设置日志记录
