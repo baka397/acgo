@@ -2,7 +2,7 @@
 //动画订阅记录
 const mongoose  = require('mongoose');
 const validate = require('mongoose-validator');
-const BaseModel = require("./base_model");
+const BaseModel = require('./base_model');
 const Schema = mongoose.Schema;
 const ObjectId  = Schema.ObjectId;
 let AnimeSubSchema = new Schema({

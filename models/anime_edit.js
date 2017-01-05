@@ -2,7 +2,7 @@
 //动画编辑/审核列表
 const mongoose  = require('mongoose');
 const validate = require('mongoose-validator');
-const BaseModel = require("./base_model");
+const BaseModel = require('./base_model');
 const Schema = mongoose.Schema;
 const ObjectId  = Schema.ObjectId;
 let animeNameValidator = [

@@ -2,9 +2,11 @@
 //标签
 const mongoose  = require('mongoose');
 const validate = require('mongoose-validator');
-const BaseModel = require("./base_model");
+const BaseModel = require('./base_model');
 const Schema = mongoose.Schema;
 const ObjectId  = Schema.ObjectId;
+const config = require('../config');
+let nickBlockRule = new RegExp('('+config.blockNickName.join('|')+')','i');
 let userEmailValidator = [
     validate({
         validator: 'isEmail',
@@ -19,9 +21,15 @@ let userNicknameValidator = [
     }),
     validate({
         validator: 'matches',
-        arguments: [/^\S+$/],
+        arguments: [/^[^\s\.\-\_\*]+$/],
         message: '错误的用户昵称'
-    })
+    }),
+    {
+        validator: function(v) {
+            return !nickBlockRule.test(v);
+        },
+        message: '昵称含有敏感词'
+    }
 ];
 let UserSchema = new Schema({
     email: {type: String, required:[true, '必须填写邮箱地址'], unique: true, validate: userEmailValidator}, //邮箱地址

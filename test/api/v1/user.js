@@ -141,7 +141,7 @@ module.exports=function(app){
             .set(apiTokenParams)
             .send({
                 'email':'admin@test.com',
-                'nickname':'测试管理员',
+                'nickname':'测试用户',
                 'password':password,
                 'code':addCodeIdAdmin
             })
@@ -259,6 +259,24 @@ module.exports=function(app){
             .send({
                 'email':'test2@test.com',
                 'nickname':'1',
+                'password':password,
+                'code':addCodeIdError
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/ with block nickname', function (done) {
+            app.post(path)
+            .set(apiTokenParams)
+            .send({
+                'email':'test2@test.com',
+                'nickname':'测试管理',
                 'password':password,
                 'code':addCodeIdError
             })

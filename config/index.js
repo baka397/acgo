@@ -25,6 +25,7 @@ let defaultConfig = {
     pwSalt:'47579A1306DC',                                  //密码盐
     userTokenExpire:24*60*60,                               //用户token有效时间,可续期
     redisNamespace:'acgo',                                  //redis命名空间
+    blockNickName:['admin','管理'],                         //屏蔽的昵称
     //管理员配置
     admins:{
         'admin@test.com':'admin,crawler'
