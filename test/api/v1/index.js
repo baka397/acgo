@@ -9,8 +9,8 @@ module.exports=function(app){
     describe('/api/v1', function(){
         commonTest(app);
         userTest(app);
-        // tagTest(app);
-        // animeTest(app);
-        // animeGroupTest(app);
+        tagTest(app);
+        animeTest(app);
+        animeGroupTest(app);
     })
 }
