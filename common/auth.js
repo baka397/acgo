@@ -43,7 +43,8 @@ exports.createLoginToken = function(user){
 }
 
 exports.removeLoginToken = function(token){
-    return redisClient.del(token);
+    let key = CONFIG.redisNamespace+':key:'+token;
+    return redisClient.del(key);
 }
 
 /**
