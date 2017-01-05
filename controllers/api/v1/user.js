@@ -99,6 +99,13 @@ router.put('/me',function(req,res,next){
         err.status=STATUS_CODE.MONGO_ERROR;
         next(err);
     });
-})
+});
+router.delete('/me',function(req,res,next){
+    User.logout(req.header('x-req-key')).then(function(result){
+        res.send(tool.buildResJson('登出成功',null));
+    }).catch(function(err){
+        next(err);
+    });
+});
 
 exports.router = router;

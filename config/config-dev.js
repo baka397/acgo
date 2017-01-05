@@ -3,6 +3,6 @@ module.exports = {
     //管理员配置
     admins:{
         'crawler@acgo.club':'crawler',
-        'default':'user'
+        'cqggff@live.com':'admin'
     }
 }

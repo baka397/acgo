@@ -42,6 +42,10 @@ exports.createLoginToken = function(user){
     })
 }
 
+exports.removeLoginToken = function(token){
+    return redisClient.del(token);
+}
+
 /**
  * 获取用户token
  */

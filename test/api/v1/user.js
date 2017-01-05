@@ -5,6 +5,7 @@ module.exports=function(app){
     let path = '/api/v1/user/';
     let apiTokenParams;
     let apiLoginTokenParams;
+    let apiLogoutTokenParams;
     let addCodeId;
     let addCodeIdAdmin;
     let addCodeIdError;
@@ -145,6 +146,36 @@ module.exports=function(app){
                 'password':password,
                 'code':addCodeIdAdmin
             })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/login again to get token', function (done) {
+            app.post(path+'login')
+            .set(apiTokenParams)
+            .send({
+                'email':'test@test.com',
+                'password':password
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(!res.body.data.key) throw new Error('验证不符合预期');
+                apiLogoutTokenParams=Object.assign({},apiTokenParams,{
+                    'x-req-key':res.body.data.key
+                });
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('DELETE /user/me', function (done) {
+            app.delete(path+'me')
+            .set(apiLogoutTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);

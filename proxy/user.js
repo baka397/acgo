@@ -83,6 +83,16 @@ function login(email,password){
         else throw error;
     })
 }
+
+/**
+ * 退出用户
+ * @param  {String} token 用户token
+ * @return {Object}       Promise对象
+ */
+function logout(token){
+    return auth.removeLoginToken(token);
+}
+
 /**
  * 获取用户列表
  * @param  {Object} query    Query info
@@ -98,4 +108,5 @@ exports.newAndSave = newAndSave;
 exports.updateById = updateById;
 exports.getById = getById;
 exports.login = login;
+exports.logout = logout;
 exports.getList = getList;
