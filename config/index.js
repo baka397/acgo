@@ -19,6 +19,11 @@ let defaultConfig = {
         port:6379,
         host:'127.0.0.1'
     },
+    qiniu:{
+        bucket:'acgo-test',
+        accessKey:'7h1BLnvFNImqMR8xWXUOAexEOdvpzfDqynAWvRFH',
+        sercetKey:'IqVhcvdxBWVJ_P3gAFR9SNjIYIyV0GiIM27YyDCP'
+    },
     //运营配置
     pageSize:10,                                            //默认列表数
     maxPageSize:150,                                        //最大列表数
