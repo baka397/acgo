@@ -45,6 +45,7 @@ module.exports=function(app){
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(!res.body.data.token) throw new Error('验证不符合预期');
+                if(!res.body.data.key) throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);

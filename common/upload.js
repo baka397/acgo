@@ -7,5 +7,8 @@ qiniu.conf.SECRET_KEY = CONFIG.qiniu.sercetKey;
 exports.getUploadToken=function(userId){
     let key = userId+'-'+new Date().getTime()+'.jpg';
     let putPolicy = new qiniu.rs.PutPolicy(CONFIG.qiniu.bucket+':'+key);
-    return putPolicy.token();
+    return {
+        key:key,
+        token:putPolicy.token()
+    }
 }

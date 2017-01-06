@@ -13,10 +13,7 @@ const STATUS_CODE = require('../../../enums/status_code');
 exports.requestMapping = '/upload';
 
 router.get('/token',function(req,res,next){
-    let token=uploadTool.getUploadToken(req.user._id);
-    res.send(tool.buildResJson('获取成功',{
-        token:token
-    }));
+    res.send(tool.buildResJson('获取成功',uploadTool.getUploadToken(req.user._id)));
 });
 
 exports.router = router;
