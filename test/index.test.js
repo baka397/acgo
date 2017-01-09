@@ -36,10 +36,9 @@ describe('Clear', function(){
     })
     describe('Redis', function(){
         it('Flush', function (done) {
-            Promise.all([redisClient.keys(config.redisNamespace+':*'),redisClient.keys('search:*')])
+            redisClient.keys(config.redisNamespace+':*')
             .then(function(data){
-                let keys=[].concat(data[0],data[1]);
-                return redisClient.del.apply(redisClient,keys);
+                return redisClient.del.apply(redisClient,data);
             }).then(function(delnum){
                 done();
             }).catch(function(err){
