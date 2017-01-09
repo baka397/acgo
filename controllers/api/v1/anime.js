@@ -38,7 +38,7 @@ router.get('/',function(req,res,next){
     tool.rebuildPageSize(req);
     let page = req.query.page;
     let pageSize = req.query.pageSize;
-    Anime.search(req.query.keyword,'_id name cover cover_clip show_status public_status',page,pageSize).then(function(result){
+    Anime.search(req.query.keyword,'_id name alias cover cover_clip show_status public_status',page,pageSize).then(function(result){
         res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
