@@ -18,7 +18,7 @@ router.post('/',function(req,res,next){
     data.name=req.body.name;
     data.alias=req.body.alias;
     Tag.newAndSave(data).then(function(result){
-        res.send(tool.buildResJson('添加成功',null));
+        res.send(tool.buildResJson('添加成功',result._id));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
         next(err);

@@ -49,4 +49,15 @@ let logger = log4js.getLogger(logType || 'dateFileLog');
 exports.logger = logger;
 exports.use = function (app) {
 	app.use(log4js.connectLogger(logger, {level: logLevel, format: ':method :url'}));
+	//记录传输数据
+	app.use(function(req,res,next){
+		switch(req.method){
+			case 'GET':
+				logger.info(req.query);
+				break;
+			default:
+				logger.info(req.body);
+		}
+		next();
+	})
 };

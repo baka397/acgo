@@ -23,6 +23,8 @@ exports.buildResJson = function(msg,data){
     }else{
         result.data=data
     }
+    //打印成功返回数据
+    LOG.info(result);
     return result;
 }
 
