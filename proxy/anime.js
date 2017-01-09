@@ -20,8 +20,8 @@ function validAnimePromise(data){
             return tool.nextPromise(err);
         }
         data.coverClip=data.coverClip.map(function(clip){
-            let clipVal=parseInt(clip);
-            if(!clipVal) validClip=false;
+            let clipVal=parseFloat(clip);
+            if(isNaN(clipVal)) validClip=false;
             return clipVal;
         });
         if(!validClip){
