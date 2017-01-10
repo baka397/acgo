@@ -45,5 +45,5 @@ exports.rebuildPageSize = function(req){
     req.query.page = parseInt(req.query.page);
     req.query.pageSize = parseInt(req.query.pageSize);
     if(!req.query.page||req.query.page<0) req.query.page=1;
-    if(!req.query.pageSize||req.query.pageSize>CONFIG.maxPageSize) req.query.pageSize=CONFIG.pageSize;
+    if(!req.query.pageSize||req.query.pageSize>CONFIG.maxPageSize) req.query.pageSize=CONFIG.maxPageSize;
 }
