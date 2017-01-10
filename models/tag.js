@@ -7,7 +7,7 @@ const Schema = mongoose.Schema;
 let tagNameValidator = [
     validate({
         validator: 'isLength',
-        arguments: [3, 10],
+        arguments: [2, 10],
         message: '标签名称需要{ARGS[0]}-{ARGS[1]}之间的字符串'
     }),
     validate({
