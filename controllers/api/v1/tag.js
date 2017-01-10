@@ -39,7 +39,7 @@ router.get('/',function(req,res,next){
         getQuery._id={
             $in:ids
         }
-        if(req.query.type) getQuery.type=req.query.type;
+        if(parseInt(req.query.type)) getQuery.type=req.query.type;
         Tag.getList(getQuery,fields,page,pageSize).then(function(result){
             res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
         }).catch(function(err){
