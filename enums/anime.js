@@ -1,5 +1,5 @@
 //动画类型
-exports.status={
+exports.publicStatus={
     '0':'未发布',
     '1':'已发布'
 }
