@@ -498,7 +498,7 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('POST /anime-group/watch', function (done) {
+        it('POST /anime-group/watch/', function (done) {
             app.post(path+'watch/')
             .send({
                 groupId:animeGroupCacheId,
@@ -513,7 +513,7 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('POST /anime-group/watch again', function (done) {
+        it('POST /anime-group/watch/ again', function (done) {
             app.post(path+'watch/')
             .send({
                 groupId:animeGroupCacheId,
@@ -528,7 +528,7 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('POST /anime-group/watch with prev groupItemId', function (done) {
+        it('POST /anime-group/watch/ with prev groupItemId', function (done) {
             app.post(path+'watch/')
             .send({
                 groupId:animeGroupCacheId,
@@ -543,15 +543,15 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('GET /anime-group/watch', function (done) {
+        it('GET /anime-group/watch/', function (done) {
             app.get(path+'watch/')
             .set(apiLoginTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
-                if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
-                if(res.body.data.content[0].group_id!==animeGroupCacheId) throw new Error('验证不符合预期');
-                if(res.body.data.content[0].watch_ep!==2) throw new Error('验证不符合预期');
+                if(res.body.data.length!==1) throw new Error('验证不符合预期');
+                if(res.body.data[0].group_id!==animeGroupCacheId) throw new Error('验证不符合预期');
+                if(res.body.data[0].watch_ep!==2) throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);
@@ -1217,7 +1217,7 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('POST /anime-group/watch without groupId', function (done) {
+        it('POST /anime-group/watch/ without groupId', function (done) {
             app.post(path+'watch/')
             .send({
                 groupItemId:animeGroupItemWatchIds[1]
@@ -1232,7 +1232,7 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('POST /anime-group/watch with wrong groupId', function (done) {
+        it('POST /anime-group/watch/ with wrong groupId', function (done) {
             app.post(path+'watch/')
             .send({
                 groupId:'test',
@@ -1248,7 +1248,7 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('POST /anime-group/watch with inexistence groupId', function (done) {
+        it('POST /anime-group/watch/ with inexistence groupId', function (done) {
             app.post(path+'watch/')
             .send({
                 groupId:'58297d95e7aaf218604a8d0f',
@@ -1264,7 +1264,7 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('POST /anime-group/watch without groupItemId', function (done) {
+        it('POST /anime-group/watch/ without groupItemId', function (done) {
             app.post(path+'watch/')
             .send({
                 groupId:animeGroupCacheId
@@ -1279,7 +1279,7 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('POST /anime-group/watch with wrong groupId', function (done) {
+        it('POST /anime-group/watch/ with wrong groupId', function (done) {
             app.post(path+'watch/')
             .send({
                 groupId:animeGroupCacheId,
@@ -1295,7 +1295,7 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('POST /anime-group/watch with inexistence groupId', function (done) {
+        it('POST /anime-group/watch/ with inexistence groupId', function (done) {
             app.post(path+'watch/')
             .send({
                 groupId:animeGroupCacheId,
@@ -1311,7 +1311,7 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('POST /anime-group/watch with mismatching groupItemId', function (done) {
+        it('POST /anime-group/watch/ with mismatching groupItemId', function (done) {
             app.post(path+'watch/')
             .send({
                 groupId:animeGroupId,

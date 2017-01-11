@@ -234,7 +234,8 @@ function search(keyword,fields,page,pageSize){
  * @return {Object}          Promise对象
  */
 function getList(query,fields,page,pageSize){
-    return Promise.all([Anime.count(query).exec(),Anime.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
+    if(page&&pageSize) return Promise.all([Anime.count(query).exec(),Anime.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
+    else return Anime.find(query).select(fields).exec()
 }
 
 /**
@@ -253,27 +254,24 @@ function getAnimeEditList(query,fields,page,pageSize){
  * 获取动画订阅列表
  * @param  {Object} query    Query info
  * @param  {String} fields   Query info
- * @param  {Number} page     Page number
- * @param  {Number} pageSize Page Size
  * @return {Object}          Promise对象
  */
-function getAnimeSubList(query,fields,page,pageSize){
-    return Promise.all([AnimeSub.count(query).exec(),AnimeSub.find(query).select('anime_id').skip((page-1)*pageSize).limit(pageSize).sort({'_id':1}).exec()])
+function getAnimeSubList(query,fields){
+    return AnimeSub.find(query).select('anime_id').sort({'_id':1}).exec()
     .then(function(result){
+        if(result.length===0) return tool.nextPromise(null,[]);
         //重组动画详情查询
-        let ids=result[1].map(function(sub){
+        let ids=result.map(function(sub){
             return sub.anime_id;
         });
-        return Promise.all([tool.nextPromise(null,result[0]),getList({
+        return getList({
             '_id':{
                 $in:ids
             }
-        },fields,page,pageSize)]);
+        },fields)
     })
     .then(function(result){
-        let count=result[0];
-        let content=result[1][1];
-        return tool.nextPromise(null,[count,content])
+        return tool.nextPromise(null,result);
     })
 }
 

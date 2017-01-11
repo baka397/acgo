@@ -433,16 +433,16 @@ module.exports=function(app){
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
-                if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
-                if(res.body.data.content[0].name!=='测试动画') throw new Error('验证不符合预期');
-                if(res.body.data.content[0].cover!=='测试动画封面3') throw new Error('验证不符合预期');
+                if(res.body.data.length!==1) throw new Error('验证不符合预期');
+                if(res.body.data[0].name!=='测试动画') throw new Error('验证不符合预期');
+                if(res.body.data[0].cover!=='测试动画封面3') throw new Error('验证不符合预期');
                 let curClip=[1,2,3,5];
-                let validResult=res.body.data.content[0].cover_clip.every(function(clip,index){
+                let validResult=res.body.data[0].cover_clip.every(function(clip,index){
                     return clip===curClip[index];
                 })
                 if(!validResult) throw new Error('验证不符合预期');
-                if(res.body.data.content[0].show_status!==1) throw new Error('验证不符合预期');
-                if(res.body.data.content[0].public_status!==1) throw new Error('验证不符合预期');
+                if(res.body.data[0].show_status!==1) throw new Error('验证不符合预期');
+                if(res.body.data[0].public_status!==1) throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);
@@ -465,16 +465,16 @@ module.exports=function(app){
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
-                if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
-                if(res.body.data.content[0].name!=='测试动画') throw new Error('验证不符合预期');
-                if(res.body.data.content[0].cover!=='测试动画封面3') throw new Error('验证不符合预期');
+                if(res.body.data.length!==1) throw new Error('验证不符合预期');
+                if(res.body.data[0].name!=='测试动画') throw new Error('验证不符合预期');
+                if(res.body.data[0].cover!=='测试动画封面3') throw new Error('验证不符合预期');
                 let curClip=[1,2,3,5];
-                let validResult=res.body.data.content[0].cover_clip.every(function(clip,index){
+                let validResult=res.body.data[0].cover_clip.every(function(clip,index){
                     return clip===curClip[index];
                 })
                 if(!validResult) throw new Error('验证不符合预期');
-                if(res.body.data.content[0].show_status!==1) throw new Error('验证不符合预期');
-                if(res.body.data.content[0].public_status!==1) throw new Error('验证不符合预期');
+                if(res.body.data[0].show_status!==1) throw new Error('验证不符合预期');
+                if(res.body.data[0].public_status!==1) throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);
@@ -497,7 +497,7 @@ module.exports=function(app){
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
-                if(res.body.data.content.length!==0) throw new Error('验证不符合预期');
+                if(res.body.data.length!==0) throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);
