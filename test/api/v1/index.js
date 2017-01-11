@@ -13,6 +13,6 @@ module.exports=function(app){
         tagTest(app);
         animeTest(app);
         animeGroupTest(app);
-        // uploadTest(app);
+        uploadTest(app);
     })
 }
