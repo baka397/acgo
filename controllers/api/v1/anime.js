@@ -8,6 +8,7 @@ const Anime = require('../../../proxy/').Anime;
 const tool = require('../../../common/tool');
 const ANIME = require('../../../enums/anime');
 const validator = require('validator');
+let apiAuth = require('../../../middlewares/api_auth');
 
 //枚举
 const STATUS_CODE = require('../../../enums/status_code');
@@ -117,6 +118,15 @@ router.put('/:id',function(req,res,next){
     });
 });
 
+router.get('/audit/me',function(req,res,next){
+    Anime.getAnimeEditByUserId(req.user._id).then(function(result){
+        res.send(tool.buildResJson('获取信息成功',result));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
+
 router.get('/audit/:id',function(req,res,next){
     if(!validator.isMongoId(req.params.id)){
         let err = new Error('错误的ID值');
@@ -137,7 +147,7 @@ router.get('/audit/:id',function(req,res,next){
     });
 });
 
-router.put('/audit/:id',function(req,res,next){
+router.put('/audit/:id',apiAuth.checkApiAdmin,function(req,res,next){
     if(!validator.isMongoId(req.params.id)){
         let err = new Error('错误的ID值');
         err.status=STATUS_CODE.ERROR;

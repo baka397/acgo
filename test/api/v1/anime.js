@@ -5,6 +5,7 @@ module.exports=function(app){
     let path = '/api/v1/anime/';
     let apiTokenParams;
     let apiLoginTokenParams;
+    let apiAdminTokenParams;
     let password = apiTool.getPassword('testpassword');
     let tags=[[],[],[]];
     let animeId;
@@ -33,6 +34,25 @@ module.exports=function(app){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(!res.body.data.key) throw new Error('验证不符合预期');
                 apiLoginTokenParams=Object.assign({},apiTokenParams,{
+                    'x-req-key':res.body.data.key
+                });
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/login', function (done) {
+            app.post('/api/v1/user/login')
+            .set(apiTokenParams)
+            .send({
+                'email':'admin@test.com',
+                'password':password
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(!res.body.data.key) throw new Error('验证不符合预期');
+                apiAdminTokenParams=Object.assign({},apiTokenParams,{
                     'x-req-key':res.body.data.key
                 });
             })
@@ -250,12 +270,66 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('GET /anime/audit/me', function (done) {
+            app.get(path+'audit/me')
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                let curClip=[1,2,3,4];
+                let validResult=res.body.data.cover_clip.every(function(clip,index){
+                    return clip===curClip[index];
+                })
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.alias!=='测试动画别名') throw new Error('验证不符合预期');
+                if(res.body.data.cover!=='测试动画封面') throw new Error('验证不符合预期');
+                if(!validResult) throw new Error('验证不符合预期');
+                if(res.body.data.show_status!==1) throw new Error('验证不符合预期');
+                if(res.body.data.desc!=='测试描述') throw new Error('验证不符合预期');
+                if(res.body.data.tag.length!==tags[0].length) throw new Error('验证不符合预期');
+                if(res.body.data.staff.length!==tags[1].length) throw new Error('验证不符合预期');
+                if(res.body.data.cv.length!==tags[2].length) throw new Error('验证不符合预期');
+                if(res.body.data.anime_id!==animeId) throw new Error('验证不符合预期');
+                if(!res.body.data.edit_user) throw new Error('验证不符合预期');
+                if(!res.body.data.audit_user||res.body.data.edit_user===res.body.data.audit_user) throw new Error('验证不符合预期');
+                if(res.body.data.audit_status!==0) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime/audit/me again', function (done) {
+            app.get(path+'audit/me')
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                let curClip=[1,2,3,4];
+                let validResult=res.body.data.cover_clip.every(function(clip,index){
+                    return clip===curClip[index];
+                })
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.alias!=='测试动画别名') throw new Error('验证不符合预期');
+                if(res.body.data.cover!=='测试动画封面') throw new Error('验证不符合预期');
+                if(!validResult) throw new Error('验证不符合预期');
+                if(res.body.data.show_status!==1) throw new Error('验证不符合预期');
+                if(res.body.data.desc!=='测试描述') throw new Error('验证不符合预期');
+                if(res.body.data.tag.length!==tags[0].length) throw new Error('验证不符合预期');
+                if(res.body.data.staff.length!==tags[1].length) throw new Error('验证不符合预期');
+                if(res.body.data.cv.length!==tags[2].length) throw new Error('验证不符合预期');
+                if(res.body.data.anime_id!==animeId) throw new Error('验证不符合预期');
+                if(!res.body.data.edit_user) throw new Error('验证不符合预期');
+                if(!res.body.data.audit_user||res.body.data.edit_user===res.body.data.audit_user) throw new Error('验证不符合预期');
+                if(res.body.data.audit_status!==0) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         it('PUT /anime/audit/:id with rejected status', function (done) {
             app.put(path+'audit/'+animeEditId)
             .send({
                 status:-1
             })
-            .set(apiLoginTokenParams)
+            .set(apiAdminTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
@@ -284,6 +358,17 @@ module.exports=function(app){
                 if(res.body.data.tag.length!==tags[0].length) throw new Error('验证不符合预期');
                 if(res.body.data.staff.length!==tags[1].length) throw new Error('验证不符合预期');
                 if(res.body.data.cv.length!==tags[2].length) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime/audit/me', function (done) {
+            app.get(path+'audit/me')
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code===200) throw new Error(res.body.msg);
             })
             .end(function(err,res){
                 done(err);
@@ -369,7 +454,7 @@ module.exports=function(app){
             .send({
                 status:1
             })
-            .set(apiLoginTokenParams)
+            .set(apiAdminTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
@@ -954,7 +1039,7 @@ module.exports=function(app){
             .send({
                 status:1
             })
-            .set(apiLoginTokenParams)
+            .set(apiAdminTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
@@ -969,7 +1054,7 @@ module.exports=function(app){
             .send({
                 status:1
             })
-            .set(apiLoginTokenParams)
+            .set(apiAdminTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
@@ -981,7 +1066,7 @@ module.exports=function(app){
         })
         it('PUT /anime/audit/:id with empty status', function (done) {
             app.put(path+'audit/'+animeEditId)
-            .set(apiLoginTokenParams)
+            .set(apiAdminTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
@@ -996,7 +1081,7 @@ module.exports=function(app){
             .send({
                 status:3
             })
-            .set(apiLoginTokenParams)
+            .set(apiAdminTokenParams)
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');

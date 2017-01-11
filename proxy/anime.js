@@ -192,6 +192,29 @@ function getAnimeEditById(id){
     return AnimeEdit.findOne({_id: id});
 }
 
+function getAnimeEditByUserId(userId){
+    //查找未完成的审核数据
+    return AnimeEdit.findOne({
+        audit_user: userId,
+        audit_status:0
+    }).then(function(unexecAnimeEdit){
+        //如果存在未完成的审核数据,则使用该数据
+        if(unexecAnimeEdit) return tool.nextPromise(null,unexecAnimeEdit);
+        //否则新查询一条数据
+        else return AnimeEdit.findOne({
+            audit_status:0
+        }).then(function(animeEdit){
+            //如果有数据,则标记所有者
+            if(animeEdit){
+                animeEdit.audit_user=userId;
+                return animeEdit.save();
+            }else{
+                throw new Error('没有需要审核的动画');
+            }
+        })
+    })
+}
+
 function getAnimeSubByAnimeIdAndUserId(animeId,userId){
     return AnimeSub.findOne({
         anime_id:animeId,
@@ -390,6 +413,7 @@ exports.newAndSave = newAndSave;
 exports.newAndSaveAnimeEdit = newAndSaveAnimeEdit;
 exports.getById = getById;
 exports.getAnimeEditById = getAnimeEditById;
+exports.getAnimeEditByUserId = getAnimeEditByUserId;
 exports.search = search;
 exports.getList = getList;
 exports.getAnimeEditList = getAnimeEditList;
