@@ -6,6 +6,7 @@ const AnimeSub = require('../models').AnimeSub;
 const searcher = require('../lib/search/');
 const ANIME = require('../enums/anime');
 const tagProxy = require('./tag');
+const AnimeGroupProxy = require('./anime_group');
 const validator = require('validator');
 const tool = require('../common/tool');
 let animeSearch = searcher.createSearch('animes');
@@ -235,7 +236,7 @@ function search(keyword,fields,page,pageSize){
  */
 function getList(query,fields,page,pageSize){
     if(page&&pageSize) return Promise.all([Anime.count(query).exec(),Anime.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
-    else return Anime.find(query).select(fields).exec()
+    else return Anime.find(query).select(fields).exec();
 }
 
 /**
@@ -259,19 +260,49 @@ function getAnimeEditList(query,fields,page,pageSize){
 function getAnimeSubList(query,fields){
     return AnimeSub.find(query).select('anime_id').sort({'_id':1}).exec()
     .then(function(result){
-        if(result.length===0) return tool.nextPromise(null,[]);
+        if(result.length===0) return tool.nextPromise(null,[[],[]]);
         //重组动画详情查询
         let ids=result.map(function(sub){
             return sub.anime_id;
         });
-        return getList({
+        return Promise.all([getList({
             '_id':{
                 $in:ids
             }
-        },fields)
+        },fields),AnimeGroupProxy.getList({
+            'anime_id':{
+                $in:ids
+            }
+        },'_id anime_id episode_cur update_at')])
     })
     .then(function(result){
-        return tool.nextPromise(null,result);
+        let animeList=result[0];
+        let animeGroupList=result[1];
+        if(animeGroupList.length===0) return tool.nextPromise(null,animeList);
+        let animeGroupMap={};
+        let animeMap=[];
+        animeGroupList.forEach((groupItem)=>{
+            if(!animeGroupMap[groupItem.anime_id]){
+                animeGroupMap[groupItem.anime_id]={
+                    update_at:groupItem.update_at,
+                    episode_cur:groupItem.episode_cur,
+                    groups:[]
+                }
+            }
+            animeGroupMap[groupItem.anime_id].groups.push(groupItem._id);
+        })
+        let returnData=animeList.map((anime)=>{
+            let animeField=fields.split(' ');
+            let animeData={};
+            animeField.forEach(function(key){
+                animeData[key]=anime[key];
+            });
+            if(animeGroupMap[animeData._id]){
+                Object.assign(animeData,animeGroupMap[animeData._id]);
+            }
+            return animeData;
+        });
+        return tool.nextPromise(null,returnData);
     })
 }
 

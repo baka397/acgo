@@ -352,7 +352,8 @@ function getHistoryByGroupIdAndSubUser(group_id,sub_user){
  * @return {Object}          Promise对象
  */
 function getList(query,fields,page,pageSize){
-    return Promise.all([AnimeGroup.count(query).exec(),AnimeGroup.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
+    if(page&&pageSize) return Promise.all([AnimeGroup.count(query).exec(),AnimeGroup.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
+    else return AnimeGroup.find(query).select(fields).exec();
 }
 
 /**

@@ -557,6 +557,42 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('PUT /anime/sub/:id', function (done) {
+            app.put('/api/v1/anime/sub/'+animeId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime/sub/me', function (done) {
+            app.get('/api/v1/anime/sub/me')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.length!==1) throw new Error('验证不符合预期');
+                if(res.body.data[0].name!=='测试动画') throw new Error('验证不符合预期');
+                if(res.body.data[0].cover!=='测试动画封面3') throw new Error('验证不符合预期');
+                let curClip=[1,2,3,5];
+                let validResult=res.body.data[0].cover_clip.every(function(clip,index){
+                    return clip===curClip[index];
+                })
+                if(!validResult) throw new Error('验证不符合预期');
+                if(res.body.data[0].show_status!==1) throw new Error('验证不符合预期');
+                if(res.body.data[0].public_status!==1) throw new Error('验证不符合预期');
+                if(res.body.data[0].groups.length!==3) throw new Error('验证不符合预期');
+                if(!res.body.data[0].update_at) throw new Error('验证不符合预期');
+                if(res.body.data[0].episode_cur!==5) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         //Error test
         it('POST /anime-group/ without animeId', function (done) {
             app.post(path)

@@ -16,5 +16,5 @@ let AnimeGroupSchema = new Schema({
     update_at: { type: Date, default: Date.now }
 });
 AnimeGroupSchema.plugin(BaseModel);
-AnimeGroupSchema.index({create_at: -1});
+AnimeGroupSchema.index({update_at:-1,anime_id:1});
 mongoose.model('AnimeGroup', AnimeGroupSchema);
