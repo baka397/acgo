@@ -281,6 +281,7 @@ function getAnimeSubList(query,fields){
         if(animeGroupList.length===0) return tool.nextPromise(null,animeList);
         let animeGroupMap={};
         let animeMap=[];
+        let animeField=fields.split(' ');
         animeGroupList.forEach((groupItem)=>{
             if(!animeGroupMap[groupItem.anime_id]){
                 animeGroupMap[groupItem.anime_id]={
@@ -292,7 +293,6 @@ function getAnimeSubList(query,fields){
             animeGroupMap[groupItem.anime_id].groups.push(groupItem._id);
         })
         let returnData=animeList.map((anime)=>{
-            let animeField=fields.split(' ');
             let animeData={};
             animeField.forEach(function(key){
                 animeData[key]=anime[key];

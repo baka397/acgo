@@ -190,7 +190,7 @@ router.get('/sub/me',function(req,res,next){
     let reqData=Object.create(null);
     reqData.sub_user=req.user._id;
     reqData.sub_status=1;
-    Anime.getAnimeSubList(reqData,'_id name cover cover_clip show_status public_status').then(function(result){
+    Anime.getAnimeSubList(reqData,'_id name alias cover cover_clip show_status public_status').then(function(result){
         res.send(tool.buildResJson('获取信息成功',result));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
