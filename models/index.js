@@ -9,6 +9,7 @@ mongoose.connect(config.db, {
     LOG.error('connect to %s error: ', config.db, err.message);
     process.exit(1);
   }
+  LOG.info('MongoDB connect succeed', config.db);
 });
 
 // models
