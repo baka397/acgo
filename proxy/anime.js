@@ -358,7 +358,7 @@ function aduitAnimeEdit(id,data){
             let anime=result[1];
             if(animeEdit.alias) anime.alias = animeEdit.alias;
             if(animeEdit.cover) anime.cover = animeEdit.cover;
-            if(animeEdit.cover_clip) anime.cover_clip = animeEdit.cover_clip;
+            if(animeEdit.cover_clip.length>0) anime.cover_clip = animeEdit.cover_clip;
             if(animeEdit.show_status) anime.show_status = animeEdit.show_status;
             if(animeEdit.desc) anime.desc = animeEdit.desc;
             if(animeEdit.tag.length>0) anime.tag = animeEdit.tag;
