@@ -163,8 +163,8 @@ function newAndSaveAnimeEdit(data,unvalid){
             if(data.showStatus) animeEdit.show_status = data.showStatus;
             if(data.desc) animeEdit.desc = data.desc;
             if(data.tag) animeEdit.tag = data.tag;
-            if(data.tag) animeEdit.staff = data.staff;
-            if(data.tag) animeEdit.cv = data.cv;
+            if(data.staff) animeEdit.staff = data.staff;
+            if(data.cv) animeEdit.cv = data.cv;
             animeEdit.audit_status = 0;
             animeEdit.anime_id = data.animeId;
             animeEdit.edit_user = data.editUser;
