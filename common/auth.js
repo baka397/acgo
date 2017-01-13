@@ -52,11 +52,12 @@ exports.removeLoginToken = function(token){
  */
 exports.getUserIdByToken = function(token){
     let key = CONFIG.redisNamespace+':key:'+token;
-    return redisClient.get(key).then(function(data){
-        if(!data){
+    let redisPipeline=redisClient.pipeline();
+    return redisPipeline.get(key).expire(key,CONFIG.userTokenExpire).exec().then(function(data){
+        if(!data[0][1]){
             throw new Error('无效的key');
         }
-        return tool.nextPromise(null,data);
+        return tool.nextPromise(null,data[0][1]);
     })
 }
 
