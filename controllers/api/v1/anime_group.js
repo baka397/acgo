@@ -1,6 +1,6 @@
 'use strict';
 /**
- * 动画合集管理
+ * 动画剧集管理
  */
 const express = require('express');
 const router = express.Router();
@@ -85,7 +85,7 @@ router.get('/task/',apiAuth.checkApiCrawler,function(req,res,next){
     let pageSize = req.query.pageSize;
     let taskPeriod = parseInt(req.query.taskPeriod);
     if(!taskPeriod||!ANIME_GROUP.taskPeriod[taskPeriod]){
-        let err = new Error('无效的集合周期');
+        let err = new Error('无效的剧集周期');
         err.status=STATUS_CODE.ERROR;
         return next(err);
     }
@@ -106,7 +106,7 @@ router.get('/item/',function(req,res,next){
     let pageSize = req.query.pageSize;
     let groupId = req.query.groupId;
     if(!groupId||!validator.isMongoId(groupId)){
-        let err = new Error('无效的集合ID');
+        let err = new Error('无效的剧集ID');
         err.status=STATUS_CODE.ERROR;
         return next(err);
     }

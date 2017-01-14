@@ -1,5 +1,5 @@
 'use strict';
-//动画集合操作
+//动画剧集操作
 const AnimeGroup = require('../models').AnimeGroup;
 const AnimeGroupTask = require('../models').AnimeGroupTask;
 const AnimeGroupItem = require('../models').AnimeGroupItem;
@@ -10,7 +10,7 @@ const validator = require('validator');
 const tool = require('../common/tool');
 
 /**
- * 新增动画合集
+ * 新增动画剧集
  * @param  {String} data  数据对象
  * @return {Object}       Promise对象
  */
@@ -20,7 +20,7 @@ function newAndSave(data){
         return tool.nextPromise(err);
     }
     if(!data.type||!ANIME_GROUP.type[data.type]){
-        let err=new Error('错误的合集类型');
+        let err=new Error('错误的剧集类型');
         return tool.nextPromise(err);
     }
     return animeProxy.getById(data.animeId).then(function(anime){
@@ -38,13 +38,13 @@ function newAndSave(data){
 }
 
 /**
- * 新增动画合集任务
+ * 新增动画剧集任务
  * @param  {String} data  数据对象
  * @return {Object}       Promise对象
  */
 function newAndSaveTask(data){
     if(!data.groupId||!validator.isMongoId(data.groupId)){
-        let err=new Error('错误的动画集合ID');
+        let err=new Error('错误的动画剧集ID');
         return tool.nextPromise(err);
     }
     if(!data.taskPeriod||!ANIME_GROUP.taskPeriod[data.taskPeriod]){
@@ -65,18 +65,18 @@ function newAndSaveTask(data){
             animeGroupTask.task_status = data.taskStatus;
             animeGroupTask.create_user = data.createUser;
             return animeGroupTask.save();
-        }else throw new Error('错误的动画集合');
+        }else throw new Error('错误的动画剧集');
     })
 }
 
 /**
- * 新增动画合集分集
+ * 新增动画剧集分集
  * @param  {String} data  数据对象
  * @return {Object}       Promise对象
  */
 function newAndSaveItem(data){
     if(!data.groupId||!validator.isMongoId(data.groupId)){
-        let err=new Error('错误的动画集合ID');
+        let err=new Error('错误的动画剧集ID');
         return tool.nextPromise(err);
     }
     if(!data.episodeNo){
@@ -105,14 +105,14 @@ function newAndSaveItem(data){
             animeGroupItem.episode_name = data.episodeName;
             animeGroupItem.create_user = data.createUser;
             return animeGroupItem.save();
-        }else throw new Error('错误的动画集合');
+        }else throw new Error('错误的动画剧集');
     }).then(function(result){
         return updateEpCurById(data.groupId);
     })
 }
 
 /**
- * 新增动画合集观看历史数据
+ * 新增动画剧集观看历史数据
  * @param  {String} data  数据对象
  * @return {Object}       Promise对象
  */
@@ -132,7 +132,7 @@ function newAndSaveGroupHistory(data){
 }
 
 /**
- * 根据ID更新动画集合
+ * 根据ID更新动画剧集
  * @param  {String} id   Object ID
  * @param  {Object} data 数据对象
  * @return {Object}      Promise对象
@@ -143,7 +143,7 @@ function updateById(id,data){
         return tool.nextPromise(err);
     }
     if(!isNaN(data.status)&&!ANIME_GROUP.status[data.status]){
-        let err=new Error('错误的动画集合状态');
+        let err=new Error('错误的动画剧集状态');
         return tool.nextPromise(err);
     }
     return getById(id).then(function(animeGroup){
@@ -160,7 +160,7 @@ function updateById(id,data){
 }
 
 /**
- * 根据ID更新动画集合最大数据
+ * 根据ID更新动画剧集最大数据
  * @param  {String} id Object ID
  * @return {Object}    Promise对象
  */
@@ -178,7 +178,7 @@ function updateEpCurById(id){
 }
 
 /**
- * 根据ID更新动画集合任务
+ * 根据ID更新动画剧集任务
  * @param  {String} id   Object ID
  * @param  {Object} data 数据对象
  * @return {Object}      Promise对象
@@ -189,7 +189,7 @@ function updateTaskById(id,data){
         return tool.nextPromise(err);
     }
     if(isNaN(data.taskStatus)||!ANIME_GROUP.taskStatus[data.taskStatus]){
-        let err=new Error('错误的动画集合任务状态');
+        let err=new Error('错误的动画剧集任务状态');
         return tool.nextPromise(err);
     }
     return getTaskById(id).then(function(animeGroupTask){
@@ -204,7 +204,7 @@ function updateTaskById(id,data){
 }
 
 /**
- * 根据ID更新动画集合数据
+ * 根据ID更新动画剧集数据
  * @param  {String} id   Object ID
  * @param  {Object} data 数据对象
  * @return {Object}      Promise对象
@@ -250,7 +250,7 @@ function updateItemById(id,data){
 }
 
 /**
- * 更新动画集合历史数据
+ * 更新动画剧集历史数据
  * @param  {String} animeGroupHistory   Object
  * @param  {Object} data                数据对象
  * @return {Object}                     Promise对象
@@ -269,13 +269,13 @@ function updateHistoryById(animeGroupHistory,data){
 }
 
 /**
- * 新增动画合集观看历史
+ * 新增动画剧集观看历史
  * @param  {String} data  数据对象
  * @return {Object}       Promise对象
  */
 function addHistory(data){
     if(!data.groupId||!validator.isMongoId(data.groupId)){
-        let err=new Error('错误的动画集合ID');
+        let err=new Error('错误的动画剧集ID');
         return tool.nextPromise(err);
     }
     if(!data.groupItemId||!validator.isMongoId(data.groupItemId)){
@@ -291,7 +291,7 @@ function addHistory(data){
 }
 
 /**
- * 根据ID获取动画合集
+ * 根据ID获取动画剧集
  * @param  {String} id 主键ID
  * @return {Object}    Promise对象
  */
@@ -300,7 +300,7 @@ function getById(id){
 }
 
 /**
- * 根据ID获取动画合集
+ * 根据ID获取动画剧集
  * @param  {String} id 主键ID
  * @return {Object}    Promise对象
  */
@@ -309,7 +309,7 @@ function getTaskById(id){
 }
 
 /**
- * 根据ID获取动画合集分集
+ * 根据ID获取动画剧集分集
  * @param  {String} id 主键ID
  * @return {Object}    Promise对象
  */
@@ -319,7 +319,7 @@ function getItemById(id){
 
 /**
  * 根据Group ID和分集编号获取动画分集
- * @param  {String} group_id 集合ID
+ * @param  {String} group_id 剧集ID
  * @param  {Number} ep_no    分集编号
  * @return {Object}          Promise对象
  */
@@ -332,7 +332,7 @@ function getItemByGroupIdAndEpNo(group_id,ep_no){
 
 /**
  * 根据Group ID和订阅用户获取动画观看历史
- * @param  {String} group_id  集合ID
+ * @param  {String} group_id  剧集ID
  * @param  {Number} sub_user  订阅用户
  * @return {Object}           Promise对象
  */
@@ -344,7 +344,7 @@ function getHistoryByGroupIdAndSubUser(group_id,sub_user){
 }
 
 /**
- * 获取动画合集
+ * 获取动画剧集
  * @param  {Object} query    Query info
  * @param  {String} fields   Query info
  * @param  {Number} page     Page number
@@ -357,7 +357,7 @@ function getList(query,fields,page,pageSize){
 }
 
 /**
- * 获取动画合集任务
+ * 获取动画剧集任务
  * @param  {Object} query    Query info
  * @param  {String} fields   Query info
  * @param  {Number} page     Page number
@@ -369,7 +369,7 @@ function getListTask(query,fields,page,pageSize){
 }
 
 /**
- * 获取动画合集任务
+ * 获取动画剧集任务
  * @param  {Object} query    Query info
  * @param  {String} fields   Query info
  * @param  {Number} page     Page number
@@ -381,7 +381,7 @@ function getListItem(query,fields,page,pageSize){
 }
 
 /**
- * 获取动画合集历史
+ * 获取动画剧集历史
  * @param  {Object} query    Query info
  * @param  {String} fields   Query info
  * @return {Object}          Promise对象
