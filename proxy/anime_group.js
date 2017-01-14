@@ -54,7 +54,10 @@ function newAndSaveTask(data){
         let err=new Error('错误的更新周期');
         return tool.nextPromise(err);
     }
-    return getById(data.groupId).then(function(animeGroup){
+    return getTaskByGroupId(data.groupId).then(function(animeGroupTask){
+        if(animeGroupTask) throw new Error('该剧集已有任务,不能添加');
+        return getById(data.groupId);
+    }).then(function(animeGroup){
         if(animeGroup){
             //检测URL规则
             if(ANIME_GROUP.type[animeGroup.type]&&ANIME_GROUP.type[animeGroup.type].taskRegExp){
@@ -322,6 +325,15 @@ function getByAnimeIdAndType(animeId,type){
  */
 function getTaskById(id){
     return AnimeGroupTask.findOne({_id: id});
+}
+
+/**
+ * 根据剧集ID查询任务
+ * @param  {String} groupId 剧集ID
+ * @return {Object}         Promise对象
+ */
+function getTaskByGroupId(groupId){
+    return AnimeGroupTask.findOne({group_id: groupId});
 }
 
 /**

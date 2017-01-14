@@ -93,23 +93,6 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('POST /anime-group/ again', function (done) {
-            app.post(path)
-            .send({
-                animeId:animeId,
-                type:1,
-                episodeTotal:30
-            })
-            .set(apiLoginTokenParams)
-            .expect(200)
-            .expect(function(res){
-                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
-                console.log(res.body.msg);
-            })
-            .end(function(err,res){
-                done(err);
-            });
-        })
         it('GET /anime-group/', function (done) {
             app.get(path+'?animeId='+animeId)
             .set(apiLoginTokenParams)
@@ -436,22 +419,6 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('POST /anime-group/task', function (done) {
-            app.post(path+'task/')
-            .send({
-                groupId:animeGroupCacheId,
-                url:'http://www.iqiyi.com/a_19rrk4anph.html',
-                taskPeriod:4
-            })
-            .set(apiAdminTokenParams)
-            .expect(200)
-            .expect(function(res){
-                if(res.body.code!==200) throw new Error(res.body.msg);
-            })
-            .end(function(err,res){
-                done(err);
-            });
-        })
         it('POST /anime-group/item', function (done) {
             app.post(path+'item/')
             .send({
@@ -611,6 +578,23 @@ module.exports=function(app){
             });
         })
         //Error test
+        it('POST /anime-group/ again', function (done) {
+            app.post(path)
+            .send({
+                animeId:animeId,
+                type:1,
+                episodeTotal:30
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         it('POST /anime-group/ without animeId', function (done) {
             app.post(path)
             .send({
@@ -763,6 +747,23 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('POST /anime-group/task again', function (done) {
+            app.post(path+'task/')
+            .send({
+                groupId:animeGroupId,
+                url:'http://bangumi.bilibili.com/anime/5524',
+                taskPeriod:4
+            })
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         it('POST /anime-group/task without group id', function (done) {
             app.post(path+'task/')
             .send({
@@ -816,7 +817,7 @@ module.exports=function(app){
         it('POST /anime-group/task without url', function (done) {
             app.post(path+'task/')
             .send({
-                groupId:animeGroupId,
+                groupId:animeGroupCacheId,
                 taskPeriod:4
             })
             .set(apiAdminTokenParams)
@@ -832,7 +833,7 @@ module.exports=function(app){
         it('POST /anime-group/task with wrong url', function (done) {
             app.post(path+'task/')
             .send({
-                groupId:animeGroupId,
+                groupId:animeGroupCacheId,
                 url:'http://bangumi.bilibili.com/anime/test',
                 taskPeriod:4
             })
