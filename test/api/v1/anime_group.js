@@ -93,6 +93,23 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('POST /anime-group/ again', function (done) {
+            app.post(path)
+            .send({
+                animeId:animeId,
+                type:1,
+                episodeTotal:30
+            })
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         it('GET /anime-group/', function (done) {
             app.get(path+'?animeId='+animeId)
             .set(apiLoginTokenParams)

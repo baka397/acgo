@@ -23,7 +23,10 @@ function newAndSave(data){
         let err=new Error('错误的剧集类型');
         return tool.nextPromise(err);
     }
-    return animeProxy.getById(data.animeId).then(function(anime){
+    return getByAnimeIdAndType(data.animeId,data.type).then(function(animeGroup){
+        if(animeGroup) throw new Error('已有该剧集,不能添加');
+        return animeProxy.getById(data.animeId);
+    }).then(function(anime){
         if(anime){
             let animeGroup=new AnimeGroup();
             animeGroup.anime_id=data.animeId;
@@ -297,6 +300,19 @@ function addHistory(data){
  */
 function getById(id){
     return AnimeGroup.findOne({_id: id});
+}
+
+/**
+ * 根据动画ID和剧集类型获取动画剧集
+ * @param  {String} animeId 动画ID
+ * @param  {Number} type    剧集类型
+ * @return {Object}         Promise对象
+ */
+function getByAnimeIdAndType(animeId,type){
+    return AnimeGroup.findOne({
+        anime_id: animeId,
+        type:type
+    });
 }
 
 /**
