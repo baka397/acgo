@@ -53,10 +53,10 @@ exports.use = function (app) {
 	app.use(function(req,res,next){
 		switch(req.method){
 			case 'GET':
-				logger.info(req.query);
+				logger.info(JSON.stringify(req.query));
 				break;
 			default:
-				logger.info(req.body);
+				logger.info(JSON.stringify(req.body));
 		}
 		next();
 	})

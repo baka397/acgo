@@ -24,7 +24,7 @@ exports.buildResJson = function(msg,data){
         result.data=data
     }
     //打印成功返回数据
-    LOG.info(result);
+    LOG.info(JSON.stringify(result));
     return result;
 }
 
