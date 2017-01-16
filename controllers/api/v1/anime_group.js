@@ -112,7 +112,7 @@ router.get('/item/',function(req,res,next){
     }
     let reqData=Object.create(null);
     reqData.group_id=groupId;
-    AnimeGroup.getListItem(reqData,'_id episode_name episode_no url',page,pageSize).then(function(result){
+    AnimeGroup.getListItem(reqData,'_id episode_name episode_no',page,pageSize).then(function(result){
         res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
@@ -152,12 +152,54 @@ router.get('/:id',function(req,res,next){
     });
 });
 
+router.get('/task/:id',apiAuth.checkApiAdmin,function(req,res,next){
+    let animeTaskId=req.params.id;
+    if(!animeTaskId||!validator.isMongoId(animeTaskId)){
+        let err = new Error('请指定正确的ID');
+        err.status=STATUS_CODE.ERROR;
+        return next(err);
+    }
+    AnimeGroup.getTaskById(animeTaskId).then(function(result){
+        if(result){
+            res.send(tool.buildResJson('获取信息成功',result));
+        }else{
+            let err = new Error('没有该数据');
+            err.status=STATUS_CODE.MONGO_ERROR;
+            return next(err);
+        }
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
+
 router.put('/task/:id',apiAuth.checkApiCrawler,function(req,res,next){
     let animeGroupTaskId=req.params.id;
     let data=Object.create(null);
     data.taskStatus=parseInt(req.body.taskStatus);
     AnimeGroup.updateTaskById(animeGroupTaskId,data).then(function(result){
         res.send(tool.buildResJson('修改成功',null));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
+
+router.get('/item/:id',apiAuth.checkApiAdmin,function(req,res,next){
+    let animeItemId=req.params.id;
+    if(!animeItemId||!validator.isMongoId(animeItemId)){
+        let err = new Error('请指定正确的ID');
+        err.status=STATUS_CODE.ERROR;
+        return next(err);
+    }
+    AnimeGroup.getItemById(animeItemId).then(function(result){
+        if(result){
+            res.send(tool.buildResJson('获取信息成功',result));
+        }else{
+            let err = new Error('没有该数据');
+            err.status=STATUS_CODE.MONGO_ERROR;
+            return next(err);
+        }
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
         next(err);
