@@ -424,6 +424,7 @@ exports.newAndSaveItem = newAndSaveItem;
 exports.addHistory = addHistory;
 exports.getById = getById;
 exports.getTaskById = getTaskById;
+exports.getItemById = getItemById;
 exports.updateById = updateById;
 exports.updateTaskById = updateTaskById;
 exports.updateItemById = updateItemById;

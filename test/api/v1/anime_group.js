@@ -152,6 +152,19 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('GET /anime-group/task/:id', function (done) {
+            app.get(path+'task/'+animeGroupTaskId)
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.url!=='http://bangumi.bilibili.com/anime/5523') throw new Error('验证不符合预期');
+                if(res.body.data.group_id!==animeGroupId) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         it('PUT /anime-group/:id', function (done) {
             app.put(path+animeGroupId)
             .send({
@@ -225,6 +238,19 @@ module.exports=function(app){
                 if(res.body.data.content[0].episode_no!==1) throw new Error('验证不符合预期');
                 if(res.body.data.content[0].episode_name!=='桐山零 / 河边的小镇') throw new Error('验证不符合预期');
                 animeGroupItemId=res.body.data.content[0]._id;
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/item/:id', function (done) {
+            app.get(path+'item/'+animeGroupItemId)
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.episode_no!==1) throw new Error('验证不符合预期');
+                if(res.body.data.episode_name!=='桐山零 / 河边的小镇') throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);
@@ -916,6 +942,30 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('GET /anime-group/task/:id with wrong ID', function (done) {
+            app.get(path+'task/test')
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/task/:id with inexistence ID', function (done) {
+            app.get(path+'task/58297d95e7aaf218604a8d0f')
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         it('PUT /anime-group/:id with wrong status', function (done) {
             app.put(path+animeGroupId)
             .send({
@@ -1038,6 +1088,30 @@ module.exports=function(app){
             .send({
                 taskStatus:'test'
             })
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/item/:id with wrong ID', function (done) {
+            app.get(path+'item/test')
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/item/:id with inexistence ID', function (done) {
+            app.get(path+'item/58297d95e7aaf218604a8d0f')
             .set(apiAdminTokenParams)
             .expect(200)
             .expect(function(res){
