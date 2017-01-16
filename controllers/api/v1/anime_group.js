@@ -112,7 +112,7 @@ router.get('/item/',function(req,res,next){
     }
     let reqData=Object.create(null);
     reqData.group_id=groupId;
-    AnimeGroup.getListItem(reqData,'_id episode_name episode_no',page,pageSize).then(function(result){
+    AnimeGroup.getListItem(reqData,'_id episode_name episode_no url',page,pageSize).then(function(result){
         res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
