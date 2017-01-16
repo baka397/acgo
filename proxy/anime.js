@@ -295,7 +295,8 @@ function getAnimeSubList(query,fields){
         },fields),AnimeGroupProxy.getList({
             'anime_id':{
                 $in:ids
-            }
+            },
+            status:1
         },'_id anime_id episode_cur update_at')])
     })
     .then(function(result){
@@ -309,11 +310,13 @@ function getAnimeSubList(query,fields){
             if(!animeGroupMap[groupItem.anime_id]){
                 animeGroupMap[groupItem.anime_id]={
                     update_at:groupItem.update_at,
-                    episode_cur:groupItem.episode_cur,
                     groups:[]
                 }
             }
-            animeGroupMap[groupItem.anime_id].groups.push(groupItem._id);
+            animeGroupMap[groupItem.anime_id].groups.push({
+                id:groupItem._id,
+                episode_cur:groupItem.episode_cur,
+            });
         })
         let returnData=animeList.map((anime)=>{
             let animeData={};
