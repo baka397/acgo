@@ -264,10 +264,10 @@ function updateItemById(id,data){
 function updateHistoryById(animeGroupHistory,data){
     return getItemById(data.groupItemId).then(function(animeGroupItem){
         if(animeGroupItem){
-            //判断之前的数据是否有效
-            if(animeGroupItem.episode_no<=animeGroupHistory.watch_ep){
-                return tool.nextPromise();
-            }
+            // //判断之前的数据是否有效
+            // if(animeGroupItem.episode_no<=animeGroupHistory.watch_ep){
+            //     return tool.nextPromise();
+            // }
             animeGroupHistory.watch_ep=animeGroupItem.episode_no;
             return animeGroupHistory.save();
         }else throw new Error('无效的数据');
