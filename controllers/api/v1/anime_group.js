@@ -152,7 +152,7 @@ router.get('/:id',function(req,res,next){
     });
 });
 
-router.get('/task/group/:id',apiAuth.checkApiCrawler,function(req,res,next){
+router.get('/task/group/:id',apiAuth.checkApiAdmin,function(req,res,next){
     let animeGroupId=req.params.id;
     if(!animeGroupId||!validator.isMongoId(animeGroupId)){
         let err = new Error('请指定正确的ID');
