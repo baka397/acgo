@@ -12,8 +12,8 @@ exports.type={
     },
     '2':{
         'name':'D站',
-        'taskRegExp':/^http:\/\/www.dilidili.com\/anime\/[a-z0-9\_\-]+(|\/)$/i,
-        'itemRegExp':/^http:\/\/www.dilidili.com\/watch[^\/]*\/\d+\/$/i
+        'taskRegExp':/^http:\/\/www.dilidili.(com|wang)\/anime\/[a-z0-9\_\-]+(|\/)$/i,
+        'itemRegExp':/^http:\/\/www.dilidili.(com|wang)\/watch[^\/]*\/\d+\/$/i
     },
     '3':{
         'name':'爱奇艺',
