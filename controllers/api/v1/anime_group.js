@@ -71,7 +71,7 @@ router.get('/ids/',apiAuth.checkApiCrawler,function(req,res,next){
     reqData._id={
         $in:ids
     }
-    AnimeGroup.getList(reqData,'_id episode_cur update_at').then(function(result){
+    AnimeGroup.getList(reqData,'_id type episode_cur update_at').then(function(result){
         res.send(tool.buildResJson('获取信息成功',result));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
