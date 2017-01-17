@@ -137,6 +137,19 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('GET /anime-group/task/group/:id', function (done) {
+            app.get(path+'task/group/'+animeGroupId)
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.url!=='http://bangumi.bilibili.com/anime/5523') throw new Error('验证不符合预期');
+                if(res.body.data.group_id!==animeGroupId) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         it('GET /anime-group/task', function (done) {
             app.get(path+'task/?taskPeriod=4')
             .set(apiAdminTokenParams)
@@ -561,7 +574,7 @@ module.exports=function(app){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.length!==1) throw new Error('验证不符合预期');
                 if(res.body.data[0].group_id!==animeGroupCacheId) throw new Error('验证不符合预期');
-                if(res.body.data[0].watch_ep!==2) throw new Error('验证不符合预期');
+                if(res.body.data[0].watch_ep!==1) throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);
@@ -595,9 +608,13 @@ module.exports=function(app){
                 if(!validResult) throw new Error('验证不符合预期');
                 if(res.body.data[0].show_status!==1) throw new Error('验证不符合预期');
                 if(res.body.data[0].public_status!==1) throw new Error('验证不符合预期');
-                if(res.body.data[0].groups.length!==3) throw new Error('验证不符合预期');
+                if(res.body.data[0].groups.length!==2) throw new Error('验证不符合预期');
                 if(!res.body.data[0].update_at) throw new Error('验证不符合预期');
-                if(res.body.data[0].episode_cur!==5) throw new Error('验证不符合预期');
+                let epNo=[1,2];
+                let validGroupResult=res.body.data[0].groups.every(function(group,index){
+                    return group.episode_cur===epNo[index];
+                });
+                if(!validGroupResult) throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);
@@ -896,6 +913,30 @@ module.exports=function(app){
                 url:'http://bangumi.bilibili.com/anime/5432',
                 taskPeriod:'test'
             })
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/task/group/:id with wrong ID', function (done) {
+            app.get(path+'task/group/test')
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/task/group/:id with inexistence ID', function (done) {
+            app.get(path+'task/group/58297d95e7aaf218604a8d0f')
             .set(apiAdminTokenParams)
             .expect(200)
             .expect(function(res){

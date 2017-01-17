@@ -152,6 +152,27 @@ router.get('/:id',function(req,res,next){
     });
 });
 
+router.get('/task/group/:id',apiAuth.checkApiCrawler,function(req,res,next){
+    let animeGroupId=req.params.id;
+    if(!animeGroupId||!validator.isMongoId(animeGroupId)){
+        let err = new Error('请指定正确的ID');
+        err.status=STATUS_CODE.ERROR;
+        return next(err);
+    }
+    AnimeGroup.getTaskByGroupId(animeGroupId).then(function(result){
+        if(result){
+            res.send(tool.buildResJson('获取信息成功',result));
+        }else{
+            let err = new Error('没有该数据');
+            err.status=STATUS_CODE.MONGO_ERROR;
+            return next(err);
+        }
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
+
 router.get('/task/:id',apiAuth.checkApiAdmin,function(req,res,next){
     let animeTaskId=req.params.id;
     if(!animeTaskId||!validator.isMongoId(animeTaskId)){
