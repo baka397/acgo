@@ -7,12 +7,12 @@ exports.status={
 exports.type={
     '1':{
         'name':'B站',
-        'taskRegExp':/^http:\/\/bangumi.bilibili.com\/anime\/\d+$/i,
+        'taskRegExp':/^http:\/\/bangumi.bilibili.com\/anime\/\d+(|\/)$/i,
         'itemRegExp':/^(http:\/\/bangumi.bilibili.com\/anime\/v\/\d+|http:\/\/www.bilibili.com\/video\/av\d+\/|http:\/\/bangumi.bilibili.com\/anime\/\d+\/play#\d+)$/i
     },
     '2':{
         'name':'D站',
-        'taskRegExp':/^http:\/\/www.dilidili.com\/anime\/[a-z0-9\_\-]+\/$/i,
+        'taskRegExp':/^http:\/\/www.dilidili.com\/anime\/[a-z0-9\_\-]+(|\/)$/i,
         'itemRegExp':/^http:\/\/www.dilidili.com\/watch[^\/]*\/\d+\/$/i
     },
     '3':{
