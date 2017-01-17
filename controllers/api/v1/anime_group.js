@@ -64,7 +64,7 @@ router.put('/:id',apiAuth.checkApiAdmin,function(req,res,next){
     });
 });
 
-router.post('/task/',apiAuth.checkApiCrawler,function(req,res,next){
+router.post('/task/',apiAuth.checkApiAdmin,function(req,res,next){
     let data=Object.create(null);
     data.groupId=req.body.groupId;
     data.url=req.body.url;
