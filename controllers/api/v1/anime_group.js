@@ -173,7 +173,7 @@ router.get('/task/group/:id',apiAuth.checkApiAdmin,function(req,res,next){
     });
 });
 
-router.get('/task/:id',apiAuth.checkApiAdmin,function(req,res,next){
+router.get('/task/:id',apiAuth.checkApiCrawler,function(req,res,next){
     let animeTaskId=req.params.id;
     if(!animeTaskId||!validator.isMongoId(animeTaskId)){
         let err = new Error('请指定正确的ID');

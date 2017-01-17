@@ -70,10 +70,10 @@ exports.checkApiAdmin = function(req, res, next){
  */
 exports.checkApiCrawler = function(req, res, next){
     let roleList=req.user.role.split(',');
-    if(roleList.indexOf('crawler')>=0){
+    if(roleList.indexOf('crawler')>=0||roleList.indexOf('admin')>=0){
         return next();
     }else{
-        let err=new Error('你不是抓取程序');
+        let err=new Error('你不是抓取程序或管理员');
         err.status = STATUS_CODE.FORBIDDEN;
         return next(err);
     }
