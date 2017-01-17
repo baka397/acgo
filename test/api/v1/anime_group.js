@@ -106,6 +106,20 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('GET /anime-group/ids/', function (done) {
+            app.get(path+'ids/?ids='+animeGroupId)
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.length!==1) throw new Error('验证不符合预期');
+                if(res.body.data[0]._id!==animeGroupId) throw new Error('验证不符合预期');
+                if(res.body.data[0].episode_cur!==0) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         it('GET /anime-group/:id', function (done) {
             app.get(path+animeGroupId)
             .set(apiLoginTokenParams)
@@ -785,6 +799,42 @@ module.exports=function(app){
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.content.length!==0) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/ids/ without ids', function (done) {
+            app.get(path+'ids/')
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/ids/ with wrong id', function (done) {
+            app.get(path+'ids/?ids=test')
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/ids/ with inexistence id', function (done) {
+            app.get(path+'ids/?ids=58297d95e7aaf218604a8d0f')
+            .set(apiAdminTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.length!==0) throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);

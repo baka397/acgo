@@ -4,9 +4,9 @@
  */
 const express = require('express');
 const router = express.Router();
+const validator = require('validator');
 const AnimeGroup = require('../../../proxy/').AnimeGroup;
 const tool = require('../../../common/tool');
-const validator = require('validator');
 const ANIME_GROUP = require('../../../enums/anime_group');
 let apiAuth = require('../../../middlewares/api_auth');
 
@@ -45,6 +45,34 @@ router.get('/',function(req,res,next){
     reqData.status=1;
     AnimeGroup.getList(reqData,'_id anime_id type episode_total episode_cur create_user create_at',page,pageSize).then(function(result){
         res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
+
+router.get('/ids/',apiAuth.checkApiCrawler,function(req,res,next){
+    let ids = req.query.ids;
+    if(!ids){
+        let err = new Error('请指定正确的ID列表');
+        err.status=STATUS_CODE.ERROR;
+        return next(err);
+    }
+    ids=ids.split(',');
+    let validId=ids.every(function(id){
+        return validator.isMongoId(id);
+    })
+    if(!validId){
+        let err = new Error('请指定正确的ID列表');
+        err.status=STATUS_CODE.ERROR;
+        return next(err);
+    }
+    let reqData=Object.create(null);
+    reqData._id={
+        $in:ids
+    }
+    AnimeGroup.getList(reqData,'_id episode_cur').then(function(result){
+        res.send(tool.buildResJson('获取信息成功',result));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
         next(err);

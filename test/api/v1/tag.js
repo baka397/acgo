@@ -253,5 +253,29 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('GET /tag/ with wrong ids', function (done) {
+            app.get(path+'?ids=test')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /tag/ with inexistence ids', function (done) {
+            app.get(path+'?ids=58297d95e7aaf218604a8d0f')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error('验证不符合预期');
+                if(res.body.data.content.length!==0) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
     })
 }

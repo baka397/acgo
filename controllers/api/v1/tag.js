@@ -4,6 +4,7 @@
  */
 const express = require('express');
 const router = express.Router();
+const validator = require('validator');
 const Tag = require('../../../proxy/').Tag;
 const tool = require('../../../common/tool');
 
@@ -35,6 +36,14 @@ router.get('/',function(req,res,next){
     req.query.type=parseInt(req.query.type);
     if(req.query.ids){
         let ids=req.query.ids.split(',');
+        let validId=ids.every(function(id){
+            return validator.isMongoId(id);
+        })
+        if(!validId){
+            let err = new Error('请指定正确的ID列表');
+            err.status=STATUS_CODE.ERROR;
+            return next(err);
+        }
         let getQuery=Object.create(null);
         getQuery._id={
             $in:ids
