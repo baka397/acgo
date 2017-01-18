@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const log4js = require('log4js');
 const config = require('./config/');
+const tool = require('./common/tool');
 let logPath = process.env.LOG_PATH || config.log.path, logType = config.log.type, logLevel = config.log.level;
 //同步创建日志目录
 try{
@@ -53,10 +54,10 @@ exports.use = function (app) {
 	app.use(function(req,res,next){
 		switch(req.method){
 			case 'GET':
-				logger.info(JSON.stringify(req.query));
+				logger.info(tool.filterReqLog(req.query));
 				break;
 			default:
-				logger.info(JSON.stringify(req.body));
+				logger.info(tool.filterReqLog(req.body));
 		}
 		next();
 	})
