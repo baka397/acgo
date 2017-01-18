@@ -24,6 +24,7 @@ exports.validApiToken = function(token,appId,timestamp){
 exports.createLoginToken = function(user){
     let token = md5Hash(user._id+new Date().getTime());
     let key = CONFIG.redisNamespace+':key:'+token;
+    let userIndexKey = CONFIG.redisNamespace+':userTokens:'+user._id;
     let redisPipeline=redisClient.pipeline();
     let redisData = {
         _id:user._id,
@@ -34,11 +35,18 @@ exports.createLoginToken = function(user){
     }else{
         redisData.role='user';
     }
-    redisPipeline.set(key,JSON.stringify(redisData)).expire(key,CONFIG.userTokenExpire);
+    redisPipeline.set(key,JSON.stringify(redisData)).expire(key,CONFIG.userTokenExpire).sadd(userIndexKey,key);
     return redisPipeline.exec().then(function(data){
         return tool.nextPromise(null,{
             'key':token
         })
+    })
+}
+
+exports.removeUserToken = function(userId){
+    let userIndexKey = CONFIG.redisNamespace+':userTokens:'+userId;
+    return redisClient.smembers(userIndexKey).then(function(keys){
+        return redisClient.del.apply(redisClient,[userIndexKey].concat(keys));
     })
 }
 

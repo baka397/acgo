@@ -1,10 +1,11 @@
 'use strict';
 //用户操作
+const validator = require('validator');
 const User = require('../models').User;
 const Code = require('./code');
 const auth = require('../common/auth');
 const tool = require('../common/tool');
-const validator = require('validator');
+const mail = require('../common/mail');
 /**
  * 新增用户
  * @param  {String} data  数据对象
@@ -33,18 +34,27 @@ function newAndSave(data){
 }
 /**
  * 根据用户ID更新用户
- * @param  {String} id   Object ID
- * @param  {Object} data 数据对象
- * @return {Object}      Promise对象
+ * @param  {String} id       Object ID
+ * @param  {Object} data     数据对象
+ * @param  {Boolen} checkOld 是否检测老数据
+ * @return {Object}          Promise对象
  */
-function updateById(id,data){
+function updateById(id,data,checkOld){
     return getById(id).then(function(user){
         if(user){
+            if(data.password&&checkOld&&(!data.oldPassword||user.password!==auth.md5Hash(CONFIG.pwSalt+data.oldPassword))){
+                throw new Error('错误的原始密码');
+            }
             let saveData={};
             if(data.nickname) saveData.nickname = data.nickname;
             if(data.password) saveData.password = auth.md5Hash(CONFIG.pwSalt+data.password);
             Object.assign(user,saveData);
-            return user.save();
+            return user.save().then(function(){
+                //查询是否变更密码
+                if(data.password){
+                    return auth.removeUserToken(user._id);
+                }else return tool.nextPromise();
+            });
         }
         else throw new Error('没有该数据');
     })
@@ -85,6 +95,24 @@ function login(email,password){
 }
 
 /**
+ * 根据ID获取用户
+ * @param  {String} id      主键ID
+ * @param  {String} backUrl 回调地址
+ * @return {Object}         Promise对象
+ */
+function sendPwMail(email,backUrl){
+    return getByEmail(email).then(function(user){
+        if(user){
+            return auth.createLoginToken(user);
+        }else throw new Error('没有该数据');
+    }).then(function(result){
+        let token=result.key;
+        backUrl+=(/\?/.test(backUrl)?'&':'?')+'token='+token;
+        return mail.sendPwMail(email,backUrl);
+    })
+}
+
+/**
  * 退出用户
  * @param  {String} token 用户token
  * @return {Object}       Promise对象
@@ -106,6 +134,7 @@ function getList(query,fields,page,pageSize){
 }
 exports.newAndSave = newAndSave;
 exports.updateById = updateById;
+exports.sendPwMail = sendPwMail;
 exports.getById = getById;
 exports.login = login;
 exports.logout = logout;

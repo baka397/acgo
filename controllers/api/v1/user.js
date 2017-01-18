@@ -90,10 +90,42 @@ router.get('/me',function(req,res,next){
         next(err);
     });
 });
+router.post('/send',function(req,res,next){
+    let email=req.body.email;
+    let backurl=req.body.backurl;
+    if(!email||!validator.isEmail(email)){
+        let error=new Error('请输入正确的邮箱');
+        error.status=STATUS_CODE.ERROR;
+        return next(error);
+    }
+    if(!backurl||!validator.isURL(backurl)){
+        let error=new Error('请输入正确的回调地址');
+        error.status=STATUS_CODE.ERROR;
+        return next(error);
+    }
+    User.sendPwMail(email,backurl).then(function(result){
+        res.send(tool.buildResJson('已发送密码邮件,请及时查收.如果没有收到请注意垃圾邮箱.',null));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
+router.post('/reset',function(req,res,next){
+    let data=Object.create(null);
+    data.password=req.body.password;
+    User.updateById(req.user._id,data,false).then(function(result){
+        res.send(tool.buildResJson('重置成功',null));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
 router.put('/me',function(req,res,next){
     let data=Object.create(null);
+    data.oldPassword=req.body.oldPassword;
+    data.password=req.body.password;
     data.nickname=req.body.nickname;
-    User.updateById(req.user._id,data).then(function(result){
+    User.updateById(req.user._id,data,true).then(function(result){
         res.send(tool.buildResJson('更新成功',null));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;

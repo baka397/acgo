@@ -19,10 +19,14 @@ let defaultConfig = {
         port:6379,
         host:'127.0.0.1'
     },
-    qiniu:{
+    qiniu:{                                                 //七牛图片上传配置
         bucket:'acgo-test',
         accessKey:'7h1BLnvFNImqMR8xWXUOAexEOdvpzfDqynAWvRFH',
         sercetKey:'IqVhcvdxBWVJ_P3gAFR9SNjIYIyV0GiIM27YyDCP'
+    },
+    mailgun:{                                               //邮件系统配置
+        apiKey:'key-4gbycm953yvy11aqupebl9to5u0qapg8',
+        domain:'mail.acgo.club'
     },
     //运营配置
     pageSize:10,                                            //默认列表数

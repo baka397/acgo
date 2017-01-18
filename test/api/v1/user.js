@@ -9,7 +9,9 @@ module.exports=function(app){
     let addCodeId;
     let addCodeIdAdmin;
     let addCodeIdError;
+    let addCodeIdEmail;
     let password = apiTool.getPassword('testpassword');
+    let newPassword = apiTool.getPassword('testpassword2');
     let apiToken;
     let userId;
     describe('/user/', function(){
@@ -30,6 +32,17 @@ module.exports=function(app){
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 addCodeId=res.body.data._id;
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('Add a code for register email test', function (done) {
+            app.post('/code/')
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                addCodeIdEmail=res.body.data._id;
             })
             .end(function(err,res){
                 done(err);
@@ -66,6 +79,23 @@ module.exports=function(app){
                 'nickname':'测试昵称',
                 'password':password,
                 'code':addCodeId
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/', function (done) {
+            app.post(path)
+            .set(apiTokenParams)
+            .send({
+                'email':'cqggff@live.com',
+                'nickname':'测试邮箱注册',
+                'password':password,
+                'code':addCodeIdEmail
             })
             .expect(200)
             .expect(function(res){
@@ -132,6 +162,104 @@ module.exports=function(app){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
                 if(res.body.data.content[0].nickname!=='测试昵称2') throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /user/me to change password', function (done) {
+            app.put(path+'me')
+            .set(apiLoginTokenParams)
+            .send({
+                'oldPassword':password,
+                'password':newPassword
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /user/ with old token', function (done) {
+            app.get(path+'?ids='+userId)
+            .set(apiLoginTokenParams)
+            .expect(403)
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/send', function (done) {
+            app.post(path+'send')
+            .set(apiTokenParams)
+            .send({
+                'email':'cqggff@live.com',
+                'backurl':'http://bing.com'
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/login', function (done) {
+            app.post(path+'login')
+            .set(apiTokenParams)
+            .send({
+                'email':'test@test.com',
+                'password':newPassword
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(!res.body.data.key) throw new Error('验证不符合预期');
+                apiLoginTokenParams=Object.assign({},apiTokenParams,{
+                    'x-req-key':res.body.data.key
+                });
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/reset', function (done) {
+            app.post(path+'reset')
+            .set(apiLoginTokenParams)
+            .send({
+                'password':password
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /user/ with old token again', function (done) {
+            app.get(path+'?ids='+userId)
+            .set(apiLoginTokenParams)
+            .expect(403)
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/login', function (done) {
+            app.post(path+'login')
+            .set(apiTokenParams)
+            .send({
+                'email':'test@test.com',
+                'password':password
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(!res.body.data.key) throw new Error('验证不符合预期');
+                apiLoginTokenParams=Object.assign({},apiTokenParams,{
+                    'x-req-key':res.body.data.key
+                });
             })
             .end(function(err,res){
                 done(err);
@@ -528,6 +656,70 @@ module.exports=function(app){
             .set(apiLoginTokenParams)
             .send({
                 'nickname':'测试 昵称'
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /user/me with wrong password', function (done) {
+            app.put(path+'me')
+            .set(apiLoginTokenParams)
+            .send({
+                'oldPassword':'123456',
+                'password':newPassword
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/send with wrong email', function (done) {
+            app.post(path+'send')
+            .set(apiTokenParams)
+            .send({
+                'email':'test',
+                'backurl':'http://bing.com'
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/send with wrong url', function (done) {
+            app.post(path+'send')
+            .set(apiTokenParams)
+            .send({
+                'email':'test@test2.com',
+                'backurl':'test'
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/send with inexistent email', function (done) {
+            app.post(path+'send')
+            .set(apiTokenParams)
+            .send({
+                'email':'test@test2.com',
+                'backurl':'http://bing.com'
             })
             .expect(200)
             .expect(function(res){
