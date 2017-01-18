@@ -103,12 +103,35 @@ function login(email,password){
 function sendPwMail(email,backUrl){
     return getByEmail(email).then(function(user){
         if(user){
-            return auth.createLoginToken(user);
+            return auth.createResetToken(user);
         }else throw new Error('没有该数据');
     }).then(function(result){
         let token=result.key;
         backUrl+=(/\?/.test(backUrl)?'&':'?')+'token='+token;
         return mail.sendPwMail(email,backUrl);
+    })
+}
+
+/**
+ * 重置密码
+ * @param  {Object} data 数据对象
+ * @return {Object}      Promise对象
+ */
+function resetPassword(data){
+    if(!data.resetToken){
+        return tool.nextPromise(new Error('请提供重置token'));
+    }
+    if(!data.password){
+        return tool.nextPromise(new Error('请输入新密码'));
+    }
+    let userData;
+    return auth.getUserIdByResetToken(data.resetToken).then(function(user){
+        userData=JSON.parse(user);
+        return updateById(userData._id,{
+            password:data.password
+        })
+    }).then(function(){
+        return auth.removeUserResetToken(userData._id);
     })
 }
 
@@ -134,6 +157,7 @@ function getList(query,fields,page,pageSize){
 }
 exports.newAndSave = newAndSave;
 exports.updateById = updateById;
+exports.resetPassword = resetPassword;
 exports.sendPwMail = sendPwMail;
 exports.getById = getById;
 exports.login = login;

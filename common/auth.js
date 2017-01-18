@@ -43,6 +43,31 @@ exports.createLoginToken = function(user){
     })
 }
 
+/**
+ * 生成用户重置token
+ * @param  {String} user   用户对象
+ * @return {Object}        Promise对象
+ */
+exports.createResetToken = function(user){
+    let userIndexKey = CONFIG.redisNamespace+':userResetTokens:'+user._id;
+    return redisClient.get(userIndexKey).then(function(data){
+        if(data) throw new Error('已发送邮件,请勿重复提交');
+        let token = md5Hash(user._id+new Date().getTime());
+        let key = CONFIG.redisNamespace+':reset:'+token;
+        let redisPipeline=redisClient.pipeline();
+        let redisData = {
+            _id:user._id,
+            email:user.email
+        }
+        redisPipeline.set(key,JSON.stringify(redisData)).expire(key,CONFIG.userResetExpire).set(userIndexKey,key).expire(userIndexKey,CONFIG.userResetExpire);
+        return redisPipeline.exec().then(function(data){
+            return tool.nextPromise(null,{
+                'key':token
+            })
+        })
+    })
+}
+
 exports.removeUserToken = function(userId){
     let userIndexKey = CONFIG.redisNamespace+':userTokens:'+userId;
     return redisClient.smembers(userIndexKey).then(function(keys){
@@ -66,6 +91,27 @@ exports.getUserIdByToken = function(token){
             throw new Error('无效的key');
         }
         return tool.nextPromise(null,data[0][1]);
+    })
+}
+
+/**
+ * 获取用户重置token
+ */
+exports.getUserIdByResetToken = function(token){
+    let key = CONFIG.redisNamespace+':reset:'+token;
+    return redisClient.get(key).then(function(data){
+        if(!data) throw new Error('无效的重置token');
+        return tool.nextPromise(null,data);
+    })
+}
+
+/**
+ * 删除用户重置token
+ */
+exports.removeUserResetToken = function(userId){
+    let userIndexKey = CONFIG.redisNamespace+':userResetTokens:'+userId;
+    return redisClient.get(userIndexKey).then(function(key){
+        return redisClient.del.apply(redisClient,[userIndexKey,key]);
     })
 }
 

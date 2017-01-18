@@ -113,7 +113,8 @@ router.post('/send',function(req,res,next){
 router.post('/reset',function(req,res,next){
     let data=Object.create(null);
     data.password=req.body.password;
-    User.updateById(req.user._id,data,false).then(function(result){
+    data.resetToken=req.body.resetToken;
+    User.resetPassword(data).then(function(result){
         res.send(tool.buildResJson('重置成功',null));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;

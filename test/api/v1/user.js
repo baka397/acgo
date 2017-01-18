@@ -1,11 +1,14 @@
 'use strict';
 const STATUS_CODE = require('../../../enums/status_code');
 const apiTool = require('../tool');
+const redisClient = require('../../../common/redis');
+const config = require('../../../config/');
 module.exports=function(app){
     let path = '/api/v1/user/';
     let apiTokenParams;
     let apiLoginTokenParams;
     let apiLogoutTokenParams;
+    let apiEmailLoginTokenParams;
     let addCodeId;
     let addCodeIdAdmin;
     let addCodeIdError;
@@ -13,6 +16,7 @@ module.exports=function(app){
     let password = apiTool.getPassword('testpassword');
     let newPassword = apiTool.getPassword('testpassword2');
     let apiToken;
+    let resetToken;
     let userId;
     describe('/user/', function(){
         //Prepare
@@ -125,6 +129,26 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('POST /user/login', function (done) {
+            app.post(path+'login')
+            .set(apiTokenParams)
+            .send({
+                'email':'cqggff@live.com',
+                'password':password
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(!res.body.data.key) throw new Error('验证不符合预期');
+                apiEmailLoginTokenParams=Object.assign({},apiTokenParams,{
+                    'x-req-key':res.body.data.key
+                });
+
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         it('GET /user/me', function (done) {
             app.get(path+'me')
             .set(apiLoginTokenParams)
@@ -169,7 +193,7 @@ module.exports=function(app){
         })
         it('PUT /user/me to change password', function (done) {
             app.put(path+'me')
-            .set(apiLoginTokenParams)
+            .set(apiEmailLoginTokenParams)
             .send({
                 'oldPassword':password,
                 'password':newPassword
@@ -184,8 +208,27 @@ module.exports=function(app){
         })
         it('GET /user/ with old token', function (done) {
             app.get(path+'?ids='+userId)
-            .set(apiLoginTokenParams)
+            .set(apiEmailLoginTokenParams)
             .expect(403)
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/login', function (done) {
+            app.post(path+'login')
+            .set(apiTokenParams)
+            .send({
+                'email':'cqggff@live.com',
+                'password':newPassword
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(!res.body.data.key) throw new Error('验证不符合预期');
+                apiEmailLoginTokenParams=Object.assign({},apiTokenParams,{
+                    'x-req-key':res.body.data.key
+                });
+            })
             .end(function(err,res){
                 done(err);
             });
@@ -205,30 +248,34 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('POST /user/login', function (done) {
-            app.post(path+'login')
+        it('POST /user/send again', function (done) {
+            app.post(path+'send')
             .set(apiTokenParams)
             .send({
-                'email':'test@test.com',
-                'password':newPassword
+                'email':'cqggff@live.com',
+                'backurl':'http://bing.com'
             })
             .expect(200)
             .expect(function(res){
-                if(res.body.code!==200) throw new Error(res.body.msg);
-                if(!res.body.data.key) throw new Error('验证不符合预期');
-                apiLoginTokenParams=Object.assign({},apiTokenParams,{
-                    'x-req-key':res.body.data.key
-                });
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
             })
             .end(function(err,res){
                 done(err);
             });
         })
+        it('GET resetToken', function (done) {
+            redisClient.keys(config.redisNamespace+':reset:*').then(function(data){
+                resetToken=data[0].replace(config.redisNamespace+':reset:','');
+                done();
+            });
+        })
         it('POST /user/reset', function (done) {
             app.post(path+'reset')
-            .set(apiLoginTokenParams)
+            .set(apiTokenParams)
             .send({
-                'password':password
+                'password':password,
+                'resetToken':resetToken
             })
             .expect(200)
             .expect(function(res){
@@ -240,7 +287,7 @@ module.exports=function(app){
         })
         it('GET /user/ with old token again', function (done) {
             app.get(path+'?ids='+userId)
-            .set(apiLoginTokenParams)
+            .set(apiEmailLoginTokenParams)
             .expect(403)
             .end(function(err,res){
                 done(err);
@@ -250,16 +297,13 @@ module.exports=function(app){
             app.post(path+'login')
             .set(apiTokenParams)
             .send({
-                'email':'test@test.com',
+                'email':'cqggff@live.com',
                 'password':password
             })
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(!res.body.data.key) throw new Error('验证不符合预期');
-                apiLoginTokenParams=Object.assign({},apiTokenParams,{
-                    'x-req-key':res.body.data.key
-                });
             })
             .end(function(err,res){
                 done(err);
@@ -720,6 +764,52 @@ module.exports=function(app){
             .send({
                 'email':'test@test2.com',
                 'backurl':'http://bing.com'
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/reset without token', function (done) {
+            app.post(path+'reset')
+            .set(apiTokenParams)
+            .send({
+                'password':password
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/reset without password', function (done) {
+            app.post(path+'reset')
+            .set(apiTokenParams)
+            .send({
+                'resetToken':resetToken
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/reset with token again', function (done) {
+            app.post(path+'reset')
+            .set(apiTokenParams)
+            .send({
+                'password':password,
+                'resetToken':resetToken
             })
             .expect(200)
             .expect(function(res){

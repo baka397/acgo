@@ -3,7 +3,7 @@ const STATUS_CODE = require('../enums/status_code');
 let authTool = require('../common/auth');
 let App = require('../proxy/').App;
 
-let excludeApiPath = ['common\\/\\S*','user\\/','user\\/login(\\/|)','user\\/find(\\/|)','user\\/send(\\/|)']; //排除验证的API路径
+let excludeApiPath = ['common\\/\\S*','user\\/','user\\/login(\\/|)','user\\/find(\\/|)','user\\/send(\\/|)','user\\/reset(\\/|)']; //排除验证的API路径
 
 /**
  * 拦截API请求并验证

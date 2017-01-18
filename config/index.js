@@ -28,11 +28,13 @@ let defaultConfig = {
         apiKey:'key-4gbycm953yvy11aqupebl9to5u0qapg8',
         domain:'mail.acgo.club'
     },
+    //token过期时间
+    userTokenExpire:24*60*60,                               //用户token有效时间,可续期(s)
+    userResetExpire:10*60,                                  //用户重置token有效时间(s)
     //运营配置
     pageSize:10,                                            //默认列表数
     maxPageSize:150,                                        //最大列表数
     pwSalt:'47579A1306DC',                                  //密码盐
-    userTokenExpire:24*60*60,                               //用户token有效时间,可续期
     redisNamespace:'acgo',                                  //redis命名空间
     blockNickName:['admin','管理'],                         //屏蔽的昵称
     //管理员配置
