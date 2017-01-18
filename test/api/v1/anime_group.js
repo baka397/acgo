@@ -227,6 +227,8 @@ module.exports=function(app){
         it('PUT /anime-group/task/:id', function (done) {
             app.put(path+'task/'+animeGroupTaskId)
             .send({
+                url:'http://bangumi.bilibili.com/anime/5523',
+                taskPeriod:4,
                 taskStatus:0
             })
             .set(apiAdminTokenParams)
@@ -1132,7 +1134,7 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('PUT /anime-group/task/:id with wrong animeGroupId', function (done) {
+        it('PUT /anime-group/task/:id with wrong animeGroupTaskId', function (done) {
             app.put(path+'task/test')
             .send({
                 taskStatus:1
@@ -1147,7 +1149,7 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('PUT /anime-group/task/:id with inexistence animeGroupId', function (done) {
+        it('PUT /anime-group/task/:id with inexistence animeGroupTaskId', function (done) {
             app.put(path+'task/58297d95e7aaf218604a8d0f')
             .send({
                 taskStatus:1
@@ -1162,9 +1164,14 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('PUT /anime-group/task/:id without taskStatus', function (done) {
+        it('PUT /anime-group/task/:id with wrong taskStatus', function (done) {
             app.put(path+'task/'+animeGroupTaskId)
             .set(apiAdminTokenParams)
+            .send({
+                url:'http://bangumi.bilibili.com/anime/5523',
+                taskPeriod:4,
+                taskStatus:7
+            })
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
@@ -1174,10 +1181,12 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('PUT /anime-group/task/:id with wrong taskStatus', function (done) {
+        it('PUT /anime-group/task/:id with wrong taskPeriod', function (done) {
             app.put(path+'task/'+animeGroupTaskId)
             .send({
-                taskStatus:'test'
+                url:'http://bangumi.bilibili.com/anime/5523',
+                taskPeriod:10,
+                taskStatus:1
             })
             .set(apiAdminTokenParams)
             .expect(200)

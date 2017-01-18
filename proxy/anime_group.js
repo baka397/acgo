@@ -194,13 +194,19 @@ function updateTaskById(id,data){
         let err = new Error('请指定正确的ID');
         return tool.nextPromise(err);
     }
-    if(isNaN(data.taskStatus)||!ANIME_GROUP.taskStatus[data.taskStatus]){
+    if(data.taskPeriod&&!ANIME_GROUP.taskPeriod[data.taskPeriod]){
+        let err=new Error('错误的更新周期');
+        return tool.nextPromise(err);
+    }
+    if(data.taskStatus&&!ANIME_GROUP.taskStatus[data.taskStatus]){
         let err=new Error('错误的动画剧集任务状态');
         return tool.nextPromise(err);
     }
     return getTaskById(id).then(function(animeGroupTask){
         if(animeGroupTask){
             let saveData={};
+            if(data.url) saveData.url = data.url;
+            if(!isNaN(data.taskPeriod)) saveData.task_period = data.taskPeriod;
             if(!isNaN(data.taskStatus)) saveData.task_status = data.taskStatus;
             Object.assign(animeGroupTask,saveData);
             return animeGroupTask.save();

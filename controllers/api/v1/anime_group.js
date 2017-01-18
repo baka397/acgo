@@ -225,6 +225,8 @@ router.get('/task/:id',apiAuth.checkApiCrawler,function(req,res,next){
 router.put('/task/:id',apiAuth.checkApiCrawler,function(req,res,next){
     let animeGroupTaskId=req.params.id;
     let data=Object.create(null);
+    data.url=req.body.url;
+    data.taskPeriod=parseInt(req.body.taskPeriod);
     data.taskStatus=parseInt(req.body.taskStatus);
     AnimeGroup.updateTaskById(animeGroupTaskId,data).then(function(result){
         res.send(tool.buildResJson('修改成功',null));
