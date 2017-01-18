@@ -47,3 +47,16 @@ exports.rebuildPageSize = function(req){
     if(!req.query.page||req.query.page<0) req.query.page=1;
     if(!req.query.pageSize||req.query.pageSize>CONFIG.maxPageSize) req.query.pageSize=CONFIG.pageSize;
 }
+
+/**
+ * 获取时间数据
+ * @param  {Number} seconds 秒数
+ * @return {String}         实际时间
+ */
+exports.getTimeInfo = function(seconds){
+    let timeOutput;
+    for (let aMultiples = ['分', '小时'], nMultiple = 0, nApprox = seconds / 60; nApprox > 1; nApprox /= 60, nMultiple++) {
+        timeOutput = parseInt(nApprox) + aMultiples[nMultiple];
+    }
+    return timeOutput;
+}

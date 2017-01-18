@@ -7,11 +7,13 @@ const sendInfo = {
     from: '宅圈小信使 <messenger@mail.acgo.club>'
 }
 function getPwMailContent(url){
+    let userResetTime=tool.getTimeInfo(config.userResetExpire);
     return `
         <p>Hi,</p>
         <p>我们收到一个新的找回密码请求,请点击以下地址重设密码:</p>
         <p><a href="${url}" target="_blank">${url}</a></p>
         <p>如果不是你发送的请求,请忽略该邮件信息.</p>
+        <p>该链接${userResetTime}内有效.</p>
         <p>ACGO.club</p>
     `
 }

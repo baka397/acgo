@@ -30,7 +30,7 @@ let defaultConfig = {
     },
     //token过期时间
     userTokenExpire:24*60*60,                               //用户token有效时间,可续期(s)
-    userResetExpire:10*60,                                  //用户重置token有效时间(s)
+    userResetExpire:30*60,                                  //用户重置token有效时间(s)
     //运营配置
     pageSize:10,                                            //默认列表数
     maxPageSize:150,                                        //最大列表数
