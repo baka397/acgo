@@ -1,8 +1,4 @@
 'use strict';
-/**
- * Created by jie.ding on 2016/4/26.
- * Updated by jing.zhang on 2016/10/12.
- */
 const fs = require('fs');
 const path = require('path');
 const log4js = require('log4js');
