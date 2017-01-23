@@ -20,7 +20,8 @@ let app = express();
 // uncomment after placing your favicon in /public
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'cert')));
+app.use('/cert/',favicon(path.join(__dirname, 'favicon.ico')));
+app.use('/cert/',express.static(path.join(__dirname, 'cert')));
 
 // 设置日志记录
 log.use(app);
