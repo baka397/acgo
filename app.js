@@ -18,10 +18,9 @@ global.CONFIG = require('./config/');
 let app = express();
 
 // uncomment after placing your favicon in /public
-app.use(favicon(path.join(__dirname, 'favicon.ico')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'cert')));
 
 // 设置日志记录
 log.use(app);
