@@ -1,5 +1,5 @@
 module.exports = {
-    db:'mongodb://root:d6b5124691e7ba034c30770ef9fbcc6a@10.8.75.164:30015/acgo-online',
+    db:'mongodb://root:d6b5124691e7ba034c30770ef9fbcc6a@10.8.75.164:30015',
     redisNamespace:'acgo-online',
     redis:{
         port:6379,
