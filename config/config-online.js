@@ -14,5 +14,10 @@ module.exports = {
         bucket:'acgo',
         accessKey:'7h1BLnvFNImqMR8xWXUOAexEOdvpzfDqynAWvRFH',
         sercetKey:'IqVhcvdxBWVJ_P3gAFR9SNjIYIyV0GiIM27YyDCP'
+    },
+    //管理员配置
+    admins:{
+        'crawler@acgo.club':'crawler',
+        'cqggff@live.com':'admin'
     }
 }
