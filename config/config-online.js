@@ -9,5 +9,10 @@ module.exports = {
         path: './logs/',
         type: 'dateFileLog',
         level: 'info'
+    },
+    qiniu:{
+        bucket:'acgo',
+        accessKey:'7h1BLnvFNImqMR8xWXUOAexEOdvpzfDqynAWvRFH',
+        sercetKey:'IqVhcvdxBWVJ_P3gAFR9SNjIYIyV0GiIM27YyDCP'
     }
 }
