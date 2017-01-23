@@ -26,25 +26,25 @@ addapp() {
 addcode(){
   echo add code begin
     export NODE_INIT_CASE=code
-    su -p website -c "node $appPath/init.js"
+    node $appPath/init.js
   echo add code end
 }
 #########################starting####################
 start() {
   echo start begin
-    su -p website -c "pm2 start $appPath/bin/www -n $uid -l $logPath/log.log -e $logPath/error.log"
+    pm2 start $appPath/bin/www -n $uid -l $logPath/log.log -e $logPath/error.log
   echo start end
 }
 #########################status####################
 status(){
   echo status begin
-    su - website -c "pm2 show $uid"
+    pm2 show $uid
   echo status end
 }
 #########################stoping####################
 stop() {
   echo stop begin
-    su - website -c "pm2 stop $uid"
+    pm2 stop $uid
   echo stop end
 }
 #########################restart####################
