@@ -12,8 +12,8 @@ let tagNameValidator = [
     }),
     validate({
         validator: 'matches',
-        arguments: [/^[\u4E00-\u9FA5A-Za-z0-9]+$/],
-        message: '标签名称只能为中文,字母及数字'
+        arguments: [/^[\u4E00-\u9FA5A-Za-z0-9\.\_]+$/],
+        message: '标签名称只能为中文,字母,数字,.,-,_'
     })
 ];
 let tagAliasValidator = [
