@@ -18,6 +18,7 @@ router.post('/',function(req,res,next){
     let data=Object.create(null);
     data.animeId=req.body.animeId;
     data.type=parseInt(req.body.type);
+    data.episodeStart=parseInt(req.body.episodeStart);
     data.episodeTotal=parseInt(req.body.episodeTotal);
     data.createUser=req.user._id;
     AnimeGroup.newAndSave(data).then(function(result){
@@ -43,7 +44,7 @@ router.get('/',function(req,res,next){
     let reqData=Object.create(null);
     reqData.anime_id=animeId;
     reqData.status=1;
-    AnimeGroup.getList(reqData,'_id anime_id type episode_total episode_cur create_user create_at',page,pageSize).then(function(result){
+    AnimeGroup.getList(reqData,'_id anime_id type episode_total episode_cur episode_start create_user create_at',page,pageSize).then(function(result){
         res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
@@ -71,7 +72,7 @@ router.get('/ids/',apiAuth.checkApiCrawler,function(req,res,next){
     reqData._id={
         $in:ids
     }
-    AnimeGroup.getList(reqData,'_id type episode_total episode_cur update_at').then(function(result){
+    AnimeGroup.getList(reqData,'_id type episode_total episode_cur episode_start update_at').then(function(result){
         res.send(tool.buildResJson('获取信息成功',result));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
@@ -81,6 +82,7 @@ router.get('/ids/',apiAuth.checkApiCrawler,function(req,res,next){
 
 router.put('/:id',apiAuth.checkApiAdmin,function(req,res,next){
     let data=Object.create(null);
+    data.episodeStart=parseInt(req.body.episodeStart);
     data.episodeTotal=parseInt(req.body.episodeTotal);
     data.episodeCur=parseInt(req.body.episodeCur);
     data.status=parseInt(req.body.status);

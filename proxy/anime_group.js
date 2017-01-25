@@ -31,6 +31,7 @@ function newAndSave(data){
             let animeGroup=new AnimeGroup();
             animeGroup.anime_id=data.animeId;
             animeGroup.type=data.type;
+            animeGroup.episode_start=data.episodeStart;
             animeGroup.episode_total=data.episodeTotal;
             animeGroup.episode_cur=0;
             animeGroup.create_user=data.createUser;
@@ -155,6 +156,7 @@ function updateById(id,data){
     return getById(id).then(function(animeGroup){
         if(animeGroup){
             let saveData={};
+            if(data.episodeStart) saveData.episode_start=data.episodeStart;
             if(data.episodeTotal) saveData.episode_total = data.episodeTotal;
             if(data.episodeCur) saveData.episode_cur = data.episodeCur;
             if(!isNaN(data.status)) saveData.status = data.status;
