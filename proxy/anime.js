@@ -21,7 +21,7 @@ function validAnimePromise(data){
             return tool.nextPromise(err);
         }
         data.coverClip=data.coverClip.map(function(clip){
-            let clipVal=parseFloat(clip);
+            let clipVal=parseInt(clip);
             if(isNaN(clipVal)) validClip=false;
             return clipVal;
         });
@@ -115,10 +115,14 @@ function newAndSave(data){
     return validAnimePromise(data).then(function(){
         //存储动画信息
         let anime = new Anime();
+        let coverClip=data.coverClip.split(',');
         anime.name = data.name;
         anime.alias = data.alias;
         anime.cover = data.cover;
-        anime.cover_clip = data.coverClip;
+        anime.cover_clip = coverClip.map(function(clip){
+            let clipVal=parseInt(clip);
+            return clipVal;
+        }).toString();
         anime.show_status = data.showStatus;
         anime.desc = data.desc;
         anime.tag = data.tag;
@@ -159,7 +163,13 @@ function newAndSaveAnimeEdit(data,unvalid){
             let animeEdit = new AnimeEdit();
             if(data.alias) animeEdit.alias = data.alias;
             if(data.cover) animeEdit.cover = data.cover;
-            if(data.coverClip) animeEdit.cover_clip = data.coverClip;
+            if(data.coverClip){
+                let coverClip=data.coverClip.split(',');
+                animeEdit.cover_clip = coverClip.map(function(clip){
+                    let clipVal=parseInt(clip);
+                    return clipVal;
+                }).toString();
+            }
             if(data.showStatus) animeEdit.show_status = data.showStatus;
             if(data.desc) animeEdit.desc = data.desc;
             if(data.tag) animeEdit.tag = data.tag;
