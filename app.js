@@ -32,14 +32,14 @@ router(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-	let err = new Error('ERROR NO PAGE FOUND');
-	err.status = 404;
-	next(err);
+    let err = new Error('ERROR NO PAGE FOUND');
+    err.status = 404;
+    next(err);
 });
 
 // error handlers
 app.use(function (err, req, res, next) {
-	if(err.code!==404||err.status!==404) LOG.error(err);
+    if(err.code!==404||err.status!==404) global.LOG.error(err);
     let code = err.code || err.status || 500;
     let message = err.message || err.stack;
     if (/TIMEDOUT/i.test(code) || err.syscall == 'connect' || err.hasOwnProperty('connect')) {
@@ -47,50 +47,51 @@ app.use(function (err, req, res, next) {
         message = '网络异常，请稍候再试';
     }else if(/^\d+$/.test(code)){
         switch(code){
-            case 404:
-                message = '找不到当前页面';
-                break;
-            case 500:
-                message = '系统错误';
-                break;
-            case 502:
-                message = '数据访问异常，请稍后重试';
-                break;
-            case STATUS_CODE.MONGO_ERROR:
-                if(err.errors){
-                    let errorName = Object.keys(err.errors)[0];
-                    if(err.errors[errorName].name==='CastError') message = '参数类型错误';
-                    else message = err.errors[errorName].message;
-                }
-                break;
-            case STATUS_CODE.MONGO_UNIQUE_ERROR:
-                code = STATUS_CODE.MONGO_ERROR;
-                message = message.replace(/^[\S\s]+\"([\S\s]+)\"[\S\s]+$/,'$1') + '已被占用';
-                break;
+        case 404:
+            message = '找不到当前页面';
+            break;
+        case 500:
+            message = '系统错误';
+            break;
+        case 502:
+            message = '数据访问异常，请稍后重试';
+            break;
+        case STATUS_CODE.MONGO_ERROR:
+            if(err.errors){
+                let errorName = Object.keys(err.errors)[0];
+                if(err.errors[errorName].name==='CastError') message = '参数类型错误';
+                else message = err.errors[errorName].message;
+            }
+            break;
+        case STATUS_CODE.MONGO_UNIQUE_ERROR:
+            code = STATUS_CODE.MONGO_ERROR;
+            message = message.replace(/^[\S\s]+\"([\S\s]+)\"[\S\s]+$/,'$1') + '已被占用';
+            break;
         }
     }else{
         code=500;
         message = '未知异常，请记录相关地址/操作并联系管理员处理';
     }
 
-	// 返回数据
+    // 返回数据
     let params = {
         code: code,
         msg: message
     };
 
     switch(code){
-        case 403:
-        case 404:
-        case 500:
-            res.status(code);
-            break;
+    case 403:
+    case 404:
+    case 500:
+        res.status(code);
+        break;
     }
 
     try {
         res.send(params);
     } catch (e) {
-        LOG.error(e);
+        global.LOG.error(e);
+        next(e);
     }
 });
 

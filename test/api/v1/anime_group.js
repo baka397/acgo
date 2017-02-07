@@ -81,6 +81,7 @@ module.exports=function(app){
             .send({
                 animeId:animeId,
                 type:1,
+                episodeStart:1,
                 episodeTotal:30
             })
             .set(apiLoginTokenParams)
@@ -397,7 +398,8 @@ module.exports=function(app){
             .send({
                 animeId:animeId,
                 type:2,
-                episodeTotal:30
+                episodeTotal:30,
+                episodeStart:1
             })
             .set(apiLoginTokenParams)
             .expect(200)
@@ -462,7 +464,8 @@ module.exports=function(app){
             .send({
                 animeId:animeId,
                 type:3,
-                episodeTotal:30
+                episodeTotal:30,
+                episodeStart:1
             })
             .set(apiLoginTokenParams)
             .expect(200)
@@ -642,7 +645,8 @@ module.exports=function(app){
             .send({
                 animeId:animeId,
                 type:1,
-                episodeTotal:30
+                episodeTotal:30,
+                episodeStart:1
             })
             .set(apiLoginTokenParams)
             .expect(200)

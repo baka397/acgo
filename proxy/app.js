@@ -32,7 +32,7 @@ function updateById(id,data){
             return app.save();
         }
         else throw new Error('没有该数据');
-    })
+    });
 }
 /**
  * 根据应用ID删除应用
@@ -45,7 +45,7 @@ function removeById(id){
             return app.remove();
         }
         else throw new Error('没有该数据');
-    })
+    });
 }
 /**
  * 根据ID获取应用

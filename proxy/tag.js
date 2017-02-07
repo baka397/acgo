@@ -14,17 +14,17 @@ function newAndSave(data){
     let tag = new Tag();
     tag.type = data.type;
     if(!TAG.type[tag.type]){
-        return tool.nextPromise(new Error('错误的类型值'))
+        return tool.nextPromise(new Error('错误的类型值'));
     }
     tag.name = data.name;
     if(data.alias) tag.alias = data.alias;
     return tag.save().then(function(data){
-        return new Promise(function(resolve,reject){
+        return new Promise(function(resolve){
             tagSearch.index(tag.name,data._id,function(){
                 resolve(data);
             });
-        })
-    })
+        });
+    });
 }
 /**
  * 根据ID更新标签
@@ -68,16 +68,16 @@ function search(keyword,type,fields,page,pageSize){
         tagSearch.query(keyword).end(function(err,ids){
             if(err) reject(err);
             else resolve(ids);
-        })
+        });
     }).then(function(ids){
-        if(ids.length===0) return tool.nextPromise(null,[0,[]])
+        if(ids.length===0) return tool.nextPromise(null,[0,[]]);
         return getList({
             '_id':{
                 $in:ids
             },
             'type':type
-        },fields,page,pageSize)
-    })
+        },fields,page,pageSize);
+    });
 }
 
 /**

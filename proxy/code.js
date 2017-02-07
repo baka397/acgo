@@ -3,10 +3,9 @@
 const Code = require('../models').Code;
 /**
  * 新增邀请码
- * @param  {String} data  数据对象
- * @return {Object}       Promise对象
+ * @return {Object}  Promise对象
  */
-function newAndSave(data){
+function newAndSave(){
     let code = new Code();
     code.status = 0;
     return code.save();
@@ -33,7 +32,7 @@ function updateById(id,data){
                 return code.save();
             }
             else throw new Error('没有该数据');
-        })
+        });
     }else{
         Object.assign(id,data);
         return id.save();

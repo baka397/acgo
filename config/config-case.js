@@ -6,4 +6,4 @@ module.exports = {
         type: 'dateFileLog',
         level: 'info'
     }
-}
+};

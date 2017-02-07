@@ -6,4 +6,4 @@ module.exports = {
         'crawler@acgo.club':'crawler',
         'cqggff@live.com':'admin'
     }
-}
+};

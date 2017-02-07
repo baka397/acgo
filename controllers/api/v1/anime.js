@@ -27,7 +27,7 @@ router.post('/',function(req,res,next){
     data.staff=req.body.staff;
     data.cv=req.body.cv;
     data.editUser=req.user._id;
-    Anime.newAndSave(data).then(function(result){
+    Anime.newAndSave(data).then(function(){
         res.send(tool.buildResJson('添加成功',null));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
@@ -85,7 +85,7 @@ router.get('/:id',function(req,res,next){
         }else{
             let err = new Error('没有该动画数据');
             err.status=STATUS_CODE.MONGO_ERROR;
-            next(err)
+            next(err);
         }
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
@@ -110,7 +110,7 @@ router.put('/:id',function(req,res,next){
     if(req.body.staff) data.staff=req.body.staff;
     if(req.body.cv) data.cv=req.body.cv;
     data.editUser=req.user._id;
-    Anime.newAndSaveAnimeEdit(data).then(function(result){
+    Anime.newAndSaveAnimeEdit(data).then(function(){
         res.send(tool.buildResJson('编辑成功',null));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
@@ -139,7 +139,7 @@ router.get('/audit/:id',function(req,res,next){
         }else{
             let err = new Error('没有该动画审核数据');
             err.status=STATUS_CODE.MONGO_ERROR;
-            next(err)
+            next(err);
         }
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
@@ -162,7 +162,7 @@ router.put('/audit/:id',apiAuth.checkApiAdmin,function(req,res,next){
     let data=Object.create(null);
     data.auditStatus=status;
     data.auditUser=req.user._id;
-    Anime.aduitAnimeEdit(req.params.id,data).then(function(result){
+    Anime.aduitAnimeEdit(req.params.id,data).then(function(){
         res.send(tool.buildResJson('审核成功',null));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
@@ -175,7 +175,7 @@ router.put('/sub/:id',function(req,res,next){
     data.animeId=req.params.id;
     data.subUser=req.user._id;
     data.subStatus=1;
-    Anime.subAnime(data).then(function(result){
+    Anime.subAnime(data).then(function(){
         res.send(tool.buildResJson('订阅成功',null));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
@@ -188,7 +188,7 @@ router.delete('/sub/:id',function(req,res,next){
     data.animeId=req.params.id;
     data.subUser=req.user._id;
     data.subStatus=-1;
-    Anime.subAnime(data).then(function(result){
+    Anime.subAnime(data).then(function(){
         res.send(tool.buildResJson('取消订阅成功',null));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;

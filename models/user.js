@@ -4,7 +4,6 @@ const mongoose  = require('mongoose');
 const validate = require('mongoose-validator');
 const BaseModel = require('./base_model');
 const Schema = mongoose.Schema;
-const ObjectId  = Schema.ObjectId;
 const config = require('../config');
 let nickBlockRule = new RegExp('('+config.blockNickName.join('|')+')','i');
 let userEmailValidator = [

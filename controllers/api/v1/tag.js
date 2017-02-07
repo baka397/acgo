@@ -27,7 +27,7 @@ router.post('/',function(req,res,next){
         err.status=STATUS_CODE.MONGO_ERROR;
         next(err);
     });
-})
+});
 router.get('/',function(req,res,next){
     tool.rebuildPageSize(req);
     let page = req.query.page;
@@ -38,7 +38,7 @@ router.get('/',function(req,res,next){
         let ids=req.query.ids.split(',');
         let validId=ids.every(function(id){
             return validator.isMongoId(id);
-        })
+        });
         if(!validId){
             let err = new Error('请指定正确的ID列表');
             err.status=STATUS_CODE.ERROR;
@@ -47,7 +47,7 @@ router.get('/',function(req,res,next){
         let getQuery=Object.create(null);
         getQuery._id={
             $in:ids
-        }
+        };
         if(parseInt(req.query.type)) getQuery.type=req.query.type;
         Tag.getList(getQuery,fields,page,pageSize).then(function(result){
             res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));

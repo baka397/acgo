@@ -38,7 +38,7 @@ function newAndSave(data){
             animeGroup.status=1;
             return animeGroup.save();
         }else throw new Error('没有该数据');
-    })
+    });
 }
 
 /**
@@ -73,7 +73,7 @@ function newAndSaveTask(data){
             animeGroupTask.create_user = data.createUser;
             return animeGroupTask.save();
         }else throw new Error('错误的动画剧集');
-    })
+    });
 }
 
 /**
@@ -113,9 +113,9 @@ function newAndSaveItem(data){
             animeGroupItem.create_user = data.createUser;
             return animeGroupItem.save();
         }else throw new Error('错误的动画剧集');
-    }).then(function(result){
+    }).then(function(){
         return updateEpCurById(data.groupId);
-    })
+    });
 }
 
 /**
@@ -135,7 +135,7 @@ function newAndSaveGroupHistory(data){
             animeGroupHistory.watch_ep=animeGroupItem.episode_no;
             return animeGroupHistory.save();
         }else throw new Error('无效的数据');
-    })
+    });
 }
 
 /**
@@ -156,7 +156,7 @@ function updateById(id,data){
     return getById(id).then(function(animeGroup){
         if(animeGroup){
             let saveData={};
-            if(data.episodeStart) saveData.episode_start=data.episodeStart;
+            if(data.episodeStart) saveData.episode_start = data.episodeStart;
             if(data.episodeTotal) saveData.episode_total = data.episodeTotal;
             if(data.episodeCur) saveData.episode_cur = data.episodeCur;
             if(!isNaN(data.status)) saveData.status = data.status;
@@ -164,7 +164,7 @@ function updateById(id,data){
             return animeGroup.save();
         }
         else throw new Error('没有该数据');
-    })
+    });
 }
 
 /**
@@ -182,7 +182,7 @@ function updateEpCurById(id){
             animeGroup.episode_cur=animeGroupItem.episode_no;
             return animeGroup.save();
         }else return tool.nextPromise();
-    })
+    });
 }
 
 /**
@@ -214,7 +214,7 @@ function updateTaskById(id,data){
             return animeGroupTask.save();
         }
         else throw new Error('没有该数据');
-    })
+    });
 }
 
 /**
@@ -236,7 +236,7 @@ function updateItemById(id,data){
                     if(animeGroupInfo){
                         throw new Error('已存在数据，请勿重复添加');
                     }else return tool.nextPromise(null,animeGroupItem);
-                })
+                });
             }else return tool.nextPromise(null,animeGroupItem);
         }
         else throw new Error('没有该数据');
@@ -259,8 +259,8 @@ function updateItemById(id,data){
         Object.assign(animeGroupItem,saveData);
         return animeGroupItem.save();
     }).then(function(animeGroupItem){
-        return updateEpCurById(animeGroupItem.group_id)
-    })
+        return updateEpCurById(animeGroupItem.group_id);
+    });
 }
 
 /**
@@ -279,7 +279,7 @@ function updateHistoryById(animeGroupHistory,data){
             animeGroupHistory.watch_ep=animeGroupItem.episode_no;
             return animeGroupHistory.save();
         }else throw new Error('无效的数据');
-    })
+    });
 }
 
 /**
@@ -301,7 +301,7 @@ function addHistory(data){
         if(animeGroupHistory){
             return updateHistoryById(animeGroupHistory,data);
         }else return newAndSaveGroupHistory(data);
-    })
+    });
 }
 
 /**

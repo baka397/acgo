@@ -21,16 +21,16 @@ function newAndSave(data){
             let user = new User();
             user.email = data.email;
             user.nickname = data.nickname;
-            user.password = data.password?auth.md5Hash(CONFIG.pwSalt+data.password):'';
-            return user.save()
+            user.password = data.password?auth.md5Hash(global.CONFIG.pwSalt+data.password):'';
+            return user.save();
         }
         else throw new Error('无效的邀请码');
     }).then(function(saveUser){
         return Code.updateById(getCode,{
             status:1,
             useUser:saveUser._id
-        })
-    })
+        });
+    });
 }
 /**
  * 根据用户ID更新用户
@@ -42,12 +42,12 @@ function newAndSave(data){
 function updateById(id,data,checkOld){
     return getById(id).then(function(user){
         if(user){
-            if(data.password&&checkOld&&(!data.oldPassword||user.password!==auth.md5Hash(CONFIG.pwSalt+data.oldPassword))){
+            if(data.password&&checkOld&&(!data.oldPassword||user.password!==auth.md5Hash(global.CONFIG.pwSalt+data.oldPassword))){
                 throw new Error('错误的原始密码');
             }
             let saveData={};
             if(data.nickname) saveData.nickname = data.nickname;
-            if(data.password) saveData.password = auth.md5Hash(CONFIG.pwSalt+data.password);
+            if(data.password) saveData.password = auth.md5Hash(global.CONFIG.pwSalt+data.password);
             Object.assign(user,saveData);
             return user.save().then(function(){
                 //查询是否变更密码
@@ -57,7 +57,7 @@ function updateById(id,data,checkOld){
             });
         }
         else throw new Error('没有该数据');
-    })
+    });
 }
 /**
  * 根据ID获取用户
@@ -85,13 +85,13 @@ function login(email,password){
     return getByEmail(email).then(function(user){
         let error=new Error('错误的邮箱或密码');
         if(user){
-            if(user.password===auth.md5Hash(CONFIG.pwSalt+password)){
+            if(user.password===auth.md5Hash(global.CONFIG.pwSalt+password)){
                 return auth.createLoginToken(user);
             }
             else throw error;
         }
         else throw error;
-    })
+    });
 }
 
 /**
@@ -109,7 +109,7 @@ function sendPwMail(email,backUrl){
         let token=result.key;
         backUrl+=(/\?/.test(backUrl)?'&':'?')+'token='+token;
         return mail.sendPwMail(email,backUrl);
-    })
+    });
 }
 
 /**
@@ -129,10 +129,10 @@ function resetPassword(data){
         userData=JSON.parse(user);
         return updateById(userData._id,{
             password:data.password
-        })
+        });
     }).then(function(){
         return auth.removeUserResetToken(userData._id);
-    })
+    });
 }
 
 /**

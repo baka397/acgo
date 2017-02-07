@@ -14,16 +14,15 @@ let animeSearch = searcher.createSearch('animes');
 function validAnimePromise(data){
     //裁剪检测
     if(data.cover||data.coverClip){
-        let validClip=true;
-        data.coverClip=data.coverClip?data.coverClip.split(','):[];
+        data.coverClip=data.coverClip?data.coverClip.split(',').map(function(clip){
+            return parseInt(clip);
+        }):[];
         if(data.coverClip.length!==4){
             let err=new Error('无效的裁剪参数');
             return tool.nextPromise(err);
         }
-        data.coverClip=data.coverClip.map(function(clip){
-            let clipVal=parseInt(clip);
-            if(isNaN(clipVal)) validClip=false;
-            return clipVal;
+        let validClip=data.coverClip.every(function(clip){
+            return clip>=0;
         });
         if(!validClip){
             let err=new Error('无效的裁剪参数');
@@ -86,7 +85,7 @@ function validAnimePromise(data){
     //检测标签是否合规
     if(tagList.length>0){
         let idValidResult=tagList.every(function(tag){
-            return validator.isMongoId(tag)
+            return validator.isMongoId(tag);
         });
         if(!idValidResult){
             let err=new Error('无效的标签ID');
@@ -97,10 +96,10 @@ function validAnimePromise(data){
         return Promise.all(promiseList).then(function(result){
             let resultValid=result.every(function(item,index){
                 return item[1].length===data[needValidKey[index]].length;
-            })
+            });
             if(!resultValid) throw new Error('存在无效的标签值');
             else return tool.nextPromise();
-        })
+        });
     }else{
         return tool.nextPromise();
     }
@@ -115,14 +114,10 @@ function newAndSave(data){
     return validAnimePromise(data).then(function(){
         //存储动画信息
         let anime = new Anime();
-        let coverClip=data.coverClip.split(',');
         anime.name = data.name;
         anime.alias = data.alias;
         anime.cover = data.cover;
-        anime.cover_clip = coverClip.map(function(clip){
-            let clipVal=parseInt(clip);
-            return clipVal;
-        }).toString();
+        anime.cover_clip = data.coverClip;
         anime.show_status = data.showStatus;
         anime.desc = data.desc;
         anime.tag = data.tag;
@@ -133,14 +128,14 @@ function newAndSave(data){
     }).then(function(result){
         return newAndSaveAnimeEdit(Object.assign(data,{
             animeId:result._id
-        }),true)
-    }).then(function(result){
-        return new Promise(function(resolve,reject){
+        }),true);
+    }).then(function(){
+        return new Promise(function(resolve){
             animeSearch.index(data.name,data.animeId,function(){
                 resolve();
             });
-        })
-    })
+        });
+    });
 }
 
 /**
@@ -164,11 +159,7 @@ function newAndSaveAnimeEdit(data,unvalid){
             if(data.alias) animeEdit.alias = data.alias;
             if(data.cover) animeEdit.cover = data.cover;
             if(data.coverClip){
-                let coverClip=data.coverClip.split(',');
-                animeEdit.cover_clip = coverClip.map(function(clip){
-                    let clipVal=parseInt(clip);
-                    return clipVal;
-                }).toString();
+                animeEdit.cover_clip = data.coverClip;
             }
             if(data.showStatus) animeEdit.show_status = data.showStatus;
             if(data.desc) animeEdit.desc = data.desc;
@@ -181,7 +172,7 @@ function newAndSaveAnimeEdit(data,unvalid){
             return animeEdit.save();
         }
         else throw new Error('没有该数据');
-    })
+    });
 }
 
 /**
@@ -221,8 +212,8 @@ function getAnimeEditByUserId(userId){
             }else{
                 throw new Error('没有需要审核的动画');
             }
-        })
-    })
+        });
+    });
 }
 
 function getAnimeSubByAnimeIdAndUserId(animeId,userId){
@@ -246,17 +237,17 @@ function search(keyword,fields,page,pageSize){
         animeSearch.query(keyword).end(function(err,ids){
             if(err) reject(err);
             else resolve(ids);
-        })
+        });
     }).then(function(ids){
-        if(ids.length===0) return new Promise(function(resolve,reject){
+        if(ids.length===0) return new Promise(function(resolve){
             resolve([0,[]]);
         });
         return getList({
             '_id':{
                 $in:ids
             }
-        },fields,page,pageSize)
-    })
+        },fields,page,pageSize);
+    });
 }
 
 /**
@@ -307,27 +298,26 @@ function getAnimeSubList(query,fields){
                 $in:ids
             },
             status:1
-        },'_id anime_id episode_cur update_at')])
+        },'_id anime_id episode_cur update_at')]);
     })
     .then(function(result){
         let animeList=result[0];
         let animeGroupList=result[1];
         if(animeGroupList.length===0) return tool.nextPromise(null,animeList);
         let animeGroupMap={};
-        let animeMap=[];
         let animeField=fields.split(' ');
         animeGroupList.forEach((groupItem)=>{
             if(!animeGroupMap[groupItem.anime_id]){
                 animeGroupMap[groupItem.anime_id]={
                     update_at:groupItem.update_at,
                     groups:[]
-                }
+                };
             }
             animeGroupMap[groupItem.anime_id].groups.push({
                 id:groupItem._id,
                 episode_cur:groupItem.episode_cur,
             });
-        })
+        });
         let returnData=animeList.map((anime)=>{
             let animeData={};
             animeField.forEach(function(key){
@@ -339,7 +329,7 @@ function getAnimeSubList(query,fields){
             return animeData;
         });
         return tool.nextPromise(null,returnData);
-    })
+    });
 }
 
 /**
@@ -382,7 +372,7 @@ function aduitAnimeEdit(id,data){
         }else{
             return tool.nextPromise();
         }
-    })
+    });
 }
 
 /**
@@ -417,9 +407,9 @@ function subAnime(data){
                 }else{
                     throw new Error('没有该数据');
                 }
-            })
+            });
         }
-    })
+    });
 }
 
 exports.newAndSave = newAndSave;

@@ -24,7 +24,7 @@ router.get('/',function(req,res,next){
         err.status=STATUS_CODE.MONGO_ERROR;
         next(err);
     });
-})
+});
 
 router.post('/',function(req,res,next){
     let data=Object.create(null);
@@ -38,7 +38,7 @@ router.post('/',function(req,res,next){
         err.status=STATUS_CODE.MONGO_ERROR;
         next(err);
     });
-})
+});
 
 router.put('/:id',function(req,res,next){
     let data=Object.create(null);
@@ -52,7 +52,7 @@ router.put('/:id',function(req,res,next){
         err.status=STATUS_CODE.MONGO_ERROR;
         next(err);
     });
-})
+});
 
 router.delete('/:id',function(req,res,next){
     App.removeById(req.params.id).then(function(result){
@@ -61,6 +61,6 @@ router.delete('/:id',function(req,res,next){
         err.status=STATUS_CODE.MONGO_ERROR;
         next(err);
     });
-})
+});
 
 exports.router = router;

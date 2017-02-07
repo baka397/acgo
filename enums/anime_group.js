@@ -2,7 +2,7 @@
 exports.status={
     '1':'正常',
     '-1':'禁用'
-}
+};
 //合集类型
 exports.type={
     '1':{
@@ -20,13 +20,13 @@ exports.type={
         'taskRegExp':/^http:\/\/www.iqiyi.com\/a_[a-z0-9\_]+.html$/i,
         'itemRegExp':/^http:\/\/www.iqiyi.com\/dongman\/\d+\/[a-z0-9\_\-]+.html$/i
     }
-}
+};
 //合集任务状态
 exports.taskStatus={
     '1':'正常',
     '0':'暂停',
     '-1':'停止'
-}
+};
 //合集任务周期
 exports.taskPeriod={
     '1':'周一',
@@ -36,4 +36,4 @@ exports.taskPeriod={
     '5':'周五',
     '6':'周六',
     '7':'周日'
-}
+};

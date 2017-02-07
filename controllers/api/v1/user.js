@@ -19,13 +19,13 @@ router.post('/',function(req,res,next){
     data.nickname=req.body.nickname;
     data.password=req.body.password;
     data.code=req.body.code;
-    User.newAndSave(data).then(function(result){
+    User.newAndSave(data).then(function(){
         res.send(tool.buildResJson('添加成功',null));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
         next(err);
     });
-})
+});
 router.post('/login',function(req,res,next){
     let data=Object.create(null);
     data.email=req.body.email;
@@ -69,7 +69,7 @@ router.get('/',function(req,res,next){
         '_id':{
             $in:ids
         }
-    }
+    };
     User.getList(queryData,'_id nickname',page,pageSize).then(function(result){
         res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
     }).catch(function(err){
@@ -103,7 +103,7 @@ router.post('/send',function(req,res,next){
         error.status=STATUS_CODE.ERROR;
         return next(error);
     }
-    User.sendPwMail(email,backurl).then(function(result){
+    User.sendPwMail(email,backurl).then(function(){
         res.send(tool.buildResJson('已发送密码邮件,请及时查收.如果没有收到请注意垃圾邮箱.',null));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
@@ -114,7 +114,7 @@ router.post('/reset',function(req,res,next){
     let data=Object.create(null);
     data.password=req.body.password;
     data.resetToken=req.body.resetToken;
-    User.resetPassword(data).then(function(result){
+    User.resetPassword(data).then(function(){
         res.send(tool.buildResJson('重置成功',null));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
@@ -126,7 +126,7 @@ router.put('/me',function(req,res,next){
     data.oldPassword=req.body.oldPassword;
     data.password=req.body.password;
     data.nickname=req.body.nickname;
-    User.updateById(req.user._id,data,true).then(function(result){
+    User.updateById(req.user._id,data,true).then(function(){
         res.send(tool.buildResJson('更新成功',null));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
@@ -134,7 +134,7 @@ router.put('/me',function(req,res,next){
     });
 });
 router.delete('/me',function(req,res,next){
-    User.logout(req.header('x-req-key')).then(function(result){
+    User.logout(req.header('x-req-key')).then(function(){
         res.send(tool.buildResJson('登出成功',null));
     }).catch(function(err){
         next(err);

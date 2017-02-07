@@ -229,7 +229,7 @@ module.exports=function(app){
             .set(apiLoginTokenParams)
             .send({
                 type:1,
-                name:'测试-标签',
+                name:'测试|-标签',
                 alias:'测试标签别名'
             })
             .expect(200)

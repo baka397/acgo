@@ -6,7 +6,7 @@ exports.filterReqLog = function(data){
     if(result.password) delete result.password;
     if(result.oldPassword) delete result.oldPassword;
     return JSON.stringify(result);
-}
+};
 
 /**
  * 构建成功JSON
@@ -26,14 +26,14 @@ exports.buildResJson = function(msg,data){
             page:args[0],
             pageSize:args[1],
             total:args[2]
-        }
+        };
     }else{
-        result.data=data
+        result.data=data;
     }
     //打印成功返回数据
-    LOG.info(JSON.stringify(result));
+    global.LOG.info(JSON.stringify(result));
     return result;
-}
+};
 
 /**
  * 请求下个Promise
@@ -45,15 +45,15 @@ exports.nextPromise = function(err,data){
     return new Promise(function(resolve,reject){
         if(err) reject(err);
         else resolve(data);
-    })
-}
+    });
+};
 
 exports.rebuildPageSize = function(req){
     req.query.page = parseInt(req.query.page);
     req.query.pageSize = parseInt(req.query.pageSize);
     if(!req.query.page||req.query.page<0) req.query.page=1;
-    if(!req.query.pageSize||req.query.pageSize>CONFIG.maxPageSize) req.query.pageSize=CONFIG.pageSize;
-}
+    if(!req.query.pageSize||req.query.pageSize>global.CONFIG.maxPageSize) req.query.pageSize=global.CONFIG.pageSize;
+};
 
 /**
  * 获取时间数据
@@ -66,4 +66,4 @@ exports.getTimeInfo = function(seconds){
         timeOutput = parseInt(nApprox) + aMultiples[nMultiple];
     }
     return timeOutput;
-}
+};

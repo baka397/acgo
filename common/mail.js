@@ -5,7 +5,7 @@ const config = require('../config/');
 const mailClient = mailgun({apiKey: config.mailgun.apiKey, domain: config.mailgun.domain});
 const sendInfo = {
     from: '宅圈小信使 <messenger@mail.acgo.club>'
-}
+};
 function getPwMailContent(url){
     let userResetTime=tool.getTimeInfo(config.userResetExpire);
     return `
@@ -15,7 +15,7 @@ function getPwMailContent(url){
         <p>如果不是你发送的请求,请忽略该邮件信息.</p>
         <p>该链接${userResetTime}内有效.</p>
         <p>ACGO.club</p>
-    `
+    `;
 }
 
 function sendMail(to,subject,html){
@@ -23,23 +23,23 @@ function sendMail(to,subject,html){
         to:to,
         subject:subject,
         html:html
-    })
+    });
     return new Promise(function(resolve,reject){
         mailClient.messages().send(data, function (err, body) {
             if(err){
-                LOG.info('发送信件失败');
-                LOG.err(err);
+                global.LOG.info('发送信件失败');
+                global.LOG.err(err);
                 return reject(new Error('信件发送失败'));
             }
-            LOG.info('发送信件成功');
-            LOG.info(body);
+            global.LOG.info('发送信件成功');
+            global.LOG.info(body);
             resolve();
         });
-    })
+    });
 }
 
 exports.sendPwMail = function(to,url){
     let subject='ACGO.club-找回密码';
     let html=getPwMailContent(url);
     return sendMail(to,subject,html);
-}
+};

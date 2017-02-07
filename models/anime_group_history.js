@@ -1,7 +1,6 @@
 'use strict';
 //动画观看记录
 const mongoose  = require('mongoose');
-const validate = require('mongoose-validator');
 const BaseModel = require('./base_model');
 const Schema = mongoose.Schema;
 const ObjectId  = Schema.ObjectId;
