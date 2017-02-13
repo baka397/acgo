@@ -50,7 +50,7 @@ function validAnimePromise(data){
                 $in:data.tag
             },
             type:1
-        }));
+        },'_id'));
     }
     if(data.staff){
         data.staff=data.staff.split(',');
@@ -65,7 +65,7 @@ function validAnimePromise(data){
                 $in:data.staff
             },
             type:2
-        }));
+        },'_id'));
     }
     if(data.cv){
         data.cv=data.cv.split(',');
@@ -80,7 +80,7 @@ function validAnimePromise(data){
                 $in:data.cv
             },
             type:3
-        }));
+        },'_id'));
     }
     //检测标签是否合规
     if(tagList.length>0){
@@ -95,7 +95,7 @@ function validAnimePromise(data){
     if(promiseList.length>0){
         return Promise.all(promiseList).then(function(result){
             let resultValid=result.every(function(item,index){
-                return item[1].length===data[needValidKey[index]].length;
+                return item.length===data[needValidKey[index]].length;
             });
             if(!resultValid) throw new Error('存在无效的标签值');
             else return tool.nextPromise();

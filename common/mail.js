@@ -25,6 +25,7 @@ function sendMail(to,subject,html){
         html:html
     });
     return new Promise(function(resolve,reject){
+        if(global.CONFIG.closeMail) return resolve();
         mailClient.messages().send(data, function (err, body) {
             if(err){
                 global.LOG.info('发送信件失败');

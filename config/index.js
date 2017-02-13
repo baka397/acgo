@@ -39,7 +39,9 @@ let defaultConfig = {
     //管理员配置
     admins:{
         'admin@test.com':'admin,crawler'
-    }
+    },
+    closeMail:false,                                        //是否关闭邮件发送
+    maxInitNum:10                                           //单次最大初始化个数
 };
 // 启动配置，部署环境变量：dev、test、uat、online
 let startupConfig = process.env.CFG_PATH || ('./config-' + (process.env.NODE_ENV || 'dev'));

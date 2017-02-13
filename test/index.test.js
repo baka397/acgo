@@ -6,6 +6,7 @@ const Model = require('../models');
 const webTest = require('./web/');
 const searchTest = require('./search/');
 const apiV1Test = require('./api/v1/');
+const initTest = require('./init/');
 const request = require('supertest');
 const redisClient = require('../common/redis');
 const config = require('../config/');
@@ -22,6 +23,7 @@ describe('Common', function(){
 webTest(client);
 searchTest();
 apiV1Test(client);
+initTest(client);
 describe('Clear', function(){
     describe('MongoDB', function(){
         Object.keys(Model).forEach(function(key){
@@ -34,6 +36,7 @@ describe('Clear', function(){
             })
         })
     })
+    initTest(client,true);
     describe('Redis', function(){
         it('Flush', function (done) {
             redisClient.keys(config.redisNamespace+':*')
@@ -46,4 +49,5 @@ describe('Clear', function(){
             })
         })
     })
+    initTest(client,true);
 });

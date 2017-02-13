@@ -6,5 +6,6 @@ module.exports={
     ERROR:110, //未知的错误
     MONGO_ERROR:111, //数据库更新错误
     MONGO_UNIQUE_ERROR:11000,//数据库已存在唯一键
+    REDIS_ERROR:112, //redis错误
     UNKNOWN_ERROR:500, //未知错误
 };

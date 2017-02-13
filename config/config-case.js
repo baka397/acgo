@@ -5,5 +5,6 @@ module.exports = {
         path: './logs/',
         type: 'dateFileLog',
         level: 'info'
-    }
+    },
+    closeMail:true
 };

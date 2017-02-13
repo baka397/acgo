@@ -89,7 +89,8 @@ function search(keyword,type,fields,page,pageSize){
  * @return {Object}          Promise对象
  */
 function getList(query,fields,page,pageSize){
-    return Promise.all([Tag.count(query).exec(),Tag.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
+    if(page&&pageSize) return Promise.all([Tag.count(query).exec(),Tag.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
+    else return Tag.find(query).select(fields).exec();
 }
 exports.newAndSave = newAndSave;
 // exports.updateById = updateById;

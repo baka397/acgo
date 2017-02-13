@@ -27,6 +27,13 @@ code(){
     node $appPath/init.js
   echo "add code end"
 }
+#########################addcode####################
+search(){
+  echo "init search begin"
+    export NODE_INIT_CASE=search
+    node $appPath/init.js
+  echo "init search end"
+}
 #########################starting####################
 start() {
   echo start begin
@@ -59,6 +66,9 @@ case "$1" in
         ;;
   code)
         code
+        ;;
+  search)
+        search
         ;;
   start)
         start

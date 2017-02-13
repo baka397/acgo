@@ -196,6 +196,7 @@ module.exports=function(app){
         it('PUT /anime-group/:id', function (done) {
             app.put(path+animeGroupId)
             .send({
+                episodeStart:2,
                 episodeTotal:32,
                 episodeCur:1,
                 status:-1
@@ -217,6 +218,7 @@ module.exports=function(app){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.anime_id!==animeId) throw new Error('验证不符合预期');
                 if(res.body.data.type!==1) throw new Error('验证不符合预期');
+                if(res.body.data.episode_start!==2) throw new Error('验证不符合预期');
                 if(res.body.data.episode_total!==32) throw new Error('验证不符合预期');
                 if(res.body.data.episode_cur!==1) throw new Error('验证不符合预期');
                 if(res.body.data.status!==-1) throw new Error('验证不符合预期');
