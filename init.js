@@ -42,7 +42,7 @@ case 'code':
     });
     break;
 case 'search':
-    client.post('/init/search/')
+    client.get('/init/search/')
     .expect(200)
     .expect(function(res){
         if(res.body.code!==200) throw new Error(res.body.msg);

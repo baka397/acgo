@@ -64,5 +64,11 @@ set NODE_INIT_CASE=code
 npm run init
 ```
 
+### 初始化搜索引擎数据
+```
+set NODE_INIT_CASE=search
+npm run init
+```
+
 ## linux
 请使用shell文件
