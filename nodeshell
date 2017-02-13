@@ -27,7 +27,7 @@ code(){
     node $appPath/init.js
   echo "add code end"
 }
-#########################addcode####################
+#########################search#####################
 search(){
   echo "init search begin"
     export NODE_INIT_CASE=search
