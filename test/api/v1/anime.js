@@ -1,6 +1,8 @@
 'use strict';
 const STATUS_CODE = require('../../../enums/status_code');
 const apiTool = require('../tool');
+const redisClient = require('../../../common/redis');
+const config = require('../../../config/');
 module.exports=function(app){
     let path = '/api/v1/anime/';
     let apiTokenParams;
@@ -10,6 +12,7 @@ module.exports=function(app){
     let tags=[[],[],[]];
     let animeId;
     let animeEditId;
+    let recommenderResult;
     describe('/anime/', function(){
         //Prepare
         it('Prepare Token', function (done) {
@@ -169,6 +172,17 @@ module.exports=function(app){
             .end(function(err,res){
                 done(err);
             });
+        })
+        it('Confirm recommender result', function (done) {
+            redisClient.keys(config.redisNamespace+':orc:*')
+            .then(function(result){
+                console.info(result);
+                recommenderResult=result;
+                if(result.length!==(3+tags[0].length+tags[1].length+tags[2].length)) throw new Error('搜索索引结果不符合预期');
+                done();
+            }).catch(function(err){
+                done(err);
+            })
         })
         it('GET /anime/', function (done) {
             app.get(path+'?keyword='+encodeURIComponent('测试'))
@@ -338,6 +352,19 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('Confirm recommender result', function (done) {
+            redisClient.keys(config.redisNamespace+':orc:*')
+            .then(function(result){
+                let validResult=recommenderResult.every(function(item,index){
+                    return item===result[index];
+                });
+                if(result.length!==(3+tags[0].length+tags[1].length+tags[2].length)) throw new Error('搜索索引结果不符合预期');
+                if(!validResult) throw new Error('搜索索引结果不符合预期');
+                done();
+            }).catch(function(err){
+                done(err);
+            })
+        })
         it('GET /anime/:id again', function (done) {
             app.get(path+animeId)
             .set(apiLoginTokenParams)
@@ -407,6 +434,19 @@ module.exports=function(app){
             .end(function(err,res){
                 done(err);
             });
+        })
+        it('Confirm recommender result', function (done) {
+            redisClient.keys(config.redisNamespace+':orc:*')
+            .then(function(result){
+                let validResult=recommenderResult.every(function(item,index){
+                    return item===result[index];
+                });
+                if(result.length!==(3+tags[0].length+tags[1].length+tags[2].length)) throw new Error('搜索索引结果不符合预期');
+                if(!validResult) throw new Error('搜索索引结果不符合预期');
+                done();
+            }).catch(function(err){
+                done(err);
+            })
         })
         it('PUT /anime/', function (done) {
             app.put(path+animeId)

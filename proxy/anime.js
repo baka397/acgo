@@ -4,6 +4,7 @@ const Anime = require('../models').Anime;
 const AnimeEdit = require('../models').AnimeEdit;
 const AnimeSub = require('../models').AnimeSub;
 const searcher = require('../lib/search/');
+const recommender = require('../lib/recommender/');
 const ANIME = require('../enums/anime');
 const tagProxy = require('./tag');
 const AnimeGroupProxy = require('./anime_group');
@@ -11,6 +12,58 @@ const validator = require('validator');
 const tool = require('../common/tool');
 let animeSearch = searcher.createSearch('animes');
 
+/**
+ * 构建动画推荐引擎任务
+ * @param  {Object} anime   动画数据
+ * @param  {Boolen} isClear 是否清除原始数据
+ * @return {Object}         Promise对象
+ */
+function buildAnimeItemRecommenderPromise(anime,isClear){
+    let itemTool=recommender.itemTool;
+    let pointDatas=[];
+    let addPromise;
+    //更新推荐引擎tag数据
+    pointDatas=pointDatas.concat(anime.tag.map(function(curId){
+        return {
+            type:'dtag',
+            itemId:anime._id,
+            dId:curId,
+            point:global.CONFIG.tagDefaultPoint
+        };
+    }));
+    //更新推荐引擎staff数据
+    pointDatas=pointDatas.concat(anime.staff.map(function(curId){
+        return {
+            type:'dstaff',
+            itemId:anime._id,
+            dId:curId,
+            point:global.CONFIG.staffDefaultPoint
+        };
+    }));
+    //更新推荐引擎cv数据
+    pointDatas=pointDatas.concat(anime.cv.map(function(curId){
+        return {
+            type:'dcv',
+            itemId:anime._id,
+            dId:curId,
+            point:global.CONFIG.cvDefaultPoint
+        };
+    }));
+    addPromise=itemTool.add(pointDatas);
+    if(isClear){
+        return Promise.all([itemTool.clear('dtag',anime._id),itemTool.clear('dstaff',anime._id),itemTool.clear('dcv',anime._id)]) //清除源数据
+            .then(function(){ //更新数据
+                return addPromise;
+            });
+    }
+    return addPromise;
+}
+
+/**
+ * 验证动画数据
+ * @param  {Object} data 验证数据,该对象部分数据会被重写
+ * @return {Object}      Promise对象
+ */
 function validAnimePromise(data){
     //裁剪检测
     if(data.cover||data.coverClip){
@@ -125,16 +178,18 @@ function newAndSave(data){
         anime.cv = data.cv;
         anime.public_status = 0;
         return anime.save();
-    }).then(function(result){
+    }).then(function(anime){
         return newAndSaveAnimeEdit(Object.assign(data,{
-            animeId:result._id
-        }),true);
-    }).then(function(){
-        return new Promise(function(resolve){
-            animeSearch.index(data.name,data.animeId,function(){
+            animeId:anime._id
+        }),true).then(function(){
+            return tool.nextPromise(null,anime);
+        });
+    }).then(function(anime){ //构建搜索引擎及推荐引擎数据
+        return Promise.all([buildAnimeItemRecommenderPromise(anime),new Promise(function(resolve){
+            animeSearch.index(anime.name,anime._id,function(){
                 resolve();
             });
-        });
+        })]);
     });
 }
 
@@ -365,6 +420,7 @@ function aduitAnimeEdit(id,data){
         }
         else throw new Error('没有该数据');
     }).then(function(result){
+        //检测是否需要更新动画数据
         if(Array.isArray(result)){
             let animeEdit=result[0];
             let anime=result[1];
@@ -376,8 +432,16 @@ function aduitAnimeEdit(id,data){
             if(animeEdit.tag.length>0) anime.tag = animeEdit.tag;
             if(animeEdit.staff.length>0) anime.staff = animeEdit.staff;
             if(animeEdit.cv.length>0) anime.cv = animeEdit.cv;
-            if(anime.public_status===0) anime.public_status=1;
+            if(anime.public_status===0){
+                anime.public_status=1;
+            }
             return anime.save();
+        }else{
+            return tool.nextPromise();
+        }
+    }).then(function(anime){
+        if(anime){
+            return buildAnimeItemRecommenderPromise(anime,true);
         }else{
             return tool.nextPromise();
         }
