@@ -282,7 +282,7 @@ function getAnimeEditList(query,fields,page,pageSize){
  * @return {Object}          Promise对象
  */
 function getAnimeSubList(query,fields){
-    return AnimeSub.find(query).select('anime_id').sort({'_id':1}).exec()
+    return getAnimeSubListOnly(query,'anime_id')
     .then(function(result){
         if(result.length===0) return tool.nextPromise(null,[[],[]]);
         //重组动画详情查询
@@ -330,6 +330,15 @@ function getAnimeSubList(query,fields){
         });
         return tool.nextPromise(null,returnData);
     });
+}
+/**
+ * 获取动画订阅列表
+ * @param  {Object} query    Query info
+ * @param  {String} fields   Query info
+ * @return {Object}          Promise对象
+ */
+function getAnimeSubListOnly(query,fields){
+    return AnimeSub.find(query).select(fields).sort({'_id':1}).exec();
 }
 
 /**
@@ -423,3 +432,4 @@ exports.getAnimeEditList = getAnimeEditList;
 exports.aduitAnimeEdit = aduitAnimeEdit;
 exports.subAnime = subAnime;
 exports.getAnimeSubList = getAnimeSubList;
+exports.getAnimeSubListOnly = getAnimeSubListOnly;

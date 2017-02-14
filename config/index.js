@@ -3,6 +3,7 @@ let pkg = require('../package.json');
 
 // 默认配置
 let defaultConfig = {
+    //基础配置
     project: {
         port: 8000,                                         // 项目端口
         name: pkg.name,                                     // 项目名称
@@ -27,9 +28,6 @@ let defaultConfig = {
         apiKey:'key-4gbycm953yvy11aqupebl9to5u0qapg8',
         domain:'mail.acgo.club'
     },
-    //token过期时间
-    userTokenExpire:24*60*60,                               //用户token有效时间,可续期(s)
-    userResetExpire:30*60,                                  //用户重置token有效时间(s)
     //运营配置
     pageSize:10,                                            //默认列表数
     maxPageSize:150,                                        //最大列表数
@@ -40,8 +38,30 @@ let defaultConfig = {
     admins:{
         'admin@test.com':'admin,crawler'
     },
+    //系统参数配置
     closeMail:false,                                        //是否关闭邮件发送
-    maxInitNum:10                                           //单次最大初始化个数
+    maxInitNum:10,                                          //单次初始化最大个数
+    userTokenExpire:24*60*60,                               //用户token有效时间,可续期(s)
+    userResetExpire:30*60,                                  //用户找回密码重置token有效时间(s)
+    //推荐系统配置
+    dimensionWeight:[                                       //推荐系统权重
+        {
+            'name':'dtag',
+            'weight':1
+        },
+        {
+            'name':'dstaff',
+            'weight':1
+        },
+        {
+            'name':'dcv',
+            'weight':1
+        }
+    ],
+    tagDefaultPoint:1,                                      //tag默认评分
+    staffDefaultPoint:1,                                    //staff默认评分
+    cvDefaultPoint:1,                                       //cv默认评分
+    subDefaultPoint:1                                       //订阅默认评分
 };
 // 启动配置，部署环境变量：dev、test、uat、online
 let startupConfig = process.env.CFG_PATH || ('./config-' + (process.env.NODE_ENV || 'dev'));

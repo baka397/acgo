@@ -4,6 +4,7 @@
 const redisClient = require('../common/redis');
 const tool = require('../common/tool');
 const searcher = require('../lib/search/');
+const recommender = require('../lib/recommender/');
 const tagProxy = require('./tag');
 const animeProxy = require('./anime');
 let animeSearch = searcher.createSearch('animes');
@@ -36,15 +37,7 @@ function initSearchIndex(){
                 });
             });
         }));
-        if(promiseList.length===0) return tool.nextPromise();
-        let totalRound=Math.ceil(promiseList.length/global.CONFIG.maxInitNum);
-        let promiseFunc=tool.nextPromise();
-        for(let i=0;i<totalRound;i++){
-            promiseFunc=promiseFunc.then(function(){
-                return Promise.all(promiseList.slice(i*global.CONFIG.maxQuestNum,(i+1)*global.CONFIG.maxQuestNum));
-            });
-        }
-        return promiseFunc;
+        return tool.buildPromiseList(promiseList);
     });
 }
 /**
@@ -58,4 +51,58 @@ function removeSearchIndex(){
         else return tool.nextPromise(null);
     });
 }
+
+function initRecommenderIndex(){
+    return recommender.clearData()
+    .then(function(){
+        return Promise.all([animeProxy.getList({'public_status':1},'_id public_status tag cv staff'),animeProxy.getAnimeSubListOnly({'sub_status':1},'anime_id sub_user sub_status')]);
+    })
+    .then(function(results){
+        let animeList=results[0];
+        let animeSubList=results[0];
+        let promiseList=[];
+        //加入anime到索引序列
+        promiseList=promiseList.concat(animeList.map(function(anime){
+            let pointDatas=[];
+            //添加标签数据
+            pointDatas=pointDatas.concat(anime.tag.map(function(curId){
+                return {
+                    type:'dtag',
+                    itemId:anime._id,
+                    dId:curId,
+                    point:global.CONFIG.tagDefaultPoint
+                };
+            }));
+            //添加staff数据
+            pointDatas=pointDatas.concat(anime.staff.map(function(curId){
+                return {
+                    type:'dstaff',
+                    itemId:anime._id,
+                    dId:curId,
+                    point:global.CONFIG.staffDefaultPoint
+                };
+            }));
+            //添加cv数据
+            pointDatas=pointDatas.concat(anime.cv.map(function(curId){
+                return {
+                    type:'dcv',
+                    itemId:anime._id,
+                    dId:curId,
+                    point:global.CONFIG.cvDefaultPoint
+                };
+            }));
+            return recommender.itemTool.add(pointDatas);
+        }));
+        //加入animeSub到索引序列
+        promiseList=promiseList.concat(animeSubList.map(function(animeSub){
+            return recommender.profileTool.add([{
+                userId:animeSub.sub_user,
+                itemId:animeSub.anime_id,
+                point:global.CONFIG.subDefaultPoint
+            }]);
+        }));
+        return tool.buildPromiseList(promiseList);
+    });
+}
 exports.initSearchIndex=initSearchIndex;
+exports.initRecommenderIndex=initRecommenderIndex;

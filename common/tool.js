@@ -41,12 +41,13 @@ exports.buildResJson = function(msg,data){
  * @param  {Object} data 传递数据
  * @return {Object}      Promise对象
  */
-exports.nextPromise = function(err,data){
+function nextPromise(err,data){
     return new Promise(function(resolve,reject){
         if(err) reject(err);
         else resolve(data);
     });
 };
+exports.nextPromise=nextPromise;
 
 exports.rebuildPageSize = function(req){
     req.query.page = parseInt(req.query.page);
@@ -66,4 +67,16 @@ exports.getTimeInfo = function(seconds){
         timeOutput = parseInt(nApprox) + aMultiples[nMultiple];
     }
     return timeOutput;
+};
+
+exports.buildPromiseList = function(promiseList){
+    if(promiseList.length===0) return nextPromise();
+    let totalRound=Math.ceil(promiseList.length/global.CONFIG.maxInitNum);
+    let promiseFunc=nextPromise();
+    for(let i=0;i<totalRound;i++){
+        promiseFunc=promiseFunc.then(function(){
+            return Promise.all(promiseList.slice(i*global.CONFIG.maxQuestNum,(i+1)*global.CONFIG.maxQuestNum));
+        });
+    }
+    return promiseFunc;
 };
