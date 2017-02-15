@@ -46,7 +46,7 @@ function nextPromise(err,data){
         if(err) reject(err);
         else resolve(data);
     });
-};
+}
 exports.nextPromise=nextPromise;
 
 exports.rebuildPageSize = function(req){
@@ -69,14 +69,25 @@ exports.getTimeInfo = function(seconds){
     return timeOutput;
 };
 
-exports.buildPromiseList = function(promiseList){
+/**
+ * 创建Promise分页执行列表
+ * @param  {Array}  promiseList Promise对象列表
+ * @return {Object}             Promise对象
+ */
+exports.buildPromiseListByPage = function(promiseList){
     if(promiseList.length===0) return nextPromise();
+    let resultData=[];
     let totalRound=Math.ceil(promiseList.length/global.CONFIG.maxInitNum);
     let promiseFunc=nextPromise();
     for(let i=0;i<totalRound;i++){
         promiseFunc=promiseFunc.then(function(){
-            return Promise.all(promiseList.slice(i*global.CONFIG.maxQuestNum,(i+1)*global.CONFIG.maxQuestNum));
+            return Promise.all(promiseList.slice(i*global.CONFIG.maxQuestNum,(i+1)*global.CONFIG.maxQuestNum))
+            .then(function(result){
+                resultData=resultData.concat(result);
+            });
         });
     }
-    return promiseFunc;
+    return promiseFunc.then(function(){
+        return nextPromise(null,resultData);
+    });
 };

@@ -51,7 +51,19 @@ module.exports=function(app,emptyTest){
                 redisClient.keys(config.redisNamespace+':orc:*')
                 .then(function(result){
                     console.info(result);
-                    if(result.length===0) throw new Error('搜索索引结果不符合预期');
+                    if(result.length===0) throw new Error('推荐引擎结果不符合预期');
+                    if(!result.some(function(key){
+                        let reg=new RegExp(config.redisNamespace+'\:orc\:profile\:');
+                        return reg.test(key);
+                    })) throw new Error('推荐引擎结果不符合预期');
+                    if(!result.some(function(key){
+                        let reg=new RegExp(config.redisNamespace+'\:orc\:item\:dimension\:');
+                        return reg.test(key);
+                    })) throw new Error('推荐引擎结果不符合预期');
+                    if(!result.some(function(key){
+                        let reg=new RegExp(config.redisNamespace+'\:orc\:item\:item\:');
+                        return reg.test(key);
+                    })) throw new Error('推荐引擎结果不符合预期');
                     done();
                 }).catch(function(err){
                     done(err);
@@ -61,7 +73,7 @@ module.exports=function(app,emptyTest){
             it('Confirm init recommender result', function (done) {
                 redisClient.keys(config.redisNamespace+':orc:*')
                 .then(function(result){
-                    if(result.length!==0) throw new Error('搜索索引结果不符合预期');
+                    if(result.length!==0) throw new Error('推荐引擎结果不符合预期');
                     done();
                 }).catch(function(err){
                     done(err);

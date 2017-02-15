@@ -173,12 +173,12 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('Confirm recommender result', function (done) {
-            redisClient.keys(config.redisNamespace+':orc:*')
+        it('Confirm recommender item result', function (done) {
+            redisClient.keys(config.redisNamespace+':orc:item:*')
             .then(function(result){
                 console.info(result);
                 recommenderResult=result;
-                if(result.length!==(3+tags[0].length+tags[1].length+tags[2].length)) throw new Error('搜索索引结果不符合预期');
+                if(result.length!==(3+tags[0].length+tags[1].length+tags[2].length)) throw new Error('推荐引擎结果不符合预期');
                 done();
             }).catch(function(err){
                 done(err);
@@ -352,14 +352,14 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('Confirm recommender result', function (done) {
-            redisClient.keys(config.redisNamespace+':orc:*')
+        it('Confirm recommender item result', function (done) {
+            redisClient.keys(config.redisNamespace+':orc:item:*')
             .then(function(result){
                 let validResult=recommenderResult.every(function(item,index){
                     return item===result[index];
                 });
-                if(result.length!==(3+tags[0].length+tags[1].length+tags[2].length)) throw new Error('搜索索引结果不符合预期');
-                if(!validResult) throw new Error('搜索索引结果不符合预期');
+                if(result.length!==(3+tags[0].length+tags[1].length+tags[2].length)) throw new Error('推荐引擎结果不符合预期');
+                if(!validResult) throw new Error('推荐引擎结果不符合预期');
                 done();
             }).catch(function(err){
                 done(err);
@@ -435,14 +435,14 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('Confirm recommender result', function (done) {
-            redisClient.keys(config.redisNamespace+':orc:*')
+        it('Confirm recommender item result', function (done) {
+            redisClient.keys(config.redisNamespace+':orc:item:*')
             .then(function(result){
                 let validResult=recommenderResult.every(function(item,index){
                     return item===result[index];
                 });
-                if(result.length!==(3+tags[0].length+tags[1].length+tags[2].length)) throw new Error('搜索索引结果不符合预期');
-                if(!validResult) throw new Error('搜索索引结果不符合预期');
+                if(result.length!==(3+tags[0].length+tags[1].length+tags[2].length)) throw new Error('推荐引擎结果不符合预期');
+                if(!validResult) throw new Error('推荐引擎结果不符合预期');
                 done();
             }).catch(function(err){
                 done(err);
@@ -552,6 +552,19 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('Confirm recommender profile result', function (done) {
+            redisClient.keys(config.redisNamespace+':orc:profile:*')
+            .then(function(result){
+                return redisClient.zrange(result[0],0,-1,'WITHSCORES');
+            })
+            .then(function(result){
+                if(result.length!==2) throw new Error('推荐引擎结果不符合预期');
+                if(parseInt(result[1])!==config.subDefaultPoint) throw new Error('推荐引擎结果不符合预期');
+                done();
+            }).catch(function(err){
+                done(err);
+            })
+        })
         it('GET /anime/sub/me', function (done) {
             app.get(path+'sub/me')
             .set(apiLoginTokenParams)
@@ -584,6 +597,19 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('Confirm recommender profile result', function (done) {
+            redisClient.keys(config.redisNamespace+':orc:profile:*')
+            .then(function(result){
+                return redisClient.zrange(result[0],0,-1,'WITHSCORES');
+            })
+            .then(function(result){
+                if(result.length!==2) throw new Error('推荐引擎结果不符合预期');
+                if(parseInt(result[1])!==config.subDefaultPoint) throw new Error('推荐引擎结果不符合预期');
+                done();
+            }).catch(function(err){
+                done(err);
+            })
+        })
         it('GET /anime/sub/me again', function (done) {
             app.get(path+'sub/me')
             .set(apiLoginTokenParams)
@@ -615,6 +641,19 @@ module.exports=function(app){
             .end(function(err,res){
                 done(err);
             });
+        })
+        it('Confirm recommender profile result', function (done) {
+            redisClient.keys(config.redisNamespace+':orc:profile:*')
+            .then(function(result){
+                return redisClient.zrange(result[0],0,-1,'WITHSCORES');
+            })
+            .then(function(result){
+                if(result.length!==2) throw new Error('推荐引擎结果不符合预期');
+                if(parseInt(result[1])===config.subDefaultPoint) throw new Error('推荐引擎结果不符合预期');
+                done();
+            }).catch(function(err){
+                done(err);
+            })
         })
         it('GET /anime/sub/me again', function (done) {
             app.get(path+'sub/me')

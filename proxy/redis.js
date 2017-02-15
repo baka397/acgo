@@ -37,7 +37,7 @@ function initSearchIndex(){
                 });
             });
         }));
-        return tool.buildPromiseList(promiseList);
+        return tool.buildPromiseListByPage(promiseList);
     });
 }
 /**
@@ -59,7 +59,7 @@ function initRecommenderIndex(){
     })
     .then(function(results){
         let animeList=results[0];
-        let animeSubList=results[0];
+        let animeSubList=results[1];
         let promiseList=[];
         //加入anime到索引序列
         promiseList=promiseList.concat(animeList.map(function(anime){
@@ -101,7 +101,7 @@ function initRecommenderIndex(){
                 point:global.CONFIG.subDefaultPoint
             }]);
         }));
-        return tool.buildPromiseList(promiseList);
+        return tool.buildPromiseListByPage(promiseList);
     });
 }
 exports.initSearchIndex=initSearchIndex;

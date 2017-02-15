@@ -60,6 +60,21 @@ function buildAnimeItemRecommenderPromise(anime,isClear){
 }
 
 /**
+ * 构建用户资料推荐引擎任务
+ * @param  {Object} animeSub          订阅数据
+ * @return {Object}                   Promise对象
+ */
+function buildAnimeProfileRecommenderPromise(animeSub){
+    if(!animeSub) return tool.nextPromise();
+    let profileTool=recommender.profileTool;
+    return profileTool.add([{
+        userId:animeSub.sub_user,
+        itemId:animeSub.anime_id,
+        point:animeSub.sub_status*global.CONFIG.subDefaultPoint
+    }]);
+}
+
+/**
  * 验证动画数据
  * @param  {Object} data 验证数据,该对象部分数据会被重写
  * @return {Object}      Promise对象
@@ -461,9 +476,9 @@ function subAnime(data){
     return getAnimeSubByAnimeIdAndUserId(data.animeId,data.subUser).then(function(animeSub){
         //如果有该数据
         if(animeSub){
-            //如果该数据已订阅
+            //如果该数据无状态改变
             if(animeSub.sub_status===data.subStatus){
-                return tool.nextPromise(null,animeSub);
+                return tool.nextPromise();
             }else{
                 animeSub.sub_status=data.subStatus;
                 return animeSub.save();
@@ -482,6 +497,8 @@ function subAnime(data){
                 }
             });
         }
+    }).then(function(animeSub){
+        return buildAnimeProfileRecommenderPromise(animeSub);
     });
 }
 
