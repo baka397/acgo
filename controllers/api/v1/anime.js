@@ -118,7 +118,7 @@ router.put('/:id',function(req,res,next){
     });
 });
 
-router.get('/audit/me',function(req,res,next){
+router.get('/audit/me',apiAuth.checkApiAdmin,function(req,res,next){
     Anime.getAnimeEditByUserId(req.user._id).then(function(result){
         res.send(tool.buildResJson('获取信息成功',result));
     }).catch(function(err){
