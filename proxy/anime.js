@@ -1,4 +1,5 @@
 'use strict';
+const xss = require('xss');
 //动画操作
 const Anime = require('../models').Anime;
 const AnimeEdit = require('../models').AnimeEdit;
@@ -187,7 +188,7 @@ function newAndSave(data){
         anime.cover = data.cover;
         anime.cover_clip = data.coverClip;
         anime.show_status = data.showStatus;
-        anime.desc = data.desc;
+        anime.desc = xss(data.desc);
         anime.tag = data.tag;
         anime.staff = data.staff;
         anime.cv = data.cv;
@@ -232,7 +233,7 @@ function newAndSaveAnimeEdit(data,unvalid){
                 animeEdit.cover_clip = data.coverClip;
             }
             if(data.showStatus) animeEdit.show_status = data.showStatus;
-            if(data.desc) animeEdit.desc = data.desc;
+            if(data.desc) animeEdit.desc = xss(data.desc);
             if(data.tag) animeEdit.tag = data.tag;
             if(data.staff) animeEdit.staff = data.staff;
             if(data.cv) animeEdit.cv = data.cv;
