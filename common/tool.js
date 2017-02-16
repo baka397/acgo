@@ -1,10 +1,12 @@
 'use strict';
 const STATUS_CODE = require('../enums/status_code');
+const validator = require('validator');
 
 exports.filterReqLog = function(data){
     let result=Object.assign({},data);
     if(result.password) delete result.password;
     if(result.oldPassword) delete result.oldPassword;
+    if(result.email) delete result.email;
     return JSON.stringify(result);
 };
 
@@ -72,22 +74,39 @@ exports.getTimeInfo = function(seconds){
 /**
  * 创建Promise分页执行列表
  * @param  {Array}  promiseList Promise对象列表
+ * @param  {Number} pageSize    单页个数
  * @return {Object}             Promise对象
  */
-exports.buildPromiseListByPage = function(promiseList){
+exports.buildPromiseListByPage = function(promiseList,pageSize){  
     if(promiseList.length===0) return nextPromise();
     let resultData=[];
-    let totalRound=Math.ceil(promiseList.length/global.CONFIG.maxInitNum);
+    let roundCount=0;
+    let totalRound=Math.ceil(promiseList.length/pageSize);
     let promiseFunc=nextPromise();
     for(let i=0;i<totalRound;i++){
         promiseFunc=promiseFunc.then(function(){
-            return Promise.all(promiseList.slice(i*global.CONFIG.maxQuestNum,(i+1)*global.CONFIG.maxQuestNum))
+            return Promise.all(promiseList.slice(i*pageSize,(i+1)*pageSize))
             .then(function(result){
+                roundCount++;
                 resultData=resultData.concat(result);
             });
         });
     }
     return promiseFunc.then(function(){
-        return nextPromise(null,resultData);
+        return nextPromise(null,[roundCount].concat(resultData));
     });
+};
+
+/**
+ * 是否为图片地址
+ * @param  {String}   name 图片名称
+ * @return {Boolean}       
+ */
+exports.isImageName = function(name){
+    if(typeof name!=='string') return false;
+    let nameArray=name.split('-');
+    if(nameArray.length!==2) return false;
+    if(!validator.isMongoId(nameArray[0])) return false;
+    if(!validator.matches(nameArray[1],/\d{13}\.jpg/)) return false;
+    return true;
 };

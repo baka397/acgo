@@ -1,11 +1,41 @@
 'use strict';
 //用户操作
+const xss = require('xss');
 const validator = require('validator');
 const User = require('../models').User;
 const Code = require('./code');
 const auth = require('../common/auth');
 const tool = require('../common/tool');
 const mail = require('../common/mail');
+/**
+ * 验证用户数据
+ * @param  {Object} data 验证数据,该对象部分数据会被重写
+ * @return {Object}      Promise对象
+ */
+function validUserPromise(data){
+    if(data.avatar&&!tool.isImageName(data.avatar)){
+        let err=new Error('无效的图片数据');
+        return tool.nextPromise(err);
+    }
+    //裁剪检测
+    if(data.avatar||data.avatarClip){
+        data.avatarClip=data.avatarClip?data.avatarClip.split(',').map(function(clip){
+            return parseInt(clip);
+        }):[];
+        if(data.avatarClip.length!==4){
+            let err=new Error('无效的裁剪参数');
+            return tool.nextPromise(err);
+        }
+        let validClip=data.avatarClip.every(function(clip){
+            return clip>=0;
+        });
+        if(!validClip){
+            let err=new Error('无效的裁剪参数');
+            return tool.nextPromise(err);
+        }
+    }
+    return tool.nextPromise();
+}
 /**
  * 新增用户
  * @param  {String} data  数据对象
@@ -40,7 +70,10 @@ function newAndSave(data){
  * @return {Object}          Promise对象
  */
 function updateById(id,data,checkOld){
-    return getById(id).then(function(user){
+    return validUserPromise(data).then(function(){
+        return getById(id);
+    })
+    .then(function(user){
         if(user){
             if(data.password&&checkOld&&(!data.oldPassword||user.password!==auth.md5Hash(global.CONFIG.pwSalt+data.oldPassword))){
                 throw new Error('错误的原始密码');
@@ -48,6 +81,9 @@ function updateById(id,data,checkOld){
             let saveData={};
             if(data.nickname) saveData.nickname = data.nickname;
             if(data.password) saveData.password = auth.md5Hash(global.CONFIG.pwSalt+data.password);
+            if(data.avatar) saveData.avatar = data.avatar;
+            if(data.avatarClip) saveData.avatar_clip = data.avatarClip;
+            if(data.desc) saveData.desc = xss(data.desc);
             Object.assign(user,saveData);
             return user.save().then(function(){
                 //查询是否变更密码

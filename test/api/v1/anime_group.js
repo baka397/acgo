@@ -621,7 +621,7 @@ module.exports=function(app){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.length!==1) throw new Error('验证不符合预期');
                 if(res.body.data[0].name!=='测试动画') throw new Error('验证不符合预期');
-                if(res.body.data[0].cover!=='测试动画封面3') throw new Error('验证不符合预期');
+                if(res.body.data[0].cover!=='5885b320a1763a717629bac3-1485226800898.jpg') throw new Error('验证不符合预期');
                 let curClip=[1,2,3,5];
                 let validResult=res.body.data[0].cover_clip.every(function(clip,index){
                     return clip===curClip[index];

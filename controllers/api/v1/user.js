@@ -70,7 +70,7 @@ router.get('/',function(req,res,next){
             $in:ids
         }
     };
-    User.getList(queryData,'_id nickname',page,pageSize).then(function(result){
+    User.getList(queryData,'_id nickname avatar avatar_clip desc',page,pageSize).then(function(result){
         res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
@@ -126,6 +126,9 @@ router.put('/me',function(req,res,next){
     data.oldPassword=req.body.oldPassword;
     data.password=req.body.password;
     data.nickname=req.body.nickname;
+    data.avatar=req.body.avatar;
+    data.avatarClip=req.body.avatarClip;
+    data.desc=req.body.desc;
     User.updateById(req.user._id,data,true).then(function(){
         res.send(tool.buildResJson('更新成功',null));
     }).catch(function(err){

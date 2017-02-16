@@ -1,6 +1,7 @@
 'use strict';
-const xss = require('xss');
 //动画操作
+const xss = require('xss');
+const validator = require('validator');
 const Anime = require('../models').Anime;
 const AnimeEdit = require('../models').AnimeEdit;
 const AnimeSub = require('../models').AnimeSub;
@@ -9,7 +10,6 @@ const recommender = require('../lib/recommender/');
 const ANIME = require('../enums/anime');
 const tagProxy = require('./tag');
 const AnimeGroupProxy = require('./anime_group');
-const validator = require('validator');
 const tool = require('../common/tool');
 let animeSearch = searcher.createSearch('animes');
 
@@ -81,6 +81,10 @@ function buildAnimeProfileRecommenderPromise(animeSub){
  * @return {Object}      Promise对象
  */
 function validAnimePromise(data){
+    if(data.cover&&!tool.isImageName(data.cover)){
+        let err=new Error('无效的图片数据');
+        return tool.nextPromise(err);
+    }
     //裁剪检测
     if(data.cover||data.coverClip){
         data.coverClip=data.coverClip?data.coverClip.split(',').map(function(clip){
