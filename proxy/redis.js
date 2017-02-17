@@ -23,21 +23,25 @@ function initSearchIndex(){
         let promiseList=[];
         //加入tag索引到promiseList
         promiseList=promiseList.concat(tagList.map(function(tag){
-            return new Promise(function(resolve){
-                tagSearch.index(tag.name,tag._id,function(){
-                    resolve();
+            return function(){
+                return new Promise(function(resolve){
+                    tagSearch.index(tag.name,tag._id,function(){
+                        resolve();
+                    });
                 });
-            });
+            };
         }));
         //加入anime索引到promiseList
         promiseList=promiseList.concat(animeList.map(function(anime){
-            return new Promise(function(resolve){
-                animeSearch.index(anime.name,anime._id,function(){
-                    resolve();
+            return function(){
+                return new Promise(function(resolve){
+                    animeSearch.index(anime.name,anime._id,function(){
+                        resolve();
+                    });
                 });
-            });
+            };
         }));
-        return tool.buildPromiseListByPage(promiseList);
+        return tool.buildPromiseListByPage(promiseList,global.CONFIG.pageSize);
     });
 }
 /**
@@ -95,17 +99,21 @@ function initRecommenderIndex(){
                     point:global.CONFIG.cvDefaultPoint
                 };
             }));
-            return recommender.itemTool.add(pointDatas);
+            return function(){
+                return recommender.itemTool.add(pointDatas);
+            };
         }));
         //加入animeSub到索引序列
         promiseList=promiseList.concat(animeSubList.map(function(animeSub){
-            return recommender.profileTool.add([{
-                userId:animeSub.sub_user,
-                itemId:animeSub.anime_id,
-                point:global.CONFIG.subDefaultPoint
-            }]);
+            return function(){
+                return recommender.profileTool.add([{
+                    userId:animeSub.sub_user,
+                    itemId:animeSub.anime_id,
+                    point:global.CONFIG.subDefaultPoint
+                }]);
+            };
         }));
-        return tool.buildPromiseListByPage(promiseList);
+        return tool.buildPromiseListByPage(promiseList,global.CONFIG.pageSize);
     });
 }
 

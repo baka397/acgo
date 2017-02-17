@@ -22,11 +22,21 @@ module.exports=function(){
             let testObject={'test':'test'};
             let testArray=[1];
             let testObjectArray=[testObject];
-            promiseList.push(tool.nextPromise(null,1));
-            promiseList.push(tool.nextPromise(null,testString));
-            promiseList.push(tool.nextPromise(null,testObject));
-            promiseList.push(tool.nextPromise(null,testArray));
-            promiseList.push(tool.nextPromise(null,testObjectArray));
+            promiseList.push(function(){
+                return tool.nextPromise(null,1);
+            });
+            promiseList.push(function(){
+                return tool.nextPromise(null,testString);
+            });
+            promiseList.push(function(){
+                return tool.nextPromise(null,testObject);
+            });
+            promiseList.push(function(){
+                return tool.nextPromise(null,testArray);
+            });
+            promiseList.push(function(){
+                return tool.nextPromise(null,testObjectArray);
+            });
             tool.buildPromiseListByPage(promiseList,3)
             .then(function(results){
                 let validResult=results.every(function(result,index){
@@ -50,7 +60,7 @@ module.exports=function(){
             }).catch(function(err){
                 done(err);
             })
-        })
+        });
         it('Call buildPromiseListByPage with empty', function (done) {
             let promiseList=[];
             tool.buildPromiseListByPage(promiseList,3)
@@ -64,10 +74,12 @@ module.exports=function(){
             .catch(function(err){
                 done(err);
             })
-        })
+        });
         it('Call buildPromiseListByPage with error', function (done) {
             let promiseList=[];
-            promiseList.push(tool.nextPromise(new Error('测试错误')));
+            promiseList.push(function(){
+                return tool.nextPromise(new Error('测试错误'));
+            });
             tool.buildPromiseListByPage(promiseList,3)
             .then(function(){
                 done(new Error('不符合预期的测试结果'));
@@ -76,7 +88,7 @@ module.exports=function(){
                 if(err.message==='测试错误') done();
                 else done(err);
             })
-        })
+        });
         it('Call isImageName', function (done) {
             if(tool.isImageName('5885b320a1763a717629bac3-1485222972574.jpg')){
                 done();

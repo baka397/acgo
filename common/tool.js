@@ -73,19 +73,22 @@ exports.getTimeInfo = function(seconds){
 
 /**
  * 创建Promise分页执行列表
- * @param  {Array}  promiseList Promise对象列表
- * @param  {Number} pageSize    单页个数
- * @return {Object}             Promise对象
+ * @param  {Array}  promiseFuncList Promise函数列表
+ * @param  {Number} pageSize        单页个数
+ * @return {Object}                 Promise对象
  */
-exports.buildPromiseListByPage = function(promiseList,pageSize){  
-    if(promiseList.length===0) return nextPromise();
+exports.buildPromiseListByPage = function(promiseFuncList,pageSize){  
+    if(promiseFuncList.length===0||!pageSize) return nextPromise();
     let resultData=[];
     let roundCount=0;
-    let totalRound=Math.ceil(promiseList.length/pageSize);
+    let totalRound=Math.ceil(promiseFuncList.length/pageSize);
     let promiseFunc=nextPromise();
     for(let i=0;i<totalRound;i++){
         promiseFunc=promiseFunc.then(function(){
-            return Promise.all(promiseList.slice(i*pageSize,(i+1)*pageSize))
+            let promiseList=promiseFuncList.slice(i*pageSize,(i+1)*pageSize).map(function(curFunc){
+                return curFunc();
+            });
+            return Promise.all(promiseList)
             .then(function(result){
                 roundCount++;
                 resultData=resultData.concat(result);
