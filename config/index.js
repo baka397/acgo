@@ -61,7 +61,8 @@ let defaultConfig = {
     tagDefaultPoint:1,                                      //tag默认评分
     staffDefaultPoint:1,                                    //staff默认评分
     cvDefaultPoint:1,                                       //cv默认评分
-    subDefaultPoint:1                                       //订阅默认评分
+    subDefaultPoint:1,                                      //订阅默认评分
+    dimensionTopNum:10                                      //用户Item dimension分析top数量
 };
 // 启动配置，部署环境变量：dev、test、uat、online
 let startupConfig = process.env.CFG_PATH || ('./config-' + (process.env.NODE_ENV || 'dev'));

@@ -1,6 +1,6 @@
 'use strict';
 //Redis初始化
-
+const validator = require('validator');
 const redisClient = require('../common/redis');
 const tool = require('../common/tool');
 const searcher = require('../lib/search/');
@@ -52,6 +52,10 @@ function removeSearchIndex(){
     });
 }
 
+/**
+ * 初始化推荐引擎数据
+ * @return {Object} Promise对象
+ */
 function initRecommenderIndex(){
     return recommender.clearData()
     .then(function(){
@@ -104,5 +108,44 @@ function initRecommenderIndex(){
         return tool.buildPromiseListByPage(promiseList);
     });
 }
+
+/**
+ * 获取用户Item dimension缓存数据
+ * @param  {String} userId 用户ID
+ * @param  {Number} top    [可选]Top数据,>0倒叙,<0正序
+ * @return {Object}        Promise对象
+ */
+function getRecommenderDimension(userId,top){
+    if(!validator.isMongoId(userId)) return tool.nextPromise(new Error('请使用正确的用户ID'));
+    return recommender.rankingTool.getDimensionCache(userId,top).then(function(result){
+        let tagIds=[];
+        Object.keys(result).forEach(function(dimensionGroup){
+            tagIds=tagIds.concat(result[dimensionGroup].map(function(dimension){
+                return dimension.id;
+            }));
+        });
+        if(tagIds.length===0) return tool.nextPromise(null,result);
+        return tagProxy.getList({
+            '_id':{
+                $in:tagIds
+            }
+        },'_id name').then(function(tags){
+            let tagMap={};
+            let newDimensionResult={};
+            tags.forEach(function(tag){
+                tagMap[tag._id]=tag.name;
+            });
+            Object.keys(result).forEach(function(dimensionGroup){
+                newDimensionResult[dimensionGroup]=result[dimensionGroup].map(function(dimension){
+                    return Object.assign({},dimension,{
+                        name:tagMap[dimension.id]
+                    });
+                });
+            });
+            return tool.nextPromise(null,newDimensionResult);
+        });
+    });
+}
 exports.initSearchIndex=initSearchIndex;
 exports.initRecommenderIndex=initRecommenderIndex;
+exports.getRecommenderDimension=getRecommenderDimension;

@@ -50,14 +50,13 @@ function buildAnimeItemRecommenderPromise(anime,isClear){
             point:global.CONFIG.cvDefaultPoint
         };
     }));
-    addPromise=itemTool.add(pointDatas);
     if(isClear){
         return Promise.all([itemTool.clear('dtag',anime._id),itemTool.clear('dstaff',anime._id),itemTool.clear('dcv',anime._id)]) //清除源数据
             .then(function(){ //更新数据
-                return addPromise;
+                return itemTool.add(pointDatas);
             });
     }
-    return addPromise;
+    return itemTool.add(pointDatas);
 }
 
 /**

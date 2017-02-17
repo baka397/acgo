@@ -435,19 +435,6 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('Confirm recommender item result', function (done) {
-            redisClient.keys(config.redisNamespace+':orc:item:*')
-            .then(function(result){
-                let validResult=recommenderResult.every(function(item,index){
-                    return item===result[index];
-                });
-                if(result.length!==(3+tags[0].length+tags[1].length+tags[2].length)) throw new Error('推荐引擎结果不符合预期');
-                if(!validResult) throw new Error('推荐引擎结果不符合预期');
-                done();
-            }).catch(function(err){
-                done(err);
-            })
-        })
         it('PUT /anime/:id', function (done) {
             app.put(path+animeId)
             .set(apiLoginTokenParams)
@@ -502,6 +489,19 @@ module.exports=function(app){
             .end(function(err,res){
                 done(err);
             });
+        })
+        it('Confirm recommender item result', function (done) {
+            redisClient.keys(config.redisNamespace+':orc:item:*')
+            .then(function(result){
+                let validResult=recommenderResult.every(function(item,index){
+                    return item===result[index];
+                });
+                if(result.length!==(3+tags[0].length+tags[1].length+tags[2].length)) throw new Error('推荐引擎结果不符合预期');
+                if(!validResult) throw new Error('推荐引擎结果不符合预期');
+                done();
+            }).catch(function(err){
+                done(err);
+            })
         })
         it('GET /anime/audit/ with approved status', function (done) {
             app.get(path+'audit/?animeId='+animeId+'&auditStatus=1')
@@ -662,6 +662,17 @@ module.exports=function(app){
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.length!==0) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /anime/sub/:id again', function (done) {
+            app.put(path+'sub/'+animeId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
             })
             .end(function(err,res){
                 done(err);

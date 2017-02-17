@@ -6,6 +6,7 @@ let tagTest = require('./tag');
 let animeTest = require('./anime');
 let animeGroupTest = require('./anime_group');
 let uploadTest = require('./upload');
+let analyticsTest = require('./analytics');
 module.exports=function(app){
     describe('/api/v1', function(){
         commonTest(app);
@@ -14,5 +15,6 @@ module.exports=function(app){
         animeTest(app);
         animeGroupTest(app);
         uploadTest(app);
+        analyticsTest(app);
     })
 }
