@@ -34,6 +34,13 @@ search(){
     node $appPath/init.js
   echo "init search end"
 }
+#########################recommender#####################
+recommender(){
+  echo "init recommender begin"
+    export NODE_INIT_CASE=recommender
+    node $appPath/init.js
+  echo "init recommender end"
+}
 #########################starting####################
 start() {
   echo start begin
@@ -70,6 +77,9 @@ case "$1" in
   search)
         search
         ;;
+  recommender)
+        recommender
+        ;;
   start)
         start
         ;;
@@ -83,7 +93,7 @@ case "$1" in
         restart
         ;;
   ?|help)
-        echo $"Usage: $0 {addapp|addcode|start|status|stop|restart|help|?}"
+        echo $"Usage: $0 {app|code|search|recommender|start|status|stop|restart|help|?}"
         ;;
   *)
         echo $"Usage: $0 {help|?}"

@@ -55,6 +55,20 @@ case 'search':
         process.exit(1);
     });
     break;
+case 'recommender':
+    client.get('/init/recommender/')
+    .expect(200)
+    .expect(function(res){
+        if(res.body.code!==200) throw new Error(res.body.msg);
+        global.console.log('初始化推荐引擎数据成功');
+    })
+    .end(function(err){
+        if(err){
+            global.console.log('初始化推荐引擎数据失败',err.message);
+        }
+        process.exit(1);
+    });
+    break;
 default:
     global.console.log('无效的命令');
     process.exit(1);
