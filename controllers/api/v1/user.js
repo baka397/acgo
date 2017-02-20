@@ -77,14 +77,33 @@ router.get('/',function(req,res,next){
         next(err);
     });
 });
-router.get('/me',function(req,res,next){
-    User.getById(req.user._id).then(function(user){
-        let returnData = Object.assign({},req.user,{
+router.get('/:id',function(req,res,next){
+    let userPromise;
+    switch(req.params.id){
+    case 'me':
+        userPromise=User.getById(req.user._id);
+        break;
+    default:
+        if(!validator.isMongoId(req.params.id)){
+            let err=new Error('错误的用户');
+            err.status=STATUS_CODE.ERROR;
+            return next(err);
+        }
+        userPromise=User.getById(req.params.id);
+    }
+    userPromise.then(function(user){
+        let returnData = {
+            _id:user._id,
             nickname:user.nickname,
             avatar:user.avatar||'',
             avatar_clip:user.avatar_clip,
             desc:user.desc||''
-        });
+        };
+        switch(req.params.id){
+        case 'me':
+            returnData.role=req.user.role;
+            break;
+        }
         res.send(tool.buildResJson('获取信息成功',returnData));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;

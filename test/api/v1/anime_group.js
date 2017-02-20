@@ -82,7 +82,6 @@ module.exports=function(app){
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
-                if(res.body.data.email!=='test@test.com') throw new Error('验证不符合预期');
                 userId=res.body.data._id;
             })
             .end(function(err,res){
