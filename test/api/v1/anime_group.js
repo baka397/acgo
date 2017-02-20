@@ -7,6 +7,7 @@ module.exports=function(app){
     let apiLoginTokenParams;
     let apiAdminTokenParams;
     let password = apiTool.getPassword('testpassword');
+    let userId;
     let animeId;
     let animeGroupId;
     let animeGroupTaskId;
@@ -70,6 +71,19 @@ module.exports=function(app){
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 animeId=res.body.data.content[0]._id;
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /user/me', function (done) {
+            app.get('/api/v1/user/me')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.email!=='test@test.com') throw new Error('验证不符合预期');
+                userId=res.body.data._id;
             })
             .end(function(err,res){
                 done(err);
@@ -587,8 +601,22 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('GET /anime-group/watch/', function (done) {
-            app.get(path+'watch/')
+        it('GET /anime-group/watch/me', function (done) {
+            app.get(path+'watch/me')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.length!==1) throw new Error('验证不符合预期');
+                if(res.body.data[0].group_id!==animeGroupCacheId) throw new Error('验证不符合预期');
+                if(res.body.data[0].watch_ep!==1) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/watch/:id', function (done) {
+            app.get(path+'watch/'+userId)
             .set(apiLoginTokenParams)
             .expect(200)
             .expect(function(res){
@@ -1555,6 +1583,18 @@ module.exports=function(app){
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /anime-group/watch/:id with wrong userId', function (done) {
+            app.get(path+'watch/test')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
                 console.log(res.body.msg);
             })
             .end(function(err,res){
