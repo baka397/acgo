@@ -155,9 +155,11 @@ module.exports=function(app){
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
-                if(res.body.data.email!=='test@test.com') throw new Error('验证不符合预期');
                 if(res.body.data.role!=='user') throw new Error('验证不符合预期');
                 if(res.body.data.nickname!=='测试昵称') throw new Error('验证不符合预期');
+                if(res.body.data.avatar!=='') throw new Error('验证不符合预期');
+                if(res.body.data.avatar_clip.length!==0) throw new Error('验证不符合预期');
+                if(res.body.data.desc!=='') throw new Error('验证不符合预期');
                 userId=res.body.data._id;
             })
             .end(function(err,res){

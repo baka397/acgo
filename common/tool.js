@@ -2,7 +2,12 @@
 const STATUS_CODE = require('../enums/status_code');
 const validator = require('validator');
 
-exports.filterReqLog = function(data){
+/**
+ * 过滤限制数据
+ * @param  {Object} data 过滤前数据
+ * @return {String}      
+ */
+exports.filterLimitData = function(data){
     let result=Object.assign({},data);
     if(result.password) delete result.password;
     if(result.oldPassword) delete result.oldPassword;

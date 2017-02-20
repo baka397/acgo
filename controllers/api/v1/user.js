@@ -80,10 +80,11 @@ router.get('/',function(req,res,next){
 router.get('/me',function(req,res,next){
     User.getById(req.user._id).then(function(user){
         let returnData = Object.assign({},req.user,{
-            nickname:user.nickname
+            nickname:user.nickname,
+            avatar:user.avatar||'',
+            avatar_clip:user.avatar_clip,
+            desc:user.desc||''
         });
-        //清除敏感信息
-        delete returnData.password;
         res.send(tool.buildResJson('获取信息成功',returnData));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;

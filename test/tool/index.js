@@ -2,14 +2,14 @@
 const tool = require('../../common/tool');
 module.exports=function(){
     describe('Tool', function(){
-        it('Call filterReqLog', function (done) {
+        it('Call filterLimitData', function (done) {
             let data={
                 test:'test',
                 password:'123',
                 oldPassword:'oldPassword',
                 email:'email'
             }
-            let result=tool.filterReqLog(data);
+            let result=tool.filterLimitData(data);
             let resultObj=JSON.parse(result);
             if(resultObj.password&&resultObj.oldPassword&&resultObj.email){
                 return done(new Error('错误的过滤结果'));
