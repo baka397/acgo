@@ -196,9 +196,20 @@ router.delete('/sub/:id',function(req,res,next){
     });
 });
 
-router.get('/sub/me',function(req,res,next){
+router.get('/sub/:id',function(req,res,next){
     let reqData=Object.create(null);
-    reqData.sub_user=req.user._id;
+    switch(req.params.id){
+    case 'me':
+        reqData.sub_user=req.user._id;
+        break;
+    default:
+        if(!validator.isMongoId(req.params.id)){
+            let err=new Error('请指定正确的用户');
+            err.status=STATUS_CODE.ERROR;
+            return next(err);
+        }
+        reqData.sub_user=req.params.id;
+    }
     reqData.sub_status=1;
     Anime.getAnimeSubList(reqData,'_id name alias cover cover_clip show_status public_status').then(function(result){
         res.send(tool.buildResJson('获取信息成功',result));

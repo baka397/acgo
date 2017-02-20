@@ -22,7 +22,6 @@ let animeSearch = searcher.createSearch('animes');
 function buildAnimeItemRecommenderPromise(anime,isClear){
     let itemTool=recommender.itemTool;
     let pointDatas=[];
-    let addPromise;
     //更新推荐引擎tag数据
     pointDatas=pointDatas.concat(anime.tag.map(function(curId){
         return {
