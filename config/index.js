@@ -39,6 +39,7 @@ let defaultConfig = {
         'admin@test.com':'admin,crawler'
     },
     //系统参数配置
+    apiExpireTime:30,                                       //API请求验证时间(s)
     closeMail:false,                                        //是否关闭邮件发送
     maxInitNum:10,                                          //单次初始化最大个数
     userTokenExpire:24*60*60,                               //用户token有效时间,可续期(s)
