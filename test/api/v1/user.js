@@ -433,6 +433,24 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('POST /user/ with long email', function (done) {
+            app.post(path)
+            .set(apiTokenParams)
+            .send({
+                'email':'test12313123131332113232132@test1231332132313212231321213.com',
+                'nickname':'测试昵称',
+                'password':password,
+                'code':addCodeIdError
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         it('POST /user/ with wrong email', function (done) {
             app.post(path)
             .set(apiTokenParams)

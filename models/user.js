@@ -8,6 +8,11 @@ const config = require('../config');
 let nickBlockRule = new RegExp('('+config.blockNickName.join('|')+')','i');
 let userEmailValidator = [
     validate({
+        validator: 'isLength',
+        arguments: [1, 40],
+        message: '邮箱需要{ARGS[0]}-{ARGS[1]}之间的字符串'
+    }),
+    validate({
         validator: 'isEmail',
         message: '请输入正确的邮箱'
     })
