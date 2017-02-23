@@ -91,11 +91,13 @@ module.exports=function(app){
             .set(apiLoginTokenParams)
             .expect(200)
             .expect(function(res){
-                console.log(res.body);
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(Object.keys(res.body.data).length!==config.dimensionWeight.length) throw new Error('验证不符合预期');
                 if(Object.keys(res.body.data).every(function(key){
-                    return res.body.data[key].length===0
+                    console.log(res.body.data[key]);
+                    return res.body.data[key].length===0||!res.body.data[key].every(function(tag){
+                        return tag.id&&tag.point>=0&&tag.name
+                    })
                 })) throw new Error('验证不符合预期');
             })
             .end(function(err,res){

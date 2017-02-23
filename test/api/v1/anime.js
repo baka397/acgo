@@ -599,27 +599,6 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('GET /anime/sub/:id', function (done) {
-            app.get(path+'sub/'+userId)
-            .set(apiLoginTokenParams)
-            .expect(200)
-            .expect(function(res){
-                if(res.body.code!==200) throw new Error(res.body.msg);
-                if(res.body.data.length!==1) throw new Error('验证不符合预期');
-                if(res.body.data[0].name!=='测试动画') throw new Error('验证不符合预期');
-                if(res.body.data[0].cover!=='5885b320a1763a717629bac3-1485226800898.jpg') throw new Error('验证不符合预期');
-                let curClip=[1,2,3,5];
-                let validResult=res.body.data[0].cover_clip.every(function(clip,index){
-                    return clip===curClip[index];
-                })
-                if(!validResult) throw new Error('验证不符合预期');
-                if(res.body.data[0].show_status!==1) throw new Error('验证不符合预期');
-                if(res.body.data[0].public_status!==1) throw new Error('验证不符合预期');
-            })
-            .end(function(err,res){
-                done(err);
-            });
-        })
         it('PUT /anime/sub/:id again', function (done) {
             app.put(path+'sub/'+animeId)
             .set(apiLoginTokenParams)
@@ -1280,18 +1259,6 @@ module.exports=function(app){
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
-                console.log(res.body.msg);
-            })
-            .end(function(err,res){
-                done(err);
-            });
-        })
-        it('GET /anime/sub/:id with wrong user ID', function (done) {
-            app.get(path+'sub/test')
-            .set(apiLoginTokenParams)
-            .expect(200)
-            .expect(function(res){
-                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
                 console.log(res.body.msg);
             })
             .end(function(err,res){

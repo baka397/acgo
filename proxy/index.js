@@ -1,6 +1,7 @@
 exports.App = require('./app');
 exports.Code = require('./code');
 exports.Redis = require('./redis');
+exports.Analytics = require('./analytics');
 exports.User = require('./user');
 exports.UserFollow = require('./user_follow');
 exports.Tag = require('./tag');
