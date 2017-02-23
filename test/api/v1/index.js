@@ -2,6 +2,7 @@
 const apiTool = require('../tool');
 let commonTest = require('./common');
 let userTest = require('./user');
+let userFollowTest = require('./user_follow');
 let tagTest = require('./tag');
 let animeTest = require('./anime');
 let animeGroupTest = require('./anime_group');
@@ -16,5 +17,6 @@ module.exports=function(app){
         animeGroupTest(app);
         uploadTest(app);
         analyticsTest(app);
+        userFollowTest(app);
     })
 }

@@ -189,7 +189,8 @@ function logout(token){
  * @return {Object}          Promise对象
  */
 function getList(query,fields,page,pageSize){
-    return Promise.all([User.count(query).exec(),User.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
+    if(page&&pageSize) return Promise.all([User.count(query).exec(),User.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
+    else return User.find(query).select(fields).exec();
 }
 exports.newAndSave = newAndSave;
 exports.updateById = updateById;
