@@ -72,3 +72,36 @@ npm run init
 
 ## linux
 请使用shell文件
+
+
+数据库操作
+----------
+更多操作见[Getting Started with the mongo Shell](https://docs.mongodb.com/v3.0/tutorial/getting-started-with-the-mongo-shell/)
+## 连接
+```
+mongo 10.8.75.164:30015
+use admin
+db.auth('root','d6b5124691e7ba034c30770ef9fbcc6a')
+```
+
+## 获取索引
+```
+db.collection.getIndexes()
+```
+
+## 删除索引
+```
+db.collection.dropIndex("indexname")
+```
+
+## 重建索引
+```
+db.collection.reIndex()
+```
+
+## 更新日志
+### v1.1.0
+```
+db.animegrouphistories.dropIndex("group_id_1_sub_user_1")
+db.animesubs.dropIndex("anime_id_1_sub_user_1_create_at_-1")
+```
