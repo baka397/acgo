@@ -4,6 +4,7 @@ exports.Redis = require('./redis');
 exports.Analytics = require('./analytics');
 exports.User = require('./user');
 exports.UserFollow = require('./user_follow');
+exports.Timeline = require('./timeline');
 exports.Tag = require('./tag');
 exports.Anime = require('./anime');
 exports.AnimeGroup = require('./anime_group');

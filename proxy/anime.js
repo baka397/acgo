@@ -404,14 +404,19 @@ function getAnimeSubList(query,fields){
         return tool.nextPromise(null,returnData);
     });
 }
+
+
 /**
  * 获取动画订阅列表
  * @param  {Object} query    Query info
  * @param  {String} fields   Query info
+ * @param  {Number} page     Page number
+ * @param  {Number} pageSize Page Size
  * @return {Object}          Promise对象
  */
-function getAnimeSubListOnly(query,fields){
-    return AnimeSub.find(query).select(fields).sort({'_id':1}).exec();
+function getAnimeSubListOnly(query,fields,page,pageSize){
+    if(page&&pageSize) return Promise.all([AnimeSub.count(query).exec(),AnimeSub.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
+    else return AnimeSub.find(query).select(fields).sort({'_id':1}).exec();
 }
 
 /**

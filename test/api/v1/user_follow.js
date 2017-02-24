@@ -294,49 +294,6 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('re POST /user-follow/', function (done) {
-            app.post(path)
-            .set(apiAdminTokenParams)
-            .send({
-                followUser:userId
-            })
-            .expect(200)
-            .expect(function(res){
-                if(res.body.code!==200) throw new Error(res.body.msg);
-            })
-            .end(function(err,res){
-                done(err);
-            });
-        })
-        it('Confirm with GET /user-follow/follow/:userId', function (done) {
-            app.get(path+'follow/'+userId)
-            .set(apiLoginTokenParams)
-            .expect(200)
-            .expect(function(res){
-                if(res.body.code!==200) throw new Error(res.body.msg);
-                if(res.body.data.content.length!==1) throw new Error('与预期结果不符');
-                if(res.body.data.content[0].status!==2) throw new Error('与预期结果不符');
-                if(res.body.data.content[0].follow_user!==userAdminId) throw new Error('与预期结果不符');
-            })
-            .end(function(err,res){
-                done(err);
-            });
-        })
-        it('Confirm with GET /user-follow/fans/:userId', function (done) {
-            app.get(path+'fans/'+userId)
-            .set(apiLoginTokenParams)
-            .expect(200)
-            .expect(function(res){
-                if(res.body.code!==200) throw new Error(res.body.msg);
-                if(res.body.data.content.length!==1) throw new Error('与预期结果不符');
-                if(res.body.data.content[0].status!==2) throw new Error('与预期结果不符');
-                if(res.body.data.content[0].create_user!==userAdminId) throw new Error('与预期结果不符');
-                adminFollowId=res.body.data.content[0]._id;
-            })
-            .end(function(err,res){
-                done(err);
-            });
-        })
         //Error test
         it('POST /user-follow/ with followed user', function (done) {
             app.post(path)
