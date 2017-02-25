@@ -8,14 +8,14 @@ let projectNameValidator = [
     validate({
         validator: 'isLength',
         arguments: [3, 50],
-        message: '应用名称需要{ARGS[0]}-{ARGS[1]}之间的字符串'
+        message: '应用名称需要{ARGS[0]}-{ARGS[1]}之间的文字'
     })
 ];
 let projectAliasValidator = [
     validate({
         validator: 'isLength',
         arguments: [3, 50],
-        message: '应用别名需要{ARGS[0]}-{ARGS[1]}之间的字符串'
+        message: '应用别名需要{ARGS[0]}-{ARGS[1]}之间的文字'
     }),
     validate({
         validator: 'isAlphanumeric',
@@ -26,14 +26,14 @@ let userNameValidator = [
     validate({
         validator: 'isLength',
         arguments: [2, 5],
-        message: '管理员姓名需要{ARGS[0]}-{ARGS[1]}之间的字符串'
+        message: '管理员姓名需要{ARGS[0]}-{ARGS[1]}之间的文字'
     })
 ];
 let userEmailValidator = [
     validate({
         validator: 'isLength',
         arguments: [3, 50],
-        message: '管理员邮箱需要{ARGS[0]}-{ARGS[1]}之间的字符串'
+        message: '管理员邮箱需要{ARGS[0]}-{ARGS[1]}之间的文字'
     }),
     validate({
         validator: 'isEmail',

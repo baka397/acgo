@@ -7,29 +7,29 @@ const Schema = mongoose.Schema;
 let animeNameValidator = [
     validate({
         validator: 'isLength',
-        arguments: [3, 50],
-        message: '动画名称需要{ARGS[0]}-{ARGS[1]}之间的字符串'
+        arguments: [2, 50],
+        message: '动画名称需要{ARGS[0]}-{ARGS[1]}之间的文字'
     })
 ];
 let animeAliasValidator = [
     validate({
         validator: 'isLength',
-        arguments: [3, 50],
-        message: '动画别名需要{ARGS[0]}-{ARGS[1]}之间的字符串'
+        arguments: [2, 50],
+        message: '动画别名需要{ARGS[0]}-{ARGS[1]}之间的文字'
     })
 ];
 let animeCoverValidator = [
     validate({
         validator: 'isLength',
         arguments: [1, 100],
-        message: '动画封面需要{ARGS[0]}-{ARGS[1]}之间的字符串'
+        message: '动画封面需要{ARGS[0]}-{ARGS[1]}之间的文字'
     })
 ];
 let animeDescValidator = [
     validate({
         validator: 'isLength',
         arguments: [1, 500],
-        message: '动画简介需要{ARGS[0]}-{ARGS[1]}之间的字符串'
+        message: '动画简介需要{ARGS[0]}-{ARGS[1]}之间的文字'
     })
 ];
 let AnimeSchema = new Schema({

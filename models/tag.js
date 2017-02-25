@@ -8,7 +8,7 @@ let tagNameValidator = [
     validate({
         validator: 'isLength',
         arguments: [2, 20],
-        message: '标签名称需要{ARGS[0]}-{ARGS[1]}之间的字符串'
+        message: '标签名称需要{ARGS[0]}-{ARGS[1]}之间的文字'
     }),
     validate({
         validator: 'matches',
@@ -20,7 +20,7 @@ let tagAliasValidator = [
     validate({
         validator: 'isLength',
         arguments: [3, 20],
-        message: '标签名称需要{ARGS[0]}-{ARGS[1]}之间的字符串'
+        message: '标签名称需要{ARGS[0]}-{ARGS[1]}之间的文字'
     })
 ];
 let TagSchema = new Schema({
