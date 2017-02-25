@@ -8,7 +8,7 @@ const ObjectId  = Schema.ObjectId;
 let animeAliasValidator = [
     validate({
         validator: 'isLength',
-        arguments: [3, 50],
+        arguments: [1, 50],
         message: '动画别名需要{ARGS[0]}-{ARGS[1]}之间的文字'
     })
 ];
