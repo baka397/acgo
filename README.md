@@ -70,6 +70,12 @@ set NODE_INIT_CASE=search
 npm run init
 ```
 
+### 初始化推荐引擎数据
+```
+set NODE_INIT_CASE=recommender
+npm run init
+```
+
 ## linux
 请使用shell文件
 
