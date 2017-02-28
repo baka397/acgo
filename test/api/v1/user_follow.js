@@ -294,6 +294,18 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('GET /user-follow/relation/:userId', function (done) {
+            app.get(path+'relation/'+userAdminId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.length!==2) throw new Error('与预期结果不符');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         //Error test
         it('POST /user-follow/ with followed user', function (done) {
             app.post(path)
@@ -410,6 +422,40 @@ module.exports=function(app){
             .expect(function(res){
                 if(res.body.code!==STATUS_CODE.ERROR) throw new Error(res.body.msg);
                 console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /user-follow/relation/:userId with wrong userId', function (done) {
+            app.get(path+'relation/test')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /user-follow/relation/:userId with self', function (done) {
+            app.get(path+'relation/'+userId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /user-follow/relation/:userId with inexistence userId', function (done) {
+            app.get(path+'relation/58297d95e7aaf218604a8d0f')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.length!==0) throw new Error(new Error('与预期结果不符'));
             })
             .end(function(err,res){
                 done(err);

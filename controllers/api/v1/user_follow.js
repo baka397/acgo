@@ -36,6 +36,30 @@ router.delete('/:id',function(req,res,next){
     });
 });
 
+router.get('/relation/:userId',function(req,res,next){
+    let userId = req.params.userId;
+    if(!validator.isMongoId(userId)){
+        let err = new Error('请指定正确的用户');
+        err.status=STATUS_CODE.ERROR;
+        return next(err);
+    }
+    if(req.user._id===req.params.userId){
+        let err = new Error('该用户和你为同一人');
+        err.status=STATUS_CODE.ERROR;
+        return next(err);
+    }
+    let data=Object.create(null);
+    data.createUser=req.user._id;
+    data.followUser=req.params.userId;
+    UserFollow.getRelation(data)
+    .then(function(result){
+        res.send(tool.buildResJson('获取用户关系成功',result));
+    }).catch(function(err){
+        err.status=STATUS_CODE.MONGO_ERROR;
+        next(err);
+    });
+});
+
 router.get('/follow/:userId',function(req,res,next){
     tool.rebuildPageSize(req);
     let page = req.query.page;

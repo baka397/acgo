@@ -21,7 +21,7 @@ let userNicknameValidator = [
     validate({
         validator: 'isLength',
         arguments: [3, 10],
-        message: '昵称需要{ARGS[0]}-{ARGS[1]}之间的字符串'
+        message: '昵称需要{ARGS[0]}-{ARGS[1]}之间的文字'
     }),
     validate({
         validator: 'matches',

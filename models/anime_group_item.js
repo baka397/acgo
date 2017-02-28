@@ -15,7 +15,7 @@ let episodeNameValidator = [
     validate({
         validator: 'isLength',
         arguments: [1, 50],
-        message: '分集名称需要{ARGS[0]}-{ARGS[1]}之间的字符串'
+        message: '分集名称需要{ARGS[0]}-{ARGS[1]}之间的文字'
     })
 ];
 let AnimeGroupItemSchema = new Schema({

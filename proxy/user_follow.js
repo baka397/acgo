@@ -26,7 +26,7 @@ function getFollowshipPromise(data){
         else return tool.nextPromise();
     }).then(function(){
         //查询关注关系
-        return getFollowShip(data);
+        return getRelation(data);
     });
 }
 /**
@@ -93,7 +93,7 @@ function cancelAndSave(id,userId){
                 userFollow.status=0;
                 return userFollow.save();
             default: //互相关注
-                return getFollowShip({
+                return getRelation({
                     createUser:userFollow.create_user,
                     followUser:userFollow.follow_user
                 }).then(function(followships){
@@ -134,10 +134,10 @@ function getById(id){
 
 /**
  * 获取关注
- * @param  {[type]} data [description]
- * @return {[type]}      [description]
+ * @param  {Object} data 用户数据
+ * @return {Object}      Promise对象
  */
-function getFollowShip(data){
+function getRelation(data){
     return getList({
         $or:[{
             create_user:data.createUser,
@@ -200,6 +200,6 @@ function getListWithUser(query,fields,page,pageSize){
 
 exports.newAndSave = newAndSave;
 exports.cancelAndSave = cancelAndSave;
-exports.getFollowShip = getFollowShip;
+exports.getRelation = getRelation;
 exports.getList = getList;
 exports.getListWithUser = getListWithUser;
