@@ -29,6 +29,7 @@ let defaultConfig = {
         domain:'mail.acgo.club'
     },
     //运营配置
+    maxPageNum:10,                                          //最大分页数
     pageSize:10,                                            //默认列表数
     maxPageSize:150,                                        //最大列表数
     pwSalt:'47579A1306DC',                                  //密码盐

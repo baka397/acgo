@@ -59,7 +59,7 @@ exports.nextPromise=nextPromise;
 exports.rebuildPageSize = function(req){
     req.query.page = parseInt(req.query.page);
     req.query.pageSize = parseInt(req.query.pageSize);
-    if(!req.query.page||req.query.page<0) req.query.page=1;
+    if(!req.query.page||req.query.page<0||req.query.page>global.CONFIG.maxPageNum) req.query.page=1;
     if(!req.query.pageSize||req.query.pageSize>global.CONFIG.maxPageSize) req.query.pageSize=global.CONFIG.pageSize;
 };
 
