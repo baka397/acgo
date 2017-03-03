@@ -415,8 +415,8 @@ function getAnimeSubList(query,fields){
  * @return {Object}          Promise对象
  */
 function getAnimeSubListOnly(query,fields,page,pageSize){
-    if(page&&pageSize) return Promise.all([AnimeSub.count(query).exec(),AnimeSub.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
-    else return AnimeSub.find(query).select(fields).sort({'_id':1}).exec();
+    if(page&&pageSize) return Promise.all([AnimeSub.count(query).exec(),AnimeSub.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).sort({'update_at':-1}).exec()]);
+    else return AnimeSub.find(query).select(fields).sort({'update_at':-1}).exec();
 }
 
 /**
