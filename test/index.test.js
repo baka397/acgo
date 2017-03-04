@@ -3,6 +3,7 @@ const nock = require('nock');
 nock.enableNetConnect(); // 允许真实的网络连接
 const app = require('../app');
 const Model = require('../models');
+const toolTest = require('./tool/');
 const webTest = require('./web/');
 const searchTest = require('./search/');
 const apiV1Test = require('./api/v1/');
@@ -20,8 +21,9 @@ describe('Common', function(){
         });
     })
 })
-webTest(client);
+toolTest();
 searchTest();
+webTest(client);
 apiV1Test(client);
 initTest(client);
 describe('Clear', function(){

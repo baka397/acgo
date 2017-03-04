@@ -50,10 +50,10 @@ exports.use = function (app) {
     app.use(function(req,res,next){
         switch(req.method){
         case 'GET':
-            logger.info(tool.filterReqLog(req.query));
+            logger.info(tool.filterLimitData(req.query));
             break;
         default:
-            logger.info(tool.filterReqLog(req.body));
+            logger.info(tool.filterLimitData(req.body));
         }
         next();
     });

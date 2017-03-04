@@ -1,17 +1,88 @@
 'use strict';
 //动画操作
+const xss = require('xss');
+const validator = require('validator');
 const Anime = require('../models').Anime;
 const AnimeEdit = require('../models').AnimeEdit;
 const AnimeSub = require('../models').AnimeSub;
 const searcher = require('../lib/search/');
+const recommender = require('../lib/recommender/');
 const ANIME = require('../enums/anime');
 const tagProxy = require('./tag');
 const AnimeGroupProxy = require('./anime_group');
-const validator = require('validator');
 const tool = require('../common/tool');
 let animeSearch = searcher.createSearch('animes');
 
+/**
+ * 构建动画推荐引擎任务
+ * @param  {Object} anime   动画数据
+ * @param  {Boolen} isClear 是否清除原始数据
+ * @return {Object}         Promise对象
+ */
+function buildAnimeItemRecommenderPromise(anime,isClear){
+    let itemTool=recommender.itemTool;
+    let pointDatas=[];
+    //更新推荐引擎tag数据
+    pointDatas=pointDatas.concat(anime.tag.map(function(curId){
+        return {
+            type:'dtag',
+            itemId:anime._id,
+            dId:curId,
+            point:global.CONFIG.tagDefaultPoint
+        };
+    }));
+    //更新推荐引擎staff数据
+    pointDatas=pointDatas.concat(anime.staff.map(function(curId){
+        return {
+            type:'dstaff',
+            itemId:anime._id,
+            dId:curId,
+            point:global.CONFIG.staffDefaultPoint
+        };
+    }));
+    //更新推荐引擎cv数据
+    pointDatas=pointDatas.concat(anime.cv.map(function(curId){
+        return {
+            type:'dcv',
+            itemId:anime._id,
+            dId:curId,
+            point:global.CONFIG.cvDefaultPoint
+        };
+    }));
+    if(isClear){
+        return Promise.all([itemTool.clear('dtag',anime._id),itemTool.clear('dstaff',anime._id),itemTool.clear('dcv',anime._id)]) //清除源数据
+            .then(function(){ //更新数据
+                return itemTool.add(pointDatas);
+            });
+    }
+    return itemTool.add(pointDatas);
+}
+
+/**
+ * 构建用户资料推荐引擎任务
+ * @param  {Object} animeSub          订阅数据
+ * @return {Object}                   Promise对象
+ */
+function buildAnimeProfileRecommenderPromise(animeSub){
+    if(!animeSub) return tool.nextPromise();
+    let profileTool=recommender.profileTool;
+    return profileTool.add([{
+        userId:animeSub.sub_user,
+        itemId:animeSub.anime_id,
+        point:animeSub.sub_status*global.CONFIG.subDefaultPoint
+    }]);
+}
+
+/**
+ * 验证动画数据
+ * @param  {Object} data 验证数据,该对象部分数据会被重写
+ * @return {Object}      Promise对象
+ */
 function validAnimePromise(data){
+    if(data.cover&&!tool.isImageName(data.cover)){
+        let err=new Error('无效的图片数据');
+        return tool.nextPromise(err);
+    }
     //裁剪检测
     if(data.cover||data.coverClip){
         data.coverClip=data.coverClip?data.coverClip.split(',').map(function(clip){
@@ -119,22 +190,24 @@ function newAndSave(data){
         anime.cover = data.cover;
         anime.cover_clip = data.coverClip;
         anime.show_status = data.showStatus;
-        anime.desc = data.desc;
+        anime.desc = xss(data.desc);
         anime.tag = data.tag;
         anime.staff = data.staff;
         anime.cv = data.cv;
         anime.public_status = 0;
         return anime.save();
-    }).then(function(result){
+    }).then(function(anime){
         return newAndSaveAnimeEdit(Object.assign(data,{
-            animeId:result._id
-        }),true);
-    }).then(function(){
-        return new Promise(function(resolve){
-            animeSearch.index(data.name,data.animeId,function(){
+            animeId:anime._id
+        }),true).then(function(){
+            return tool.nextPromise(null,anime);
+        });
+    }).then(function(anime){ //构建搜索引擎及推荐引擎数据
+        return Promise.all([buildAnimeItemRecommenderPromise(anime),new Promise(function(resolve){
+            animeSearch.index(anime.name,anime._id,function(){
                 resolve();
             });
-        });
+        })]);
     });
 }
 
@@ -162,7 +235,7 @@ function newAndSaveAnimeEdit(data,unvalid){
                 animeEdit.cover_clip = data.coverClip;
             }
             if(data.showStatus) animeEdit.show_status = data.showStatus;
-            if(data.desc) animeEdit.desc = data.desc;
+            if(data.desc) animeEdit.desc = xss(data.desc);
             if(data.tag) animeEdit.tag = data.tag;
             if(data.staff) animeEdit.staff = data.staff;
             if(data.cv) animeEdit.cv = data.cv;
@@ -282,7 +355,7 @@ function getAnimeEditList(query,fields,page,pageSize){
  * @return {Object}          Promise对象
  */
 function getAnimeSubList(query,fields){
-    return AnimeSub.find(query).select('anime_id').sort({'_id':1}).exec()
+    return getAnimeSubListOnly(query,'anime_id')
     .then(function(result){
         if(result.length===0) return tool.nextPromise(null,[[],[]]);
         //重组动画详情查询
@@ -332,6 +405,20 @@ function getAnimeSubList(query,fields){
     });
 }
 
+
+/**
+ * 获取动画订阅列表
+ * @param  {Object} query    Query info
+ * @param  {String} fields   Query info
+ * @param  {Number} page     Page number
+ * @param  {Number} pageSize Page Size
+ * @return {Object}          Promise对象
+ */
+function getAnimeSubListOnly(query,fields,page,pageSize){
+    if(page&&pageSize) return Promise.all([AnimeSub.count(query).exec(),AnimeSub.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).sort({'update_at':-1}).exec()]);
+    else return AnimeSub.find(query).select(fields).sort({'update_at':-1}).exec();
+}
+
 /**
  * 审核动画信息
  * @param  {String} id    动画编辑信息
@@ -356,6 +443,7 @@ function aduitAnimeEdit(id,data){
         }
         else throw new Error('没有该数据');
     }).then(function(result){
+        //检测是否需要更新动画数据
         if(Array.isArray(result)){
             let animeEdit=result[0];
             let anime=result[1];
@@ -367,8 +455,16 @@ function aduitAnimeEdit(id,data){
             if(animeEdit.tag.length>0) anime.tag = animeEdit.tag;
             if(animeEdit.staff.length>0) anime.staff = animeEdit.staff;
             if(animeEdit.cv.length>0) anime.cv = animeEdit.cv;
-            if(anime.public_status===0) anime.public_status=1;
+            if(anime.public_status===0){
+                anime.public_status=1;
+            }
             return anime.save();
+        }else{
+            return tool.nextPromise();
+        }
+    }).then(function(anime){
+        if(anime){
+            return buildAnimeItemRecommenderPromise(anime,true);
         }else{
             return tool.nextPromise();
         }
@@ -388,9 +484,9 @@ function subAnime(data){
     return getAnimeSubByAnimeIdAndUserId(data.animeId,data.subUser).then(function(animeSub){
         //如果有该数据
         if(animeSub){
-            //如果该数据已订阅
+            //如果该数据无状态改变
             if(animeSub.sub_status===data.subStatus){
-                return tool.nextPromise(null,animeSub);
+                return tool.nextPromise();
             }else{
                 animeSub.sub_status=data.subStatus;
                 return animeSub.save();
@@ -409,6 +505,8 @@ function subAnime(data){
                 }
             });
         }
+    }).then(function(animeSub){
+        return buildAnimeProfileRecommenderPromise(animeSub);
     });
 }
 
@@ -423,3 +521,4 @@ exports.getAnimeEditList = getAnimeEditList;
 exports.aduitAnimeEdit = aduitAnimeEdit;
 exports.subAnime = subAnime;
 exports.getAnimeSubList = getAnimeSubList;
+exports.getAnimeSubListOnly = getAnimeSubListOnly;

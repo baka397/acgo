@@ -16,6 +16,7 @@ mongoose.connect(config.db, {
 require('./app');
 require('./code');
 require('./user');
+require('./user_follow');
 require('./tag');
 require('./anime');
 require('./anime_edit');
@@ -27,6 +28,7 @@ require('./anime_group_history');
 exports.App = mongoose.model('App');
 exports.Code = mongoose.model('Code');
 exports.User = mongoose.model('User');
+exports.UserFollow = mongoose.model('UserFollow');
 exports.Tag = mongoose.model('Tag');
 exports.Anime = mongoose.model('Anime');
 exports.AnimeEdit = mongoose.model('AnimeEdit');

@@ -155,10 +155,27 @@ module.exports=function(app){
             .expect(200)
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
-                if(res.body.data.email!=='test@test.com') throw new Error('验证不符合预期');
                 if(res.body.data.role!=='user') throw new Error('验证不符合预期');
                 if(res.body.data.nickname!=='测试昵称') throw new Error('验证不符合预期');
+                if(res.body.data.avatar!=='') throw new Error('验证不符合预期');
+                if(res.body.data.avatar_clip.length!==0) throw new Error('验证不符合预期');
+                if(res.body.data.desc!=='') throw new Error('验证不符合预期');
                 userId=res.body.data._id;
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('GET /user/:id', function (done) {
+            app.get(path+userId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                if(res.body.data.nickname!=='测试昵称') throw new Error('验证不符合预期');
+                if(res.body.data.avatar!=='') throw new Error('验证不符合预期');
+                if(res.body.data.avatar_clip.length!==0) throw new Error('验证不符合预期');
+                if(res.body.data.desc!=='') throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);
@@ -168,7 +185,10 @@ module.exports=function(app){
             app.put(path+'me')
             .set(apiLoginTokenParams)
             .send({
-                'nickname':'测试昵称2'
+                nickname:'测试昵称2',
+                avatar:'5885b320a1763a717629bac3-1485222972574.jpg',
+                avatarClip:'1,2,3,5',
+                desc:'测试用户介绍'
             })
             .expect(200)
             .expect(function(res){
@@ -183,9 +203,16 @@ module.exports=function(app){
             .set(apiLoginTokenParams)
             .expect(200)
             .expect(function(res){
+                let curClip=[1,2,3,5];
+                let validResult=res.body.data.content[0].avatar_clip.every(function(clip,index){
+                    return clip===curClip[index];
+                })
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
                 if(res.body.data.content[0].nickname!=='测试昵称2') throw new Error('验证不符合预期');
+                if(res.body.data.content[0].avatar!=='5885b320a1763a717629bac3-1485222972574.jpg') throw new Error('验证不符合预期');
+                if(!validResult) throw new Error('验证不符合预期');
+                if(res.body.data.content[0].desc!=='测试用户介绍') throw new Error('验证不符合预期');
             })
             .end(function(err,res){
                 done(err);
@@ -408,6 +435,24 @@ module.exports=function(app){
             app.post(path)
             .set(apiTokenParams)
             .send({
+                'nickname':'测试昵称',
+                'password':password,
+                'code':addCodeIdError
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('POST /user/ with long email', function (done) {
+            app.post(path)
+            .set(apiTokenParams)
+            .send({
+                'email':'test12313123131332113232132@test1231332132313212231321213.com',
                 'nickname':'测试昵称',
                 'password':password,
                 'code':addCodeIdError
@@ -695,11 +740,85 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('GET /user/:id with wrong ID', function (done) {
+            app.get(path+'test')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         it('PUT /user/me with wrong nickname', function (done) {
             app.put(path+'me')
             .set(apiLoginTokenParams)
             .send({
-                'nickname':'测试 昵称'
+                nickname:'测试 昵称'
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /user/me with avatar only', function (done) {
+            app.put(path+'me')
+            .set(apiLoginTokenParams)
+            .send({
+                avatar:'5885b320a1763a717629bac3-1485222972574.jpg'
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /user/me with wrong', function (done) {
+            app.put(path+'me')
+            .set(apiLoginTokenParams)
+            .send({
+                avatar:'测试'
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /user/me with wrong avatarClip', function (done) {
+            app.put(path+'me')
+            .set(apiLoginTokenParams)
+            .send({
+                avatar:'5885b320a1763a717629bac3-1485222972574.jpg',
+                avatarClip:'test',
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /user/me with wrong avatarClip value', function (done) {
+            app.put(path+'me')
+            .set(apiLoginTokenParams)
+            .send({
+                avatar:'5885b320a1763a717629bac3-1485222972574.jpg',
+                avatarClip:'test,2,3,4',
             })
             .expect(200)
             .expect(function(res){

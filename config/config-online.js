@@ -19,5 +19,7 @@ module.exports = {
     admins:{
         'crawler@acgo.club':'crawler',
         'cqggff@live.com':'admin'
-    }
+    },
+    //运营配置
+    maxPageNum:50
 };

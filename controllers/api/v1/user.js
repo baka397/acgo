@@ -70,20 +70,40 @@ router.get('/',function(req,res,next){
             $in:ids
         }
     };
-    User.getList(queryData,'_id nickname',page,pageSize).then(function(result){
+    User.getList(queryData,'_id nickname avatar avatar_clip desc',page,pageSize).then(function(result){
         res.send(tool.buildResJson('获取信息成功',result[1],page,pageSize,result[0]));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
         next(err);
     });
 });
-router.get('/me',function(req,res,next){
-    User.getById(req.user._id).then(function(user){
-        let returnData = Object.assign({},req.user,{
-            nickname:user.nickname
-        });
-        //清除敏感信息
-        delete returnData.password;
+router.get('/:id',function(req,res,next){
+    let userPromise;
+    switch(req.params.id){
+    case 'me':
+        userPromise=User.getById(req.user._id);
+        break;
+    default:
+        if(!validator.isMongoId(req.params.id)){
+            let err=new Error('错误的用户');
+            err.status=STATUS_CODE.ERROR;
+            return next(err);
+        }
+        userPromise=User.getById(req.params.id);
+    }
+    userPromise.then(function(user){
+        let returnData = {
+            _id:user._id,
+            nickname:user.nickname,
+            avatar:user.avatar||'',
+            avatar_clip:user.avatar_clip,
+            desc:user.desc||''
+        };
+        switch(req.params.id){
+        case 'me':
+            returnData.role=req.user.role;
+            break;
+        }
         res.send(tool.buildResJson('获取信息成功',returnData));
     }).catch(function(err){
         err.status=STATUS_CODE.MONGO_ERROR;
@@ -126,6 +146,9 @@ router.put('/me',function(req,res,next){
     data.oldPassword=req.body.oldPassword;
     data.password=req.body.password;
     data.nickname=req.body.nickname;
+    data.avatar=req.body.avatar;
+    data.avatarClip=req.body.avatarClip;
+    data.desc=req.body.desc;
     User.updateById(req.user._id,data,true).then(function(){
         res.send(tool.buildResJson('更新成功',null));
     }).catch(function(err){

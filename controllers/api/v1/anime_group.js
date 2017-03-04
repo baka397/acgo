@@ -150,7 +150,7 @@ router.get('/item/',function(req,res,next){
     });
 });
 
-router.get('/watch/',function(req,res,next){
+router.get('/watch/me',function(req,res,next){
     let reqData=Object.create(null);
     reqData.sub_user=req.user._id;
     AnimeGroup.getListHistory(reqData,'group_id watch_ep update_at').then(function(result){

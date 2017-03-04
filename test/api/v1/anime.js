@@ -1,6 +1,8 @@
 'use strict';
 const STATUS_CODE = require('../../../enums/status_code');
 const apiTool = require('../tool');
+const redisClient = require('../../../common/redis');
+const config = require('../../../config/');
 module.exports=function(app){
     let path = '/api/v1/anime/';
     let apiTokenParams;
@@ -8,8 +10,10 @@ module.exports=function(app){
     let apiAdminTokenParams;
     let password = apiTool.getPassword('testpassword');
     let tags=[[],[],[]];
+    let userId;
     let animeId;
     let animeEditId;
+    let recommenderResult;
     describe('/anime/', function(){
         //Prepare
         it('Prepare Token', function (done) {
@@ -147,6 +151,18 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('GET /user/me', function (done) {
+            app.get('/api/v1/user/me')
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
+                userId=res.body.data._id;
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         //Start
         it('POST /anime/', function (done) {
             app.post(path)
@@ -154,7 +170,7 @@ module.exports=function(app){
             .send({
                 name:'测试动画',
                 alias:'测试动画别名',
-                cover:'测试动画封面',
+                cover:'5885b320a1763a717629bac3-1485222972574.jpg',
                 coverClip:'1,2,3,4',
                 showStatus:1,
                 desc:'测试描述',
@@ -170,6 +186,17 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('Confirm recommender item result', function (done) {
+            redisClient.keys(config.redisNamespace+':orc:item:*')
+            .then(function(result){
+                console.info(result);
+                recommenderResult=result;
+                if(result.length!==(3+tags[0].length+tags[1].length+tags[2].length)) throw new Error('推荐引擎结果不符合预期');
+                done();
+            }).catch(function(err){
+                done(err);
+            })
+        })
         it('GET /anime/', function (done) {
             app.get(path+'?keyword='+encodeURIComponent('测试'))
             .set(apiLoginTokenParams)
@@ -182,7 +209,7 @@ module.exports=function(app){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.content.length!==1) throw new Error('验证不符合预期');
                 if(res.body.data.content[0].name!=='测试动画') throw new Error('验证不符合预期');
-                if(res.body.data.content[0].cover!=='测试动画封面') throw new Error('验证不符合预期');
+                if(res.body.data.content[0].cover!=='5885b320a1763a717629bac3-1485222972574.jpg') throw new Error('验证不符合预期');
                 if(!validResult) throw new Error('验证不符合预期');
                 if(res.body.data.content[0].show_status!==1) throw new Error('验证不符合预期');
                 if(res.body.data.content[0].public_status!==0) throw new Error('验证不符合预期');
@@ -204,7 +231,7 @@ module.exports=function(app){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.name!=='测试动画') throw new Error('验证不符合预期');
                 if(res.body.data.alias!=='测试动画别名') throw new Error('验证不符合预期');
-                if(res.body.data.cover!=='测试动画封面') throw new Error('验证不符合预期');
+                if(res.body.data.cover!=='5885b320a1763a717629bac3-1485222972574.jpg') throw new Error('验证不符合预期');
                 if(!validResult) throw new Error('验证不符合预期');
                 if(res.body.data.show_status!==1) throw new Error('验证不符合预期');
                 if(res.body.data.public_status!==0) throw new Error('验证不符合预期');
@@ -254,7 +281,7 @@ module.exports=function(app){
                 })
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.alias!=='测试动画别名') throw new Error('验证不符合预期');
-                if(res.body.data.cover!=='测试动画封面') throw new Error('验证不符合预期');
+                if(res.body.data.cover!=='5885b320a1763a717629bac3-1485222972574.jpg') throw new Error('验证不符合预期');
                 if(!validResult) throw new Error('验证不符合预期');
                 if(res.body.data.show_status!==1) throw new Error('验证不符合预期');
                 if(res.body.data.desc!=='测试描述') throw new Error('验证不符合预期');
@@ -281,7 +308,7 @@ module.exports=function(app){
                 })
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.alias!=='测试动画别名') throw new Error('验证不符合预期');
-                if(res.body.data.cover!=='测试动画封面') throw new Error('验证不符合预期');
+                if(res.body.data.cover!=='5885b320a1763a717629bac3-1485222972574.jpg') throw new Error('验证不符合预期');
                 if(!validResult) throw new Error('验证不符合预期');
                 if(res.body.data.show_status!==1) throw new Error('验证不符合预期');
                 if(res.body.data.desc!=='测试描述') throw new Error('验证不符合预期');
@@ -308,7 +335,7 @@ module.exports=function(app){
                 })
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.alias!=='测试动画别名') throw new Error('验证不符合预期');
-                if(res.body.data.cover!=='测试动画封面') throw new Error('验证不符合预期');
+                if(res.body.data.cover!=='5885b320a1763a717629bac3-1485222972574.jpg') throw new Error('验证不符合预期');
                 if(!validResult) throw new Error('验证不符合预期');
                 if(res.body.data.show_status!==1) throw new Error('验证不符合预期');
                 if(res.body.data.desc!=='测试描述') throw new Error('验证不符合预期');
@@ -338,6 +365,19 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('Confirm recommender item result', function (done) {
+            redisClient.keys(config.redisNamespace+':orc:item:*')
+            .then(function(result){
+                let validResult=recommenderResult.every(function(item,index){
+                    return item===result[index];
+                });
+                if(result.length!==(3+tags[0].length+tags[1].length+tags[2].length)) throw new Error('推荐引擎结果不符合预期');
+                if(!validResult) throw new Error('推荐引擎结果不符合预期');
+                done();
+            }).catch(function(err){
+                done(err);
+            })
+        })
         it('GET /anime/:id again', function (done) {
             app.get(path+animeId)
             .set(apiLoginTokenParams)
@@ -350,7 +390,7 @@ module.exports=function(app){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.name!=='测试动画') throw new Error('验证不符合预期');
                 if(res.body.data.alias!=='测试动画别名') throw new Error('验证不符合预期');
-                if(res.body.data.cover!=='测试动画封面') throw new Error('验证不符合预期');
+                if(res.body.data.cover!=='5885b320a1763a717629bac3-1485222972574.jpg') throw new Error('验证不符合预期');
                 if(!validResult) throw new Error('验证不符合预期');
                 if(res.body.data.show_status!==1) throw new Error('验证不符合预期');
                 if(res.body.data.public_status!==0) throw new Error('验证不符合预期');
@@ -374,12 +414,12 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('PUT /anime/', function (done) {
+        it('PUT /anime/:id', function (done) {
             app.put(path+animeId)
             .set(apiLoginTokenParams)
             .send({
                 alias:'测试动画别名3',
-                cover:'测试动画封面3',
+                cover:'5885b320a1763a717629bac3-1485226800898.jpg',
                 coverClip:'1,2,3,5',
                 desc:'测试描述4',
                 showStatus:1,
@@ -408,12 +448,12 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('PUT /anime/', function (done) {
+        it('PUT /anime/:id', function (done) {
             app.put(path+animeId)
             .set(apiLoginTokenParams)
             .send({
                 alias:'测试动画别名3',
-                cover:'测试动画封面3',
+                cover:'5885b320a1763a717629bac3-1485226800898.jpg',
                 coverClip:'1,2,3,5',
                 desc:'测试描述4',
                 showStatus:1
@@ -437,7 +477,7 @@ module.exports=function(app){
                 })
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.alias!=='测试动画别名3') throw new Error('验证不符合预期');
-                if(res.body.data.cover!=='测试动画封面3') throw new Error('验证不符合预期');
+                if(res.body.data.cover!=='5885b320a1763a717629bac3-1485226800898.jpg') throw new Error('验证不符合预期');
                 if(!validResult) throw new Error('验证不符合预期');
                 if(res.body.data.desc!=='测试描述4') throw new Error('验证不符合预期');
                 if(res.body.data.anime_id!==animeId) throw new Error('验证不符合预期');
@@ -462,6 +502,19 @@ module.exports=function(app){
             .end(function(err,res){
                 done(err);
             });
+        })
+        it('Confirm recommender item result', function (done) {
+            redisClient.keys(config.redisNamespace+':orc:item:*')
+            .then(function(result){
+                let validResult=recommenderResult.every(function(item,index){
+                    return item===result[index];
+                });
+                if(result.length!==(3+tags[0].length+tags[1].length+tags[2].length)) throw new Error('推荐引擎结果不符合预期');
+                if(!validResult) throw new Error('推荐引擎结果不符合预期');
+                done();
+            }).catch(function(err){
+                done(err);
+            })
         })
         it('GET /anime/audit/ with approved status', function (done) {
             app.get(path+'audit/?animeId='+animeId+'&auditStatus=1')
@@ -488,7 +541,7 @@ module.exports=function(app){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.name!=='测试动画') throw new Error('验证不符合预期');
                 if(res.body.data.alias!=='测试动画别名3') throw new Error('验证不符合预期');
-                if(res.body.data.cover!=='测试动画封面3') throw new Error('验证不符合预期');
+                if(res.body.data.cover!=='5885b320a1763a717629bac3-1485226800898.jpg') throw new Error('验证不符合预期');
                 if(!validResult) throw new Error('验证不符合预期');
                 if(res.body.data.show_status!==1) throw new Error('验证不符合预期');
                 if(res.body.data.public_status!==1) throw new Error('验证不符合预期');
@@ -512,6 +565,19 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('Confirm recommender profile result', function (done) {
+            redisClient.keys(config.redisNamespace+':orc:profile:*')
+            .then(function(result){
+                return redisClient.zrange(result[0],0,-1,'WITHSCORES');
+            })
+            .then(function(result){
+                if(result.length!==2) throw new Error('推荐引擎结果不符合预期');
+                if(parseInt(result[1])!==config.subDefaultPoint) throw new Error('推荐引擎结果不符合预期');
+                done();
+            }).catch(function(err){
+                done(err);
+            })
+        })
         it('GET /anime/sub/me', function (done) {
             app.get(path+'sub/me')
             .set(apiLoginTokenParams)
@@ -520,7 +586,7 @@ module.exports=function(app){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.length!==1) throw new Error('验证不符合预期');
                 if(res.body.data[0].name!=='测试动画') throw new Error('验证不符合预期');
-                if(res.body.data[0].cover!=='测试动画封面3') throw new Error('验证不符合预期');
+                if(res.body.data[0].cover!=='5885b320a1763a717629bac3-1485226800898.jpg') throw new Error('验证不符合预期');
                 let curClip=[1,2,3,5];
                 let validResult=res.body.data[0].cover_clip.every(function(clip,index){
                     return clip===curClip[index];
@@ -544,6 +610,19 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('Confirm recommender profile result', function (done) {
+            redisClient.keys(config.redisNamespace+':orc:profile:*')
+            .then(function(result){
+                return redisClient.zrange(result[0],0,-1,'WITHSCORES');
+            })
+            .then(function(result){
+                if(result.length!==2) throw new Error('推荐引擎结果不符合预期');
+                if(parseInt(result[1])!==config.subDefaultPoint) throw new Error('推荐引擎结果不符合预期');
+                done();
+            }).catch(function(err){
+                done(err);
+            })
+        })
         it('GET /anime/sub/me again', function (done) {
             app.get(path+'sub/me')
             .set(apiLoginTokenParams)
@@ -552,7 +631,7 @@ module.exports=function(app){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.length!==1) throw new Error('验证不符合预期');
                 if(res.body.data[0].name!=='测试动画') throw new Error('验证不符合预期');
-                if(res.body.data[0].cover!=='测试动画封面3') throw new Error('验证不符合预期');
+                if(res.body.data[0].cover!=='5885b320a1763a717629bac3-1485226800898.jpg') throw new Error('验证不符合预期');
                 let curClip=[1,2,3,5];
                 let validResult=res.body.data[0].cover_clip.every(function(clip,index){
                     return clip===curClip[index];
@@ -576,6 +655,19 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('Confirm recommender profile result', function (done) {
+            redisClient.keys(config.redisNamespace+':orc:profile:*')
+            .then(function(result){
+                return redisClient.zrange(result[0],0,-1,'WITHSCORES');
+            })
+            .then(function(result){
+                if(result.length!==2) throw new Error('推荐引擎结果不符合预期');
+                if(parseInt(result[1])===config.subDefaultPoint) throw new Error('推荐引擎结果不符合预期');
+                done();
+            }).catch(function(err){
+                done(err);
+            })
+        })
         it('GET /anime/sub/me again', function (done) {
             app.get(path+'sub/me')
             .set(apiLoginTokenParams)
@@ -583,6 +675,17 @@ module.exports=function(app){
             .expect(function(res){
                 if(res.body.code!==200) throw new Error(res.body.msg);
                 if(res.body.data.length!==0) throw new Error('验证不符合预期');
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
+        it('PUT /anime/sub/:id again', function (done) {
+            app.put(path+'sub/'+animeId)
+            .set(apiLoginTokenParams)
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==200) throw new Error(res.body.msg);
             })
             .end(function(err,res){
                 done(err);
@@ -611,13 +714,36 @@ module.exports=function(app){
                 done(err);
             });
         })
+        it('POST /anime/ with wrong cover', function (done) {
+            app.post(path)
+            .set(apiLoginTokenParams)
+            .send({
+                name:'测试动画',
+                alias:'测试动画别名',
+                cover:'测试',
+                coverClip:'1,2,3,4',
+                showStatus:1,
+                desc:'测试描述',
+                tag:tags[0].toString(),
+                staff:tags[1].toString(),
+                cv:tags[2].toString()
+            })
+            .expect(200)
+            .expect(function(res){
+                if(res.body.code!==STATUS_CODE.MONGO_ERROR) throw new Error('验证不符合预期');
+                console.log(res.body.msg);
+            })
+            .end(function(err,res){
+                done(err);
+            });
+        })
         it('POST /anime/ with empty coverClip', function (done) {
             app.post(path)
             .set(apiLoginTokenParams)
             .send({
                 name:'测试动画',
                 alias:'测试动画别名',
-                cover:'测试动画封面',
+                cover:'5885b320a1763a717629bac3-1485222972574.jpg',
                 showStatus:1,
                 desc:'测试描述',
                 tag:tags[0].toString(),
@@ -639,7 +765,7 @@ module.exports=function(app){
             .send({
                 name:'测试动画',
                 alias:'测试动画别名',
-                cover:'测试动画封面',
+                cover:'5885b320a1763a717629bac3-1485222972574.jpg',
                 coverClip:'test,2,3,4',
                 showStatus:1,
                 desc:'测试描述',
@@ -662,7 +788,7 @@ module.exports=function(app){
             .send({
                 name:'测试动画',
                 alias:'测试动画别名',
-                cover:'测试动画封面',
+                cover:'5885b320a1763a717629bac3-1485222972574.jpg',
                 coverClip:'1,2,3,4',
                 showStatus:1,
                 desc:'测试描述',
@@ -684,7 +810,7 @@ module.exports=function(app){
             .send({
                 name:'测试动画',
                 alias:'测试动画别名',
-                cover:'测试动画封面',
+                cover:'5885b320a1763a717629bac3-1485222972574.jpg',
                 coverClip:'1,2,3,4',
                 showStatus:1,
                 desc:'测试描述',
@@ -707,7 +833,7 @@ module.exports=function(app){
             .send({
                 name:'测试动画',
                 alias:'测试动画别名',
-                cover:'测试动画封面',
+                cover:'5885b320a1763a717629bac3-1485222972574.jpg',
                 coverClip:'1,2,3,4',
                 showStatus:1,
                 desc:'测试描述',
@@ -729,7 +855,7 @@ module.exports=function(app){
             .send({
                 name:'测试动画',
                 alias:'测试动画别名',
-                cover:'测试动画封面',
+                cover:'5885b320a1763a717629bac3-1485222972574.jpg',
                 coverClip:'1,2,3,4',
                 showStatus:1,
                 desc:'测试描述',
@@ -752,7 +878,7 @@ module.exports=function(app){
             .send({
                 name:'测试动画',
                 alias:'测试动画别名',
-                cover:'测试动画封面',
+                cover:'5885b320a1763a717629bac3-1485222972574.jpg',
                 coverClip:'1,2,3,4',
                 showStatus:1,
                 desc:'测试描述',
@@ -774,7 +900,7 @@ module.exports=function(app){
             .send({
                 name:'测试动画',
                 alias:'测试动画别名',
-                cover:'测试动画封面',
+                cover:'5885b320a1763a717629bac3-1485222972574.jpg',
                 coverClip:'1,2,3,4',
                 showStatus:1,
                 desc:'测试描述',
@@ -797,7 +923,7 @@ module.exports=function(app){
             .send({
                 name:'测试动画',
                 alias:'测试动画别名',
-                cover:'测试动画封面',
+                cover:'5885b320a1763a717629bac3-1485222972574.jpg',
                 coverClip:'1,2,3,4',
                 showStatus:1,
                 desc:'测试描述',
@@ -820,7 +946,7 @@ module.exports=function(app){
             .send({
                 name:'测试动画',
                 alias:'测试动画别名',
-                cover:'测试动画封面',
+                cover:'5885b320a1763a717629bac3-1485222972574.jpg',
                 coverClip:'1,2,3,4',
                 desc:'测试描述',
                 tag:tags[0].toString(),
@@ -842,7 +968,7 @@ module.exports=function(app){
             .send({
                 name:'测试动画',
                 alias:'测试动画别名',
-                cover:'测试动画封面',
+                cover:'5885b320a1763a717629bac3-1485222972574.jpg',
                 coverClip:'1,2,3,4',
                 showStatus:3,
                 desc:'测试描述',
@@ -865,7 +991,7 @@ module.exports=function(app){
             .send({
                 name:'测试动画',
                 alias:'测试动画别名',
-                cover:'测试动画封面',
+                cover:'5885b320a1763a717629bac3-1485222972574.jpg',
                 coverClip:'1,2,3,4',
                 showStatus:1,
                 desc:'测试描述',
@@ -990,12 +1116,12 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('PUT /anime/ with wrong animeId', function (done) {
+        it('PUT /anime/:id with wrong animeId', function (done) {
             app.put(path+'123')
             .set(apiLoginTokenParams)
             .send({
                 alias:'测试动画别名',
-                cover:'测试动画封面',
+                cover:'5885b320a1763a717629bac3-1485222972574.jpg',
                 coverClip:'1,2,3,4',
                 showStatus:1,
                 desc:'测试描述',
@@ -1012,12 +1138,12 @@ module.exports=function(app){
                 done(err);
             });
         })
-        it('PUT /anime/ with inexistence animeId', function (done) {
+        it('PUT /anime/:id with inexistence animeId', function (done) {
             app.put(path+'58297d95e7aaf218604a8d0f')
             .set(apiLoginTokenParams)
             .send({
                 alias:'测试动画别名',
-                cover:'测试动画封面',
+                cover:'5885b320a1763a717629bac3-1485222972574.jpg',
                 coverClip:'1,2,3,4',
                 showStatus:1,
                 desc:'测试描述',

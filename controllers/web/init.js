@@ -22,4 +22,14 @@ router.get('/search',function(req,res,next){
     });
 });
 
+//推荐引擎初始化
+router.get('/recommender',function(req,res,next){
+    RedisProxy.initRecommenderIndex().then(function(){
+        res.send(tool.buildResJson('初始化推荐引擎索引成功',null));
+    }).catch(function(err){
+        err.status=STATUS_CODE.REDIS_ERROR;
+        next(err);
+    });
+});
+
 exports.router = router;

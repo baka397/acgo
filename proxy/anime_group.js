@@ -6,6 +6,7 @@ const AnimeGroupItem = require('../models').AnimeGroupItem;
 const AnimeGroupHistory = require('../models').AnimeGroupHistory;
 const ANIME_GROUP = require('../enums/anime_group');
 const animeProxy = require('./anime');
+const userProxy = require('./user');
 const validator = require('validator');
 const tool = require('../common/tool');
 
@@ -420,10 +421,13 @@ function getListItem(query,fields,page,pageSize){
  * 获取动画剧集历史
  * @param  {Object} query    Query info
  * @param  {String} fields   Query info
+ * @param  {Number} page     Page number
+ * @param  {Number} pageSize Page Size
  * @return {Object}          Promise对象
  */
-function getListHistory(query,fields){
-    return AnimeGroupHistory.find(query).select(fields).exec();
+function getListHistory(query,fields,page,pageSize){
+    if(page&&pageSize) return Promise.all([AnimeGroupHistory.count(query).exec(),AnimeGroupHistory.find(query).select(fields).skip((page-1)*pageSize).limit(pageSize).exec()]);
+    else return AnimeGroupHistory.find(query).select(fields).exec();
 }
 
 exports.newAndSave = newAndSave;
