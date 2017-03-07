@@ -238,7 +238,7 @@ router.put('/task/:id',apiAuth.checkApiCrawler,function(req,res,next){
     });
 });
 
-router.get('/item/:id',apiAuth.checkApiAdmin,function(req,res,next){
+router.get('/item/:id',function(req,res,next){
     let animeItemId=req.params.id;
     if(!animeItemId||!validator.isMongoId(animeItemId)){
         let err = new Error('请指定正确的ID');
