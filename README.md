@@ -111,3 +111,17 @@ db.collection.reIndex()
 db.animegrouphistories.dropIndex("group_id_1_sub_user_1")
 db.animesubs.dropIndex("anime_id_1_sub_user_1_create_at_-1")
 ```
+
+## 常用命令
+### tag查询
+```
+db.getCollection("tags").find({name:{$regex:''}})
+```
+### tag删除
+```
+db.getCollection("tags").remove({_id:ObjectId("")})
+```
+### tag更新
+```
+db.getCollection("tags").update({_id:ObjectId("")},{$set:{}})
+```
