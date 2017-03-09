@@ -19,6 +19,11 @@ exports.type={
         'name':'爱奇艺',
         'taskRegExp':/^http:\/\/www.iqiyi.com\/a_[a-z0-9\_]+.html$/i,
         'itemRegExp':/^http:\/\/www.iqiyi.com\/dongman\/\d+\/[a-z0-9\_\-]+.html$/i
+    },
+    '4':{
+        'name':'PPTV',
+        'taskRegExp':/^http:\/\/v.pptv.com\/page\/[a-zA-Z0-9\_\-]+.html$/i,
+        'itemRegExp':/^http:\/\/v.pptv.com\/show\/[a-zA-Z0-9\_\-]+.html$/i
     }
 };
 //合集任务状态
