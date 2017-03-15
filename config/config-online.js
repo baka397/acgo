@@ -18,7 +18,8 @@ module.exports = {
     //管理员配置
     admins:{
         'crawler@acgo.club':'crawler',
-        'cqggff@live.com':'admin'
+        'cqggff@live.com':'admin',
+        '460272267@qq.com':'admin' // na
     },
     //运营配置
     maxPageNum:50
